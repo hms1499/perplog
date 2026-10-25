@@ -9,6 +9,7 @@ export * from "./exit-type";
 export * from "./fixture";
 export * from "./leaks";
 export * from "./reconcile";
+export * from "./summary";
 export * from "./trades";
 export type * from "./types";
 export * from "./units";
