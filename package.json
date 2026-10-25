@@ -18,6 +18,7 @@
   "dependencies": {
     "@perplog/core": "workspace:*",
     "@perplog/chain": "workspace:*",
-    "viem": "^2.57"
+    "viem": "^2.57",
+    "zod": "^4"
   }
 }

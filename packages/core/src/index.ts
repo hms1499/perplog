@@ -8,6 +8,7 @@ export * from "./enrich";
 export * from "./exit-type";
 export * from "./fixture";
 export * from "./leaks";
+export * from "./platform";
 export * from "./reconcile";
 export * from "./summary";
 export * from "./trades";

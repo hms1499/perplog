@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!docs", "!**/test/fixtures", "!**/data/platform-stats.json", "!pnpm-lock.yaml"]
+    "includes": [
+      "**",
+      "!docs",
+      "!**/test/fixtures",
+      "!**/data/platform-stats.json",
+      "!pnpm-lock.yaml",
+      "!**/*.md"
+    ]
   },
   "formatter": {
     "enabled": true,

@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-25T08:30:00Z",
-  "windowHours": 9.2,
-  "newPositions": 834,
-  "realTraders": 343,
-  "noStopPct": 79,
-  "liquidationFees7dRaw": "147079100000000000000000",
-  "liquidatedAccounts7d": 571,
-  "method": "Placeholder from the 2026-10-25 research run; regenerate with scripts/platform-stats.ts."
+  "generatedAt": "2026-10-25T10:18:20.000Z",
+  "windowHours": 9.3,
+  "newPositions": 896,
+  "realTraders": 351,
+  "noStopPct": 77,
+  "liquidationFees7dRaw": "147313340027638468950186",
+  "liquidatedAccounts7d": 572,
+  "method": "Latest 60000 position changes (last 9.3 hours). A new position counts as protected when a stop order on the same account and market was created between 60 seconds before and 10 minutes after it opened. Accounts with at most 6 position changes and less than 1 USDso of realized PnL in the window are treated as automated and excluded. Liquidation fees are summed over the last 7 days."
 }
