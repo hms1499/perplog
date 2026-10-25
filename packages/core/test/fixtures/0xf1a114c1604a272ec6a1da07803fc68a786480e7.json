@@ -1,15 +1,15 @@
 {
   "account": "0xf1a114c1604a272ec6a1da07803fc68a786480e7",
   "asOfBlock": {
-    "$bigint": "32696519"
+    "$bigint": "32699188"
   },
-  "asOfTimestamp": 1792921771,
+  "asOfTimestamp": 1792922038,
   "collateralRaw": {
     "$bigint": "1203193279407524244264"
   },
   "history": {
     "account": "0xf1a114c1604a272ec6a1da07803fc68a786480e7",
-    "asOfTimestamp": 1792921771,
+    "asOfTimestamp": 1792922038,
     "truncated": false,
     "changes": [
       {
@@ -2976,21 +2976,6 @@
       "stopRegistry": "0xbfe6f500627a0344270c72a61c4f9f9f31db9a05"
     },
     {
-      "pool": "0xb483ec1fb34996638677c20ab087b16f1896fa53",
-      "symbol": "SOL",
-      "baseDecimals": 9,
-      "tickSize": {
-        "$bigint": "10000000000000000"
-      },
-      "lotSize": {
-        "$bigint": "10000000"
-      },
-      "minQuantity": {
-        "$bigint": "100000000"
-      },
-      "stopRegistry": "0x85a0879d19777c343eb317a890d5058ab92b8f5d"
-    },
-    {
       "pool": "0x63b47ed4a7de0fde659b0d82441dd74828b7297a",
       "symbol": "HYPE",
       "baseDecimals": 6,
@@ -3004,6 +2989,21 @@
         "$bigint": "120000"
       },
       "stopRegistry": "0x44c24cd26cf41037c6ebf337948a6c9bbc0ee055"
+    },
+    {
+      "pool": "0xb483ec1fb34996638677c20ab087b16f1896fa53",
+      "symbol": "SOL",
+      "baseDecimals": 9,
+      "tickSize": {
+        "$bigint": "10000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "10000000"
+      },
+      "minQuantity": {
+        "$bigint": "100000000"
+      },
+      "stopRegistry": "0x85a0879d19777c343eb317a890d5058ab92b8f5d"
     },
     {
       "pool": "0x0f464d57c1fd839e4d87a408bbccdab8f77e6394",
@@ -3156,5 +3156,136 @@
       "stopRegistry": "0x52e2ccebaec9332672c247e9a90aa3d61fb615ef"
     }
   ],
-  "openPositions": []
+  "openPositions": [
+    {
+      "pool": "0x2a73129f26917124bd2a47a9b355c395c537f050",
+      "symbol": "ZEC",
+      "side": "long",
+      "sizeRaw": {
+        "$bigint": "58300000"
+      },
+      "entryPrice": {
+        "$bigint": "1163376000000000000000"
+      },
+      "markPrice": {
+        "$bigint": "1186300706275424000000"
+      },
+      "markFromIndex": false,
+      "liquidationPrice": {
+        "$bigint": "0"
+      },
+      "liqDistanceBps": 10000,
+      "unrealizedPnlRaw": {
+        "$bigint": "13365103758572192000"
+      },
+      "stopCoverageBps": 10000,
+      "fundingLast24hRaw": {
+        "$bigint": "0"
+      }
+    },
+    {
+      "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+      "symbol": "BTC",
+      "side": "short",
+      "sizeRaw": {
+        "$bigint": "-2114000"
+      },
+      "entryPrice": {
+        "$bigint": "83213476462072958888245"
+      },
+      "markPrice": {
+        "$bigint": "80200787157013357500000"
+      },
+      "markFromIndex": false,
+      "liquidationPrice": {
+        "$bigint": "112772151973424473744456"
+      },
+      "liqDistanceBps": 4061,
+      "unrealizedPnlRaw": {
+        "$bigint": "63688251908959973347"
+      },
+      "stopCoverageBps": 10000,
+      "fundingLast24hRaw": {
+        "$bigint": "0"
+      }
+    },
+    {
+      "pool": "0x63b47ed4a7de0fde659b0d82441dd74828b7297a",
+      "symbol": "HYPE",
+      "side": "long",
+      "sizeRaw": {
+        "$bigint": "60100000"
+      },
+      "entryPrice": {
+        "$bigint": "77519256239600665557"
+      },
+      "markPrice": {
+        "$bigint": "75734124458130500000"
+      },
+      "markFromIndex": false,
+      "liquidationPrice": {
+        "$bigint": "63689709277885536097"
+      },
+      "liqDistanceBps": 1590,
+      "unrealizedPnlRaw": {
+        "$bigint": "-107286420066356949975"
+      },
+      "stopCoverageBps": 10000,
+      "fundingLast24hRaw": {
+        "$bigint": "0"
+      }
+    },
+    {
+      "pool": "0xd6cb1dd58580b84d76068ac21594219ce03aeddf",
+      "symbol": "ETH",
+      "side": "long",
+      "sizeRaw": {
+        "$bigint": "1486100000000000000"
+      },
+      "entryPrice": {
+        "$bigint": "2366045875782248839243"
+      },
+      "markPrice": {
+        "$bigint": "2325009600526615500000"
+      },
+      "markFromIndex": false,
+      "liquidationPrice": {
+        "$bigint": "1837916301063105419516"
+      },
+      "liqDistanceBps": 2095,
+      "unrealizedPnlRaw": {
+        "$bigint": "-60984008657396705449"
+      },
+      "stopCoverageBps": 0,
+      "fundingLast24hRaw": {
+        "$bigint": "3242300361658639924"
+      }
+    },
+    {
+      "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+      "symbol": "XRP",
+      "side": "long",
+      "sizeRaw": {
+        "$bigint": "2141400000"
+      },
+      "entryPrice": {
+        "$bigint": "1307357233585504809"
+      },
+      "markPrice": {
+        "$bigint": "1291932931228500000"
+      },
+      "markFromIndex": false,
+      "liquidationPrice": {
+        "$bigint": "953897369291112156"
+      },
+      "liqDistanceBps": 2616,
+      "unrealizedPnlRaw": {
+        "$bigint": "-33029601067290097992"
+      },
+      "stopCoverageBps": 10000,
+      "fundingLast24hRaw": {
+        "$bigint": "0"
+      }
+    }
+  ]
 }

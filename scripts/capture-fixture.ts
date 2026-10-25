@@ -9,6 +9,7 @@ import {
   fetchIndexerHead,
   fetchPerpMarkets,
   getCollateralRaw,
+  getOpenPositions,
   HIDEKI,
 } from "@perplog/chain";
 import { type AccountFixture, type Address, normalizeAddress, writeFixture } from "@perplog/core";
@@ -29,7 +30,11 @@ async function waitForIndexer(block: bigint): Promise<void> {
 async function capture(account: Address): Promise<AccountFixture> {
   const client = createReadClient();
   const publicClient = createPublicClient({ chain: HIDEKI.chain, transport: http(HIDEKI.rpcHttp) });
-  const { collateralRaw, asOfBlock } = await getCollateralRaw(client, HIDEKI.marginBank, account);
+  const { collateralRaw, asOfBlock, activePools } = await getCollateralRaw(
+    client,
+    HIDEKI.marginBank,
+    account,
+  );
   const block = await publicClient.getBlock({ blockNumber: asOfBlock });
   const rawTs = Number(block.timestamp);
   const asOfTimestamp = rawTs > 1e12 ? Math.floor(rawTs / 1000) : rawTs;
@@ -40,7 +45,17 @@ async function capture(account: Address): Promise<AccountFixture> {
     perpPools: new Set(markets.map((m) => m.pool)),
     asOfTimestamp,
   });
-  return { account, asOfBlock, asOfTimestamp, collateralRaw, history, markets, openPositions: [] };
+  const openPositions = await getOpenPositions({
+    client,
+    marginBank: HIDEKI.marginBank,
+    account,
+    activePools,
+    markets: new Map(markets.map((m) => [m.pool, m])),
+    stopOrders: history.stopOrders,
+    funding: history.funding,
+    nowSec: asOfTimestamp,
+  });
+  return { account, asOfBlock, asOfTimestamp, collateralRaw, history, markets, openPositions };
 }
 
 async function main(): Promise<void> {
@@ -55,7 +70,7 @@ async function main(): Promise<void> {
     const fixture = await capture(account);
     writeFileSync(new URL(`${account}.json`, OUT_DIR), writeFixture(fixture));
     console.log(
-      `${account}: block ${fixture.asOfBlock}, ${fixture.history.changes.length} changes, truncated=${fixture.history.truncated}`,
+      `${account}: block ${fixture.asOfBlock}, ${fixture.history.changes.length} changes, truncated=${fixture.history.truncated}, open=${fixture.openPositions.length}`,
     );
   }
 }

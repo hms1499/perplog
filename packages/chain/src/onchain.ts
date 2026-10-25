@@ -1,5 +1,15 @@
-import type { Address } from "@perplog/core";
-import { SomniaMarkets, type SomniaMarketsClient } from "@somnia-chain/markets-sdk";
+import {
+  type Address,
+  absBig,
+  type FundingPayment,
+  type MarketInfo,
+  type OpenPosition,
+  ratioBps,
+  type StopOrderRecord,
+  shortAddress,
+  stopCoverageBps,
+} from "@perplog/core";
+import { perpMarkForPnl, SomniaMarkets, type SomniaMarketsClient } from "@somnia-chain/markets-sdk";
 import { HIDEKI, type Network } from "./networks";
 
 let readClient: SomniaMarketsClient | undefined;
@@ -33,4 +43,51 @@ export async function getCollateralRaw(
     asOfBlock: m.asOfBlock,
     activePools: m.activePerpPools.map((p) => p.toLowerCase() as Address),
   };
+}
+
+const DAY = 86_400;
+
+export async function getOpenPositions(args: {
+  client: Pick<SomniaMarketsClient, "getPerpPosition" | "getPerpState" | "getLiquidationPrice">;
+  marginBank: Address;
+  account: Address;
+  activePools: Address[];
+  markets: ReadonlyMap<Address, MarketInfo>;
+  stopOrders: StopOrderRecord[];
+  funding: FundingPayment[];
+  nowSec: number;
+}): Promise<OpenPosition[]> {
+  const { client, marginBank, account } = args;
+  const read = async (pool: Address): Promise<OpenPosition | null> => {
+    const ref = { marginBank, account, pool };
+    const position = await client.getPerpPosition(ref);
+    if (position.size === 0n) return null;
+    const [state, liquidationPrice] = await Promise.all([
+      client.getPerpState(pool),
+      client.getLiquidationPrice(ref).catch(() => null),
+    ]);
+    const mark = perpMarkForPnl(state);
+    const market = args.markets.get(pool);
+    const side = position.size > 0n ? "long" : "short";
+    return {
+      pool,
+      symbol: market?.symbol ?? shortAddress(pool),
+      side,
+      sizeRaw: position.size,
+      entryPrice: position.avgEntryPrice,
+      markPrice: mark.price,
+      markFromIndex: mark.fromIndex,
+      liquidationPrice,
+      liqDistanceBps:
+        liquidationPrice === null ? null : ratioBps(absBig(mark.price - liquidationPrice), mark.price),
+      unrealizedPnlRaw:
+        ((mark.price - position.avgEntryPrice) * position.size) / 10n ** BigInt(market?.baseDecimals ?? 18),
+      stopCoverageBps: stopCoverageBps(side, position.size, pool, args.stopOrders),
+      fundingLast24hRaw: args.funding
+        .filter((f) => f.pool === pool && f.timestamp >= args.nowSec - DAY)
+        .reduce((acc, f) => acc + f.amount, 0n),
+    };
+  };
+  const positions = await Promise.all(args.activePools.map(read));
+  return positions.filter((p): p is OpenPosition => p !== null);
 }
