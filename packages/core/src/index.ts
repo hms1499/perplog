@@ -1,7 +1,10 @@
 export const VERSION = "0.1.0";
 export * from "./address";
+export * from "./cohort";
 export * from "./config";
 export * from "./costs";
+export * from "./fixture";
+export * from "./reconcile";
 export * from "./trades";
 export type * from "./types";
 export * from "./units";
