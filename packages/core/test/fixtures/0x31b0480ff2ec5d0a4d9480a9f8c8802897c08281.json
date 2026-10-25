@@ -1,0 +1,4922 @@
+{
+  "account": "0x31b0480ff2ec5d0a4d9480a9f8c8802897c08281",
+  "asOfBlock": {
+    "$bigint": "32696572"
+  },
+  "asOfTimestamp": 1792921776,
+  "collateralRaw": {
+    "$bigint": "2243129550750150552501"
+  },
+  "history": {
+    "account": "0x31b0480ff2ec5d0a4d9480a9f8c8802897c08281",
+    "asOfTimestamp": 1792921776,
+    "truncated": false,
+    "changes": [
+      {
+        "id": "22253565_3",
+        "kind": "OPEN",
+        "pool": "0xd6cb1dd58580b84d76068ac21594219ce03aeddf",
+        "orderId": "16306921761159246284499",
+        "blockNumber": {
+          "$bigint": "22253565"
+        },
+        "logIndex": 3,
+        "timestamp": 1791876454,
+        "txHash": "0x0a277effedd207d6692f491505847d3bc0015ac8c38a1b262357cef9d602d544",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-317400000000000000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "2522820000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "22253994_2",
+        "kind": "OPEN",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "16768090363001985782980",
+        "blockNumber": {
+          "$bigint": "22253994"
+        },
+        "logIndex": 2,
+        "timestamp": 1791876497,
+        "txHash": "0xe323a33b36f206a7d480b91c5a305163beb7b4e5816c3c544bc30d8f6a349759",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "268000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "83621300000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "22254359_3",
+        "kind": "OPEN",
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "orderId": "405828369621611912056",
+        "blockNumber": {
+          "$bigint": "22254359"
+        },
+        "logIndex": 3,
+        "timestamp": 1791876533,
+        "txHash": "0xcdbb0352fbae805c19bec577d336aa827e98dbc8d265cff04f914704fc8eea1c",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-757200000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "1370300000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "22254412_27",
+        "kind": "OPEN",
+        "pool": "0xb483ec1fb34996638677c20ab087b16f1896fa53",
+        "orderId": "5238875316933515977189",
+        "blockNumber": {
+          "$bigint": "22254412"
+        },
+        "logIndex": 27,
+        "timestamp": 1791876538,
+        "txHash": "0xb6d8bb212b74354e0e5035f284a32fdd1099a18f39463560b6ab88a96d192e18",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-6540000000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "107880000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "22254445_16",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "16768090363001985782980",
+        "blockNumber": {
+          "$bigint": "22254445"
+        },
+        "logIndex": 16,
+        "timestamp": 1791876542,
+        "txHash": "0x3ea4d61aac3fe58a09c4953a2227dc7e8677bc6e5226c43054dfb877d28a62ee",
+        "sizeBefore": {
+          "$bigint": "268000"
+        },
+        "sizeAfter": {
+          "$bigint": "2371000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83621300000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83621300000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "22254458_2",
+        "kind": "OPEN",
+        "pool": "0x3d2a99fe1e2bdeaa25024515a2d2202daf9531ad",
+        "orderId": "295147905179354043778",
+        "blockNumber": {
+          "$bigint": "22254458"
+        },
+        "logIndex": 2,
+        "timestamp": 1791876543,
+        "txHash": "0xd9a799a74f6563181b004c4901007c167094f8e88fb24be240e34b57c19552ec",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-666000000000000000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "742929000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "22254933_60",
+        "kind": "CLOSE",
+        "pool": "0xb483ec1fb34996638677c20ab087b16f1896fa53",
+        "orderId": "5238875316933515977266",
+        "blockNumber": {
+          "$bigint": "22254933"
+        },
+        "logIndex": 60,
+        "timestamp": 1791876591,
+        "txHash": "0xe1ba4e27202d00e3a2c9ddaa78f7972092489ec26309376c0c5908aa786353a0",
+        "sizeBefore": {
+          "$bigint": "-6540000000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "6540000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "107880000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "107990000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-719400000000000000"
+        }
+      },
+      {
+        "id": "22255352_47",
+        "kind": "REDUCE",
+        "pool": "0x3d2a99fe1e2bdeaa25024515a2d2202daf9531ad",
+        "orderId": "295147905179354043868",
+        "blockNumber": {
+          "$bigint": "22255352"
+        },
+        "logIndex": 47,
+        "timestamp": 1791876633,
+        "txHash": "0x1dbb816f29a4b8ca5a633888ce8ceb6c555b3aabd21b28e31f55f1502115fe70",
+        "sizeBefore": {
+          "$bigint": "-666000000000000000"
+        },
+        "sizeAfter": {
+          "$bigint": "-197000000000000000"
+        },
+        "closedSize": {
+          "$bigint": "469000000000000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "742929000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "742929000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "743945000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-476504000000000000"
+        }
+      },
+      {
+        "id": "22255352_52",
+        "kind": "CLOSE",
+        "pool": "0x3d2a99fe1e2bdeaa25024515a2d2202daf9531ad",
+        "orderId": "295147905179354043868",
+        "blockNumber": {
+          "$bigint": "22255352"
+        },
+        "logIndex": 52,
+        "timestamp": 1791876633,
+        "txHash": "0x1dbb816f29a4b8ca5a633888ce8ceb6c555b3aabd21b28e31f55f1502115fe70",
+        "sizeBefore": {
+          "$bigint": "-197000000000000000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "197000000000000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "742929000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "744592000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-327611000000000000"
+        }
+      },
+      {
+        "id": "22255504_26",
+        "kind": "CLOSE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "8762203435012040381967",
+        "blockNumber": {
+          "$bigint": "22255504"
+        },
+        "logIndex": 26,
+        "timestamp": 1791876648,
+        "txHash": "0x6e7449f53f4e57b418339d278922d8d43ff1e05f7a6a42f967ee5201e7e28325",
+        "sizeBefore": {
+          "$bigint": "2371000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "2371000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83621300000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "83676900000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "1318276000000000000"
+        }
+      },
+      {
+        "id": "22255585_0",
+        "kind": "CLOSE",
+        "pool": "0xd6cb1dd58580b84d76068ac21594219ce03aeddf",
+        "orderId": "16306921761159246284861",
+        "blockNumber": {
+          "$bigint": "22255585"
+        },
+        "logIndex": 0,
+        "timestamp": 1791876656,
+        "txHash": "0xf4de961aaeea3e0121f55ca6d854ad777fd9da6d4ffd9b6ea4282d8e3f794489",
+        "sizeBefore": {
+          "$bigint": "-317400000000000000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "317400000000000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "2522820000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "2527680000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-1542564000000000000"
+        }
+      },
+      {
+        "id": "22256106_0",
+        "kind": "CLOSE",
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "orderId": "405828369621611912229",
+        "blockNumber": {
+          "$bigint": "22256106"
+        },
+        "logIndex": 0,
+        "timestamp": 1791876708,
+        "txHash": "0xcb4a0cd15a77e967d8fa470236c7aeb9c266098e84f5d32af4eff4e8c1617921",
+        "sizeBefore": {
+          "$bigint": "-757200000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "757200000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "1370300000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "1376000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-4316040000000000000"
+        }
+      },
+      {
+        "id": "23048170_19",
+        "kind": "OPEN",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15827306415242799200302",
+        "blockNumber": {
+          "$bigint": "23048170"
+        },
+        "logIndex": 19,
+        "timestamp": 1791956172,
+        "txHash": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-1130000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "83550300000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23048170_24",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15827306415242799200302",
+        "blockNumber": {
+          "$bigint": "23048170"
+        },
+        "logIndex": 24,
+        "timestamp": 1791956172,
+        "txHash": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8",
+        "sizeBefore": {
+          "$bigint": "-1130000"
+        },
+        "sizeAfter": {
+          "$bigint": "-1143000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83550300000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83550300000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23048170_29",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15827306415242799200302",
+        "blockNumber": {
+          "$bigint": "23048170"
+        },
+        "logIndex": 29,
+        "timestamp": 1791956172,
+        "txHash": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8",
+        "sizeBefore": {
+          "$bigint": "-1143000"
+        },
+        "sizeAfter": {
+          "$bigint": "-1156000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83550300000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83550300000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23048170_34",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15827306415242799200302",
+        "blockNumber": {
+          "$bigint": "23048170"
+        },
+        "logIndex": 34,
+        "timestamp": 1791956172,
+        "txHash": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8",
+        "sizeBefore": {
+          "$bigint": "-1156000"
+        },
+        "sizeAfter": {
+          "$bigint": "-1169000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83550300000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83550300000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23048170_39",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15827306415242799200302",
+        "blockNumber": {
+          "$bigint": "23048170"
+        },
+        "logIndex": 39,
+        "timestamp": 1791956172,
+        "txHash": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8",
+        "sizeBefore": {
+          "$bigint": "-1169000"
+        },
+        "sizeAfter": {
+          "$bigint": "-1182000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83550300000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83550300000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23048170_44",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15827306415242799200302",
+        "blockNumber": {
+          "$bigint": "23048170"
+        },
+        "logIndex": 44,
+        "timestamp": 1791956172,
+        "txHash": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8",
+        "sizeBefore": {
+          "$bigint": "-1182000"
+        },
+        "sizeAfter": {
+          "$bigint": "-1427000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83550300000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83549922284512964260686"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23048229_52",
+        "kind": "OPEN",
+        "pool": "0xb483ec1fb34996638677c20ab087b16f1896fa53",
+        "orderId": "2213609288845150028162",
+        "blockNumber": {
+          "$bigint": "23048229"
+        },
+        "logIndex": 52,
+        "timestamp": 1791956178,
+        "txHash": "0x20eafcba50a2cb4b1e53bc211192ff21ad9f21083cdcc198b8f9361f860ba11c",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-4890000000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "107290000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23048326_11",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "18797232211110037010682",
+        "blockNumber": {
+          "$bigint": "23048326"
+        },
+        "logIndex": 11,
+        "timestamp": 1791956188,
+        "txHash": "0x531239ae130866ca3e129aef21b3b9f49af89da49eea5ddb95c118c707e8a3aa",
+        "sizeBefore": {
+          "$bigint": "-1427000"
+        },
+        "sizeAfter": {
+          "$bigint": "-270000"
+        },
+        "closedSize": {
+          "$bigint": "1157000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83549922284512964260686"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83549922284512964260686"
+        },
+        "exitPrice": {
+          "$bigint": "83553500000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-41394168185003504"
+        }
+      },
+      {
+        "id": "23048326_16",
+        "kind": "CLOSE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "18797232211110037010682",
+        "blockNumber": {
+          "$bigint": "23048326"
+        },
+        "logIndex": 16,
+        "timestamp": 1791956188,
+        "txHash": "0x531239ae130866ca3e129aef21b3b9f49af89da49eea5ddb95c118c707e8a3aa",
+        "sizeBefore": {
+          "$bigint": "-270000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "270000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83549922284512964260686"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "83553700000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-10199831814996497"
+        }
+      },
+      {
+        "id": "23048526_116",
+        "kind": "CLOSE",
+        "pool": "0xb483ec1fb34996638677c20ab087b16f1896fa53",
+        "orderId": "479615345916452176495",
+        "blockNumber": {
+          "$bigint": "23048526"
+        },
+        "logIndex": 116,
+        "timestamp": 1791956208,
+        "txHash": "0xd603ccefb2aa5428d853e5d146f76234fd5428d4678622f1918b80d2826f38a7",
+        "sizeBefore": {
+          "$bigint": "-4890000000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "4890000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "107290000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "107190000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "489000000000000000"
+        }
+      },
+      {
+        "id": "23742215_109",
+        "kind": "OPEN",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15200117116736675209241",
+        "blockNumber": {
+          "$bigint": "23742215"
+        },
+        "logIndex": 109,
+        "timestamp": 1792025702,
+        "txHash": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "1228000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "81444600000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23742215_119",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15200117116736675209241",
+        "blockNumber": {
+          "$bigint": "23742215"
+        },
+        "logIndex": 119,
+        "timestamp": 1792025702,
+        "txHash": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18",
+        "sizeBefore": {
+          "$bigint": "1228000"
+        },
+        "sizeAfter": {
+          "$bigint": "2456000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81444600000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81444600000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23742215_129",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15200117116736675209241",
+        "blockNumber": {
+          "$bigint": "23742215"
+        },
+        "logIndex": 129,
+        "timestamp": 1792025702,
+        "txHash": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18",
+        "sizeBefore": {
+          "$bigint": "2456000"
+        },
+        "sizeAfter": {
+          "$bigint": "4298000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81444600000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81444600000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23742215_139",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15200117116736675209241",
+        "blockNumber": {
+          "$bigint": "23742215"
+        },
+        "logIndex": 139,
+        "timestamp": 1792025702,
+        "txHash": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18",
+        "sizeBefore": {
+          "$bigint": "4298000"
+        },
+        "sizeAfter": {
+          "$bigint": "6754000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81444600000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81444600000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23742215_149",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15200117116736675209241",
+        "blockNumber": {
+          "$bigint": "23742215"
+        },
+        "logIndex": 149,
+        "timestamp": 1792025702,
+        "txHash": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18",
+        "sizeBefore": {
+          "$bigint": "6754000"
+        },
+        "sizeAfter": {
+          "$bigint": "10438000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81444600000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81444600000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23742215_159",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "15200117116736675209241",
+        "blockNumber": {
+          "$bigint": "23742215"
+        },
+        "logIndex": 159,
+        "timestamp": 1792025702,
+        "txHash": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18",
+        "sizeBefore": {
+          "$bigint": "10438000"
+        },
+        "sizeAfter": {
+          "$bigint": "10621000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81444600000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81444600000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "23742305_0",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "9573860174255261966640",
+        "blockNumber": {
+          "$bigint": "23742305"
+        },
+        "logIndex": 0,
+        "timestamp": 1792025711,
+        "txHash": "0x9fbdf8582f141cf04f6e57a913e7f39b4a6f384fc38555f369a74c26f0cbfb9f",
+        "sizeBefore": {
+          "$bigint": "10621000"
+        },
+        "sizeAfter": {
+          "$bigint": "10515000"
+        },
+        "closedSize": {
+          "$bigint": "106000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81444600000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81444600000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81450500000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "6254000000000000"
+        }
+      },
+      {
+        "id": "24621974_11",
+        "kind": "CLOSE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21914731959566953034144",
+        "blockNumber": {
+          "$bigint": "24621974"
+        },
+        "logIndex": 11,
+        "timestamp": 1792113852,
+        "txHash": "0x1041467adce5c487c2c03cdc7daecb169dd9bc3890a725b907e192cf3d5f501d",
+        "sizeBefore": {
+          "$bigint": "7474000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "7474000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81444600000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "82255800000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "60629088000000000000"
+        }
+      },
+      {
+        "id": "24621974_3",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21914731959566953034144",
+        "blockNumber": {
+          "$bigint": "24621974"
+        },
+        "logIndex": 3,
+        "timestamp": 1792113852,
+        "txHash": "0x1041467adce5c487c2c03cdc7daecb169dd9bc3890a725b907e192cf3d5f501d",
+        "sizeBefore": {
+          "$bigint": "10515000"
+        },
+        "sizeAfter": {
+          "$bigint": "8690000"
+        },
+        "closedSize": {
+          "$bigint": "1825000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81444600000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81444600000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "82258400000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "14851850000000000000"
+        }
+      },
+      {
+        "id": "24621974_7",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21914731959566953034144",
+        "blockNumber": {
+          "$bigint": "24621974"
+        },
+        "logIndex": 7,
+        "timestamp": 1792113852,
+        "txHash": "0x1041467adce5c487c2c03cdc7daecb169dd9bc3890a725b907e192cf3d5f501d",
+        "sizeBefore": {
+          "$bigint": "8690000"
+        },
+        "sizeAfter": {
+          "$bigint": "7474000"
+        },
+        "closedSize": {
+          "$bigint": "1216000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81444600000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81444600000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "82257300000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "9882432000000000000"
+        }
+      },
+      {
+        "id": "27278530_64",
+        "kind": "OPEN",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "6253446240987544236320",
+        "blockNumber": {
+          "$bigint": "27278530"
+        },
+        "logIndex": 64,
+        "timestamp": 1792379656,
+        "txHash": "0x765b75eb6a50c28553d2fd7b33121706c659dffe807be0e510955e925a517bd5",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-1192000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "82728800000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "27278530_69",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "6253446240987544236320",
+        "blockNumber": {
+          "$bigint": "27278530"
+        },
+        "logIndex": 69,
+        "timestamp": 1792379656,
+        "txHash": "0x765b75eb6a50c28553d2fd7b33121706c659dffe807be0e510955e925a517bd5",
+        "sizeBefore": {
+          "$bigint": "-1192000"
+        },
+        "sizeAfter": {
+          "$bigint": "-1822000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "82728800000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "82728696267837541163556"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28128220_34",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "1881567895518380707218",
+        "blockNumber": {
+          "$bigint": "28128220"
+        },
+        "logIndex": 34,
+        "timestamp": 1792464680,
+        "txHash": "0xcdb9f8f082e03788884cb963a2ea5ca8d1047b7b1ae531420eebd33bd9851fff",
+        "sizeBefore": {
+          "$bigint": "-1822000"
+        },
+        "sizeAfter": {
+          "$bigint": "-1803000"
+        },
+        "closedSize": {
+          "$bigint": "19000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "82728696267837541163556"
+        },
+        "entryPriceAfter": {
+          "$bigint": "82728696267837541163556"
+        },
+        "exitPrice": {
+          "$bigint": "81918400000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "153956290889132821"
+        }
+      },
+      {
+        "id": "28128220_39",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "1881567895518380707218",
+        "blockNumber": {
+          "$bigint": "28128220"
+        },
+        "logIndex": 39,
+        "timestamp": 1792464680,
+        "txHash": "0xcdb9f8f082e03788884cb963a2ea5ca8d1047b7b1ae531420eebd33bd9851fff",
+        "sizeBefore": {
+          "$bigint": "-1803000"
+        },
+        "sizeAfter": {
+          "$bigint": "-580000"
+        },
+        "closedSize": {
+          "$bigint": "1223000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "82728696267837541163556"
+        },
+        "entryPriceAfter": {
+          "$bigint": "82728696267837541163556"
+        },
+        "exitPrice": {
+          "$bigint": "81923700000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "9845104355653128430"
+        }
+      },
+      {
+        "id": "28128220_44",
+        "kind": "CLOSE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "1881567895518380707218",
+        "blockNumber": {
+          "$bigint": "28128220"
+        },
+        "logIndex": 44,
+        "timestamp": 1792464680,
+        "txHash": "0xcdb9f8f082e03788884cb963a2ea5ca8d1047b7b1ae531420eebd33bd9851fff",
+        "sizeBefore": {
+          "$bigint": "-580000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "580000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "82728696267837541163556"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "81926600000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "4652158353457738748"
+        }
+      },
+      {
+        "id": "28128415_4",
+        "kind": "OPEN",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "7138889956525602917822",
+        "blockNumber": {
+          "$bigint": "28128415"
+        },
+        "logIndex": 4,
+        "timestamp": 1792464699,
+        "txHash": "0x01b6f54cda9f82176242bebd9af11620c8bcbe05e90753688f009709dac8c942",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-4608000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "81917200000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28128669_101",
+        "kind": "OPEN",
+        "pool": "0xd6cb1dd58580b84d76068ac21594219ce03aeddf",
+        "orderId": "16399155481527798096348",
+        "blockNumber": {
+          "$bigint": "28128669"
+        },
+        "logIndex": 101,
+        "timestamp": 1792464725,
+        "txHash": "0x8fdc1e52ab829af15e38ee6f5ac2965396bccd71f46ea34fe7517ce7664b2d2f",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-480900000000000000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "2396690000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28128919_35",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "7747632510958018121284",
+        "blockNumber": {
+          "$bigint": "28128919"
+        },
+        "logIndex": 35,
+        "timestamp": 1792464750,
+        "txHash": "0x90edb77d9cb9eb558755ae43b322aea4b293c0633482767da59d18177285d4b5",
+        "sizeBefore": {
+          "$bigint": "-4608000"
+        },
+        "sizeAfter": {
+          "$bigint": "-935000"
+        },
+        "closedSize": {
+          "$bigint": "3673000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81917200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81917200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81879100000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "1399413000000000000"
+        }
+      },
+      {
+        "id": "28128919_40",
+        "kind": "CLOSE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "7747632510958018121284",
+        "blockNumber": {
+          "$bigint": "28128919"
+        },
+        "logIndex": 40,
+        "timestamp": 1792464750,
+        "txHash": "0x90edb77d9cb9eb558755ae43b322aea4b293c0633482767da59d18177285d4b5",
+        "sizeBefore": {
+          "$bigint": "-935000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "935000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81917200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "81879400000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "353430000000000000"
+        }
+      },
+      {
+        "id": "28128969_139",
+        "kind": "OPEN",
+        "pool": "0x1cd15ae8bff0fe0a7f49233be8b90734775ba454",
+        "orderId": "977677435906613291136",
+        "blockNumber": {
+          "$bigint": "28128969"
+        },
+        "logIndex": 139,
+        "timestamp": 1792464755,
+        "txHash": "0x009d125642985776c21cb8b28504b115399fca0179b1c194dc0b50cdff43d6b8",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-223200000000000000000000000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "4847900000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28129479_96",
+        "kind": "OPEN",
+        "pool": "0x3d2a99fe1e2bdeaa25024515a2d2202daf9531ad",
+        "orderId": "276701161105646257731",
+        "blockNumber": {
+          "$bigint": "28129479"
+        },
+        "logIndex": 96,
+        "timestamp": 1792464806,
+        "txHash": "0xff610dda46841da29ea60dd87c9579dabb44a349a9d5a7046f1f8a497ff352ec",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-2107000000000000000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "728829000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28129928_76",
+        "kind": "OPEN",
+        "pool": "0x1be21287cfb865a7c462ff3c4f275e70bcccefe4",
+        "orderId": "184467440737099174253",
+        "blockNumber": {
+          "$bigint": "28129928"
+        },
+        "logIndex": 76,
+        "timestamp": 1792464851,
+        "txHash": "0x7fc8ad637b531479f02a1e28cea1931ebb8063282f43e335bff2de4363e73933",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-1090000000000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "997800000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28129968_103",
+        "kind": "REDUCE",
+        "pool": "0x3d2a99fe1e2bdeaa25024515a2d2202daf9531ad",
+        "orderId": "276701161105646257918",
+        "blockNumber": {
+          "$bigint": "28129968"
+        },
+        "logIndex": 103,
+        "timestamp": 1792464855,
+        "txHash": "0x81e4fb77573206efb2d19f0d7d94a866ba9393d54b593fdb3372948c33c93616",
+        "sizeBefore": {
+          "$bigint": "-2107000000000000000"
+        },
+        "sizeAfter": {
+          "$bigint": "-736000000000000000"
+        },
+        "closedSize": {
+          "$bigint": "1371000000000000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "728829000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "728829000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "728712000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "160407000000000000"
+        }
+      },
+      {
+        "id": "28129968_108",
+        "kind": "CLOSE",
+        "pool": "0x3d2a99fe1e2bdeaa25024515a2d2202daf9531ad",
+        "orderId": "276701161105646257918",
+        "blockNumber": {
+          "$bigint": "28129968"
+        },
+        "logIndex": 108,
+        "timestamp": 1792464855,
+        "txHash": "0x81e4fb77573206efb2d19f0d7d94a866ba9393d54b593fdb3372948c33c93616",
+        "sizeBefore": {
+          "$bigint": "-736000000000000000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "736000000000000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "728829000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "728875000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-33856000000000000"
+        }
+      },
+      {
+        "id": "28130438_118",
+        "kind": "OPEN",
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "orderId": "461168601842742912792",
+        "blockNumber": {
+          "$bigint": "28130438"
+        },
+        "logIndex": 118,
+        "timestamp": 1792464902,
+        "txHash": "0x3cfa1485a6ca052f8c9e2c53a94cad8ef49d9ea6c047c64449ce09bfc1811d1a",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-1532200000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "1302500000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28130590_60",
+        "kind": "INCREASE",
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "orderId": "461168601842742912792",
+        "blockNumber": {
+          "$bigint": "28130590"
+        },
+        "logIndex": 60,
+        "timestamp": 1792464917,
+        "txHash": "0x3a59ab6d11bbe1979220933bcf12ccac7aa28473f8696b8822b523c135381861",
+        "sizeBefore": {
+          "$bigint": "-1532200000"
+        },
+        "sizeAfter": {
+          "$bigint": "-2299700000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "1302500000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "1302500000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28130738_184",
+        "kind": "INCREASE",
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "orderId": "461168601842742912792",
+        "blockNumber": {
+          "$bigint": "28130738"
+        },
+        "logIndex": 184,
+        "timestamp": 1792464932,
+        "txHash": "0x7eda9189ee90ebf74b8ca4c94be82a6b4e72fbb7996cff99288872456ff6e3cc",
+        "sizeBefore": {
+          "$bigint": "-2299700000"
+        },
+        "sizeAfter": {
+          "$bigint": "-2585700000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "1302500000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "1302500000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28131767_81",
+        "kind": "CLOSE",
+        "pool": "0x1be21287cfb865a7c462ff3c4f275e70bcccefe4",
+        "orderId": "996124179980319446011",
+        "blockNumber": {
+          "$bigint": "28131767"
+        },
+        "logIndex": 81,
+        "timestamp": 1792465035,
+        "txHash": "0x5c869ee8c5597793fee78f9dcafea9c6b1c51b28940140e94b2b217bd37c1b5e",
+        "sizeBefore": {
+          "$bigint": "-1090000000000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "1090000000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "997800000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "998800000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-1090000000000000000"
+        }
+      },
+      {
+        "id": "28132016_52",
+        "kind": "CLOSE",
+        "pool": "0x1cd15ae8bff0fe0a7f49233be8b90734775ba454",
+        "orderId": "387381625547907641888",
+        "blockNumber": {
+          "$bigint": "28132016"
+        },
+        "logIndex": 52,
+        "timestamp": 1792465060,
+        "txHash": "0xc74a83680ba8833d219bd12d7515727754871a1c97e0ac099986f12b2996af68",
+        "sizeBefore": {
+          "$bigint": "-223200000000000000000000000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "223200000000000000000000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "4847900000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "4843100000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "1071360000000000000"
+        }
+      },
+      {
+        "id": "28142209_51",
+        "kind": "REDUCE",
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "orderId": "719423018874676641272",
+        "blockNumber": {
+          "$bigint": "28142209"
+        },
+        "logIndex": 51,
+        "timestamp": 1792466080,
+        "txHash": "0xcc39e66c693324d7aee1973c48a8f23a27429022a2b8e066a87c3c482049d8b4",
+        "sizeBefore": {
+          "$bigint": "-2585700000"
+        },
+        "sizeAfter": {
+          "$bigint": "-1816300000"
+        },
+        "closedSize": {
+          "$bigint": "769400000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "1302500000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "1302500000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "1299800000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "2077380000000000000"
+        }
+      },
+      {
+        "id": "28142209_56",
+        "kind": "REDUCE",
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "orderId": "719423018874676641272",
+        "blockNumber": {
+          "$bigint": "28142209"
+        },
+        "logIndex": 56,
+        "timestamp": 1792466080,
+        "txHash": "0xcc39e66c693324d7aee1973c48a8f23a27429022a2b8e066a87c3c482049d8b4",
+        "sizeBefore": {
+          "$bigint": "-1816300000"
+        },
+        "sizeAfter": {
+          "$bigint": "-286000000"
+        },
+        "closedSize": {
+          "$bigint": "1530300000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "1302500000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "1302500000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "1299900000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "3978780000000000000"
+        }
+      },
+      {
+        "id": "28227577_25",
+        "kind": "REDUCE",
+        "pool": "0xd6cb1dd58580b84d76068ac21594219ce03aeddf",
+        "orderId": "17524406870024080801678",
+        "blockNumber": {
+          "$bigint": "28227577"
+        },
+        "logIndex": 25,
+        "timestamp": 1792474625,
+        "txHash": "0x94baabb2eafa9f46abcb83e7e2cad333c7f1920e0d821030b91f01f937cef6cb",
+        "sizeBefore": {
+          "$bigint": "-480900000000000000"
+        },
+        "sizeAfter": {
+          "$bigint": "-63400000000000000"
+        },
+        "closedSize": {
+          "$bigint": "417500000000000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "2396690000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "2396690000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "2395580000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "463425000000000000"
+        }
+      },
+      {
+        "id": "28227577_30",
+        "kind": "CLOSE",
+        "pool": "0xd6cb1dd58580b84d76068ac21594219ce03aeddf",
+        "orderId": "17524406870024080801678",
+        "blockNumber": {
+          "$bigint": "28227577"
+        },
+        "logIndex": 30,
+        "timestamp": 1792474625,
+        "txHash": "0x94baabb2eafa9f46abcb83e7e2cad333c7f1920e0d821030b91f01f937cef6cb",
+        "sizeBefore": {
+          "$bigint": "-63400000000000000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "63400000000000000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "2396690000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "2395630000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "67204000000000000"
+        }
+      },
+      {
+        "id": "28941219_18",
+        "kind": "REDUCE",
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "orderId": "424275113695324181868",
+        "blockNumber": {
+          "$bigint": "28941219"
+        },
+        "logIndex": 18,
+        "timestamp": 1792546042,
+        "txHash": "0xd6fec04b34c96d8dfd76e4655f6c10fb0a52fc90c9602879bb5d405ba26baeb4",
+        "sizeBefore": {
+          "$bigint": "-286000000"
+        },
+        "sizeAfter": {
+          "$bigint": "-268800000"
+        },
+        "closedSize": {
+          "$bigint": "17200000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "1302500000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "1302500000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "1334600000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-552120000000000000"
+        }
+      },
+      {
+        "id": "28941219_22",
+        "kind": "CLOSE",
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "orderId": "424275113695324181868",
+        "blockNumber": {
+          "$bigint": "28941219"
+        },
+        "logIndex": 22,
+        "timestamp": 1792546042,
+        "txHash": "0xd6fec04b34c96d8dfd76e4655f6c10fb0a52fc90c9602879bb5d405ba26baeb4",
+        "sizeBefore": {
+          "$bigint": "-268800000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "268800000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "1302500000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "1334800000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-8682240000000000000"
+        }
+      },
+      {
+        "id": "28941391_101",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21582690566240182029754",
+        "blockNumber": {
+          "$bigint": "28941391"
+        },
+        "logIndex": 101,
+        "timestamp": 1792546059,
+        "txHash": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13",
+        "sizeBefore": {
+          "$bigint": "-38598000"
+        },
+        "sizeAfter": {
+          "$bigint": "-46978000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28941391_41",
+        "kind": "OPEN",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21582690566240182029754",
+        "blockNumber": {
+          "$bigint": "28941391"
+        },
+        "logIndex": 41,
+        "timestamp": 1792546059,
+        "txHash": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-1187000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28941391_50",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21582690566240182029754",
+        "blockNumber": {
+          "$bigint": "28941391"
+        },
+        "logIndex": 50,
+        "timestamp": 1792546059,
+        "txHash": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13",
+        "sizeBefore": {
+          "$bigint": "-1187000"
+        },
+        "sizeAfter": {
+          "$bigint": "-2393000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28941391_59",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21582690566240182029754",
+        "blockNumber": {
+          "$bigint": "28941391"
+        },
+        "logIndex": 59,
+        "timestamp": 1792546059,
+        "txHash": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13",
+        "sizeBefore": {
+          "$bigint": "-2393000"
+        },
+        "sizeAfter": {
+          "$bigint": "-4203000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28941391_68",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21582690566240182029754",
+        "blockNumber": {
+          "$bigint": "28941391"
+        },
+        "logIndex": 68,
+        "timestamp": 1792546059,
+        "txHash": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13",
+        "sizeBefore": {
+          "$bigint": "-4203000"
+        },
+        "sizeAfter": {
+          "$bigint": "-6616000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28941391_77",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21582690566240182029754",
+        "blockNumber": {
+          "$bigint": "28941391"
+        },
+        "logIndex": 77,
+        "timestamp": 1792546059,
+        "txHash": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13",
+        "sizeBefore": {
+          "$bigint": "-6616000"
+        },
+        "sizeAfter": {
+          "$bigint": "-10236000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28941391_83",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21582690566240182029754",
+        "blockNumber": {
+          "$bigint": "28941391"
+        },
+        "logIndex": 83,
+        "timestamp": 1792546059,
+        "txHash": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13",
+        "sizeBefore": {
+          "$bigint": "-10236000"
+        },
+        "sizeAfter": {
+          "$bigint": "-15667000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28941391_89",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21582690566240182029754",
+        "blockNumber": {
+          "$bigint": "28941391"
+        },
+        "logIndex": 89,
+        "timestamp": 1792546059,
+        "txHash": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13",
+        "sizeBefore": {
+          "$bigint": "-15667000"
+        },
+        "sizeAfter": {
+          "$bigint": "-24115000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "28941391_95",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21582690566240182029754",
+        "blockNumber": {
+          "$bigint": "28941391"
+        },
+        "logIndex": 95,
+        "timestamp": 1792546059,
+        "txHash": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13",
+        "sizeBefore": {
+          "$bigint": "-24115000"
+        },
+        "sizeAfter": {
+          "$bigint": "-38598000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "29961908_12",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "9832114591287197931486",
+        "blockNumber": {
+          "$bigint": "29961908"
+        },
+        "logIndex": 12,
+        "timestamp": 1792648185,
+        "txHash": "0xab8d798889ad678a30f30dd0c467fa9590be5c99c54f22fcf06714d022b04e1e",
+        "sizeBefore": {
+          "$bigint": "-45750000"
+        },
+        "sizeAfter": {
+          "$bigint": "-44541000"
+        },
+        "closedSize": {
+          "$bigint": "1209000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "82859300000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "2042001000000000000"
+        }
+      },
+      {
+        "id": "29961908_17",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "9832114591287197931486",
+        "blockNumber": {
+          "$bigint": "29961908"
+        },
+        "logIndex": 17,
+        "timestamp": 1792648185,
+        "txHash": "0xab8d798889ad678a30f30dd0c467fa9590be5c99c54f22fcf06714d022b04e1e",
+        "sizeBefore": {
+          "$bigint": "-44541000"
+        },
+        "sizeAfter": {
+          "$bigint": "-42727000"
+        },
+        "closedSize": {
+          "$bigint": "1814000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "82859700000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "3056590000000000000"
+        }
+      },
+      {
+        "id": "29961908_2",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "9832114591287197931486",
+        "blockNumber": {
+          "$bigint": "29961908"
+        },
+        "logIndex": 2,
+        "timestamp": 1792648185,
+        "txHash": "0xab8d798889ad678a30f30dd0c467fa9590be5c99c54f22fcf06714d022b04e1e",
+        "sizeBefore": {
+          "$bigint": "-46978000"
+        },
+        "sizeAfter": {
+          "$bigint": "-46959000"
+        },
+        "closedSize": {
+          "$bigint": "19000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "82852700000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "33345000000000000"
+        }
+      },
+      {
+        "id": "29961908_22",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "9832114591287197931486",
+        "blockNumber": {
+          "$bigint": "29961908"
+        },
+        "logIndex": 22,
+        "timestamp": 1792648185,
+        "txHash": "0xab8d798889ad678a30f30dd0c467fa9590be5c99c54f22fcf06714d022b04e1e",
+        "sizeBefore": {
+          "$bigint": "-42727000"
+        },
+        "sizeAfter": {
+          "$bigint": "-42281000"
+        },
+        "closedSize": {
+          "$bigint": "446000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "82861900000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "741698000000000000"
+        }
+      },
+      {
+        "id": "29961908_7",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "9832114591287197931486",
+        "blockNumber": {
+          "$bigint": "29961908"
+        },
+        "logIndex": 7,
+        "timestamp": 1792648185,
+        "txHash": "0xab8d798889ad678a30f30dd0c467fa9590be5c99c54f22fcf06714d022b04e1e",
+        "sizeBefore": {
+          "$bigint": "-46959000"
+        },
+        "sizeAfter": {
+          "$bigint": "-45750000"
+        },
+        "closedSize": {
+          "$bigint": "1209000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "82858800000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "2048046000000000000"
+        }
+      },
+      {
+        "id": "30101767_13",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "17247705708918437716859",
+        "blockNumber": {
+          "$bigint": "30101767"
+        },
+        "logIndex": 13,
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8",
+        "sizeBefore": {
+          "$bigint": "-42281000"
+        },
+        "sizeAfter": {
+          "$bigint": "-42262000"
+        },
+        "closedSize": {
+          "$bigint": "19000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81836600000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "226404000000000000"
+        }
+      },
+      {
+        "id": "30101767_18",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "17247705708918437716859",
+        "blockNumber": {
+          "$bigint": "30101767"
+        },
+        "logIndex": 18,
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8",
+        "sizeBefore": {
+          "$bigint": "-42262000"
+        },
+        "sizeAfter": {
+          "$bigint": "-41038000"
+        },
+        "closedSize": {
+          "$bigint": "1224000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81847500000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "14451768000000000000"
+        }
+      },
+      {
+        "id": "30101767_23",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "17247705708918437716859",
+        "blockNumber": {
+          "$bigint": "30101767"
+        },
+        "logIndex": 23,
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8",
+        "sizeBefore": {
+          "$bigint": "-41038000"
+        },
+        "sizeAfter": {
+          "$bigint": "-39814000"
+        },
+        "closedSize": {
+          "$bigint": "1224000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81847800000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "14448096000000000000"
+        }
+      },
+      {
+        "id": "30101767_28",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "17247705708918437716859",
+        "blockNumber": {
+          "$bigint": "30101767"
+        },
+        "logIndex": 28,
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8",
+        "sizeBefore": {
+          "$bigint": "-39814000"
+        },
+        "sizeAfter": {
+          "$bigint": "-37977000"
+        },
+        "closedSize": {
+          "$bigint": "1837000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81847900000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "21682111000000000000"
+        }
+      },
+      {
+        "id": "30101767_33",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "17247705708918437716859",
+        "blockNumber": {
+          "$bigint": "30101767"
+        },
+        "logIndex": 33,
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8",
+        "sizeBefore": {
+          "$bigint": "-37977000"
+        },
+        "sizeAfter": {
+          "$bigint": "-35528000"
+        },
+        "closedSize": {
+          "$bigint": "2449000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81848400000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "28893302000000000000"
+        }
+      },
+      {
+        "id": "30101767_38",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "17247705708918437716859",
+        "blockNumber": {
+          "$bigint": "30101767"
+        },
+        "logIndex": 38,
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8",
+        "sizeBefore": {
+          "$bigint": "-35528000"
+        },
+        "sizeAfter": {
+          "$bigint": "-31854000"
+        },
+        "closedSize": {
+          "$bigint": "3674000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81848700000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "43334830000000000000"
+        }
+      },
+      {
+        "id": "30101767_43",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "17247705708918437716859",
+        "blockNumber": {
+          "$bigint": "30101767"
+        },
+        "logIndex": 43,
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8",
+        "sizeBefore": {
+          "$bigint": "-31854000"
+        },
+        "sizeAfter": {
+          "$bigint": "-26343000"
+        },
+        "closedSize": {
+          "$bigint": "5511000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81849400000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "64963668000000000000"
+        }
+      },
+      {
+        "id": "30101767_48",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "17247705708918437716859",
+        "blockNumber": {
+          "$bigint": "30101767"
+        },
+        "logIndex": 48,
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8",
+        "sizeBefore": {
+          "$bigint": "-26343000"
+        },
+        "sizeAfter": {
+          "$bigint": "-17770000"
+        },
+        "closedSize": {
+          "$bigint": "8573000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81850100000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "100998513000000000000"
+        }
+      },
+      {
+        "id": "30101767_53",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "17247705708918437716859",
+        "blockNumber": {
+          "$bigint": "30101767"
+        },
+        "logIndex": 53,
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8",
+        "sizeBefore": {
+          "$bigint": "-17770000"
+        },
+        "sizeAfter": {
+          "$bigint": "-3073000"
+        },
+        "closedSize": {
+          "$bigint": "14697000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "83028200000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "81850700000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "173057175000000000000"
+        }
+      },
+      {
+        "id": "30101767_58",
+        "kind": "CLOSE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "17247705708918437716859",
+        "blockNumber": {
+          "$bigint": "30101767"
+        },
+        "logIndex": 58,
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8",
+        "sizeBefore": {
+          "$bigint": "-3073000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "3073000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "83028200000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "81852800000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "36120042000000000000"
+        }
+      },
+      {
+        "id": "30663313_9",
+        "kind": "OPEN",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30663313"
+        },
+        "logIndex": 9,
+        "timestamp": 1792718370,
+        "txHash": "0xfec61cb56e6287e8a9385efe9dc36eeefd8259fd33879114d4c7a763c5eefbae",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "1264000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30663831_5",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30663831"
+        },
+        "logIndex": 5,
+        "timestamp": 1792718422,
+        "txHash": "0x1515685e09ab581e4b3580a3acbb4566612c2364fee701849fe891a20db416b7",
+        "sizeBefore": {
+          "$bigint": "1264000"
+        },
+        "sizeAfter": {
+          "$bigint": "3377000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30663981_4",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30663981"
+        },
+        "logIndex": 4,
+        "timestamp": 1792718437,
+        "txHash": "0x5dfb013b8a34d8aaf96235d5e9f64c831009a719b51e91ec76088cae7cb7b098",
+        "sizeBefore": {
+          "$bigint": "3377000"
+        },
+        "sizeAfter": {
+          "$bigint": "5430000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30664279_14",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30664279"
+        },
+        "logIndex": 14,
+        "timestamp": 1792718467,
+        "txHash": "0x81605b6fe3dd3e7cacb35acb7bac94247d7a3e114bd58177b3a20d5788ba2e95",
+        "sizeBefore": {
+          "$bigint": "5430000"
+        },
+        "sizeAfter": {
+          "$bigint": "7539000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30664284_20",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30664284"
+        },
+        "logIndex": 20,
+        "timestamp": 1792718467,
+        "txHash": "0x94ca0ef42b6337bd92a0ba1a8c4ec08e144e9ca1ee528058a69b3c669d8e1eea",
+        "sizeBefore": {
+          "$bigint": "7539000"
+        },
+        "sizeAfter": {
+          "$bigint": "9652000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30664633_2",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30664633"
+        },
+        "logIndex": 2,
+        "timestamp": 1792718502,
+        "txHash": "0xc44aea41ecd77375e5cf7d9a670a7ff293dfd64a2d1a2c132dead0df897d6620",
+        "sizeBefore": {
+          "$bigint": "9652000"
+        },
+        "sizeAfter": {
+          "$bigint": "11879000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666524_30",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666524"
+        },
+        "logIndex": 30,
+        "timestamp": 1792718691,
+        "txHash": "0x2f8245482e0cf1359cf53ff10d79a900908c0fd26a7b6befb9a0307a580ae3f6",
+        "sizeBefore": {
+          "$bigint": "11879000"
+        },
+        "sizeAfter": {
+          "$bigint": "13109000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666524_38",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666524"
+        },
+        "logIndex": 38,
+        "timestamp": 1792718691,
+        "txHash": "0x2f8245482e0cf1359cf53ff10d79a900908c0fd26a7b6befb9a0307a580ae3f6",
+        "sizeBefore": {
+          "$bigint": "13109000"
+        },
+        "sizeAfter": {
+          "$bigint": "14339000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666524_46",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666524"
+        },
+        "logIndex": 46,
+        "timestamp": 1792718691,
+        "txHash": "0x2f8245482e0cf1359cf53ff10d79a900908c0fd26a7b6befb9a0307a580ae3f6",
+        "sizeBefore": {
+          "$bigint": "14339000"
+        },
+        "sizeAfter": {
+          "$bigint": "16184000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666524_54",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666524"
+        },
+        "logIndex": 54,
+        "timestamp": 1792718691,
+        "txHash": "0x2f8245482e0cf1359cf53ff10d79a900908c0fd26a7b6befb9a0307a580ae3f6",
+        "sizeBefore": {
+          "$bigint": "16184000"
+        },
+        "sizeAfter": {
+          "$bigint": "18644000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666524_62",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666524"
+        },
+        "logIndex": 62,
+        "timestamp": 1792718691,
+        "txHash": "0x2f8245482e0cf1359cf53ff10d79a900908c0fd26a7b6befb9a0307a580ae3f6",
+        "sizeBefore": {
+          "$bigint": "18644000"
+        },
+        "sizeAfter": {
+          "$bigint": "22334000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666525_63",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666525"
+        },
+        "logIndex": 63,
+        "timestamp": 1792718691,
+        "txHash": "0x7e07b48e3732141101f3bc635526c5b041dc3b404db139224b5c878601e73643",
+        "sizeBefore": {
+          "$bigint": "22334000"
+        },
+        "sizeAfter": {
+          "$bigint": "23564000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666525_71",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666525"
+        },
+        "logIndex": 71,
+        "timestamp": 1792718691,
+        "txHash": "0x7e07b48e3732141101f3bc635526c5b041dc3b404db139224b5c878601e73643",
+        "sizeBefore": {
+          "$bigint": "23564000"
+        },
+        "sizeAfter": {
+          "$bigint": "24794000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666525_79",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666525"
+        },
+        "logIndex": 79,
+        "timestamp": 1792718691,
+        "txHash": "0x7e07b48e3732141101f3bc635526c5b041dc3b404db139224b5c878601e73643",
+        "sizeBefore": {
+          "$bigint": "24794000"
+        },
+        "sizeAfter": {
+          "$bigint": "26639000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666547_13",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666547"
+        },
+        "logIndex": 13,
+        "timestamp": 1792718693,
+        "txHash": "0x0c9f25f8de40ab0e7c1a88e33ef63725e43a382b409cd442ee74e424f3cf69ea",
+        "sizeBefore": {
+          "$bigint": "26639000"
+        },
+        "sizeAfter": {
+          "$bigint": "28755000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666673_7",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666673"
+        },
+        "logIndex": 7,
+        "timestamp": 1792718706,
+        "txHash": "0xb9dd07b862ca24dd48da8fffff58eb07e7a56c9b674589f7b9ca851598374d4b",
+        "sizeBefore": {
+          "$bigint": "28755000"
+        },
+        "sizeAfter": {
+          "$bigint": "30979000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "30666677_142",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21748711262903568445109",
+        "blockNumber": {
+          "$bigint": "30666677"
+        },
+        "logIndex": 142,
+        "timestamp": 1792718707,
+        "txHash": "0x43644957dd68225d99f9407ba1524f2f2cbdc5a062b142a51c2cdf5ffcca8ffe",
+        "sizeBefore": {
+          "$bigint": "30979000"
+        },
+        "sizeAfter": {
+          "$bigint": "58424000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "31543533_16",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "11842809695321539469447",
+        "blockNumber": {
+          "$bigint": "31543533"
+        },
+        "logIndex": 16,
+        "timestamp": 1792806429,
+        "txHash": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283",
+        "sizeBefore": {
+          "$bigint": "58424000"
+        },
+        "sizeAfter": {
+          "$bigint": "57205000"
+        },
+        "closedSize": {
+          "$bigint": "1219000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "80940500000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-6820305000000000000"
+        }
+      },
+      {
+        "id": "31543533_20",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "11842809695321539469447",
+        "blockNumber": {
+          "$bigint": "31543533"
+        },
+        "logIndex": 20,
+        "timestamp": 1792806429,
+        "txHash": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283",
+        "sizeBefore": {
+          "$bigint": "57205000"
+        },
+        "sizeAfter": {
+          "$bigint": "55967000"
+        },
+        "closedSize": {
+          "$bigint": "1238000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "80940100000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-6931562000000000000"
+        }
+      },
+      {
+        "id": "31543533_24",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "11842809695321539469447",
+        "blockNumber": {
+          "$bigint": "31543533"
+        },
+        "logIndex": 24,
+        "timestamp": 1792806429,
+        "txHash": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283",
+        "sizeBefore": {
+          "$bigint": "55967000"
+        },
+        "sizeAfter": {
+          "$bigint": "54110000"
+        },
+        "closedSize": {
+          "$bigint": "1857000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "80940000000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-10399200000000000000"
+        }
+      },
+      {
+        "id": "31543533_28",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "11842809695321539469447",
+        "blockNumber": {
+          "$bigint": "31543533"
+        },
+        "logIndex": 28,
+        "timestamp": 1792806429,
+        "txHash": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283",
+        "sizeBefore": {
+          "$bigint": "54110000"
+        },
+        "sizeAfter": {
+          "$bigint": "51634000"
+        },
+        "closedSize": {
+          "$bigint": "2476000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "80933800000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-14019112000000000000"
+        }
+      },
+      {
+        "id": "31543533_32",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "11842809695321539469447",
+        "blockNumber": {
+          "$bigint": "31543533"
+        },
+        "logIndex": 32,
+        "timestamp": 1792806429,
+        "txHash": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283",
+        "sizeBefore": {
+          "$bigint": "51634000"
+        },
+        "sizeAfter": {
+          "$bigint": "47920000"
+        },
+        "closedSize": {
+          "$bigint": "3714000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "80932500000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-21076950000000000000"
+        }
+      },
+      {
+        "id": "31543533_36",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "11842809695321539469447",
+        "blockNumber": {
+          "$bigint": "31543533"
+        },
+        "logIndex": 36,
+        "timestamp": 1792806429,
+        "txHash": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283",
+        "sizeBefore": {
+          "$bigint": "47920000"
+        },
+        "sizeAfter": {
+          "$bigint": "42348000"
+        },
+        "closedSize": {
+          "$bigint": "5572000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "80931900000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-31654532000000000000"
+        }
+      },
+      {
+        "id": "31543533_40",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "11842809695321539469447",
+        "blockNumber": {
+          "$bigint": "31543533"
+        },
+        "logIndex": 40,
+        "timestamp": 1792806429,
+        "txHash": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283",
+        "sizeBefore": {
+          "$bigint": "42348000"
+        },
+        "sizeAfter": {
+          "$bigint": "33681000"
+        },
+        "closedSize": {
+          "$bigint": "8667000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "80931500000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-49271895000000000000"
+        }
+      },
+      {
+        "id": "31543533_44",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "11842809695321539469447",
+        "blockNumber": {
+          "$bigint": "31543533"
+        },
+        "logIndex": 44,
+        "timestamp": 1792806429,
+        "txHash": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283",
+        "sizeBefore": {
+          "$bigint": "33681000"
+        },
+        "sizeAfter": {
+          "$bigint": "18822000"
+        },
+        "closedSize": {
+          "$bigint": "14859000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "81500000000000000000000"
+        },
+        "exitPrice": {
+          "$bigint": "80930800000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-84577428000000000000"
+        }
+      },
+      {
+        "id": "31543533_48",
+        "kind": "CLOSE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "11842809695321539469447",
+        "blockNumber": {
+          "$bigint": "31543533"
+        },
+        "logIndex": 48,
+        "timestamp": 1792806429,
+        "txHash": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283",
+        "sizeBefore": {
+          "$bigint": "18822000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "18822000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "81500000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "80929500000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-107379510000000000000"
+        }
+      },
+      {
+        "id": "31543627_28",
+        "kind": "OPEN",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "9168031804633654485154",
+        "blockNumber": {
+          "$bigint": "31543627"
+        },
+        "logIndex": 28,
+        "timestamp": 1792806438,
+        "txHash": "0x2b938ae12087912bdcd8a85aa35cf5c756459a7ac6584233be798acc21a115b0",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "-1219000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "80945600000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "31543627_33",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "9168031804633654485154",
+        "blockNumber": {
+          "$bigint": "31543627"
+        },
+        "logIndex": 33,
+        "timestamp": 1792806438,
+        "txHash": "0x2b938ae12087912bdcd8a85aa35cf5c756459a7ac6584233be798acc21a115b0",
+        "sizeBefore": {
+          "$bigint": "-1219000"
+        },
+        "sizeAfter": {
+          "$bigint": "-2457000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "80945600000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "80945146520146520146520"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "31543627_38",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "9168031804633654485154",
+        "blockNumber": {
+          "$bigint": "31543627"
+        },
+        "logIndex": 38,
+        "timestamp": 1792806438,
+        "txHash": "0x2b938ae12087912bdcd8a85aa35cf5c756459a7ac6584233be798acc21a115b0",
+        "sizeBefore": {
+          "$bigint": "-2457000"
+        },
+        "sizeAfter": {
+          "$bigint": "-4314000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "80945146520146520146520"
+        },
+        "entryPriceAfter": {
+          "$bigint": "80944954311543810848400"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "31543627_43",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "9168031804633654485154",
+        "blockNumber": {
+          "$bigint": "31543627"
+        },
+        "logIndex": 43,
+        "timestamp": 1792806438,
+        "txHash": "0x2b938ae12087912bdcd8a85aa35cf5c756459a7ac6584233be798acc21a115b0",
+        "sizeBefore": {
+          "$bigint": "-4314000"
+        },
+        "sizeAfter": {
+          "$bigint": "-4959000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "80944954311543810848400"
+        },
+        "entryPriceAfter": {
+          "$bigint": "80944882214156079854808"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "31543722_6",
+        "kind": "OPEN",
+        "pool": "0x63b47ed4a7de0fde659b0d82441dd74828b7297a",
+        "orderId": "811656739243224950033",
+        "blockNumber": {
+          "$bigint": "31543722"
+        },
+        "logIndex": 6,
+        "timestamp": 1792806447,
+        "txHash": "0xfa2bb59e90fc62ae3889e3aa51dcb51316a7d3b02b5e13fcbb7615f813d40eb5",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "200000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "77000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "31543760_29",
+        "kind": "INCREASE",
+        "pool": "0x63b47ed4a7de0fde659b0d82441dd74828b7297a",
+        "orderId": "811656739243224950033",
+        "blockNumber": {
+          "$bigint": "31543760"
+        },
+        "logIndex": 29,
+        "timestamp": 1792806451,
+        "txHash": "0x4f29add14c03507dd1c027e74f68de0088af2026e2f8d2a381bbea4f2e6da292",
+        "sizeBefore": {
+          "$bigint": "200000"
+        },
+        "sizeAfter": {
+          "$bigint": "39240000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "77000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "77000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "31543760_55",
+        "kind": "INCREASE",
+        "pool": "0x63b47ed4a7de0fde659b0d82441dd74828b7297a",
+        "orderId": "811656739243224950033",
+        "blockNumber": {
+          "$bigint": "31543760"
+        },
+        "logIndex": 55,
+        "timestamp": 1792806451,
+        "txHash": "0x0db3af8c6d024f104bab43c9f85898d370eb16b6fe01833cefbe725222648b66",
+        "sizeBefore": {
+          "$bigint": "39240000"
+        },
+        "sizeAfter": {
+          "$bigint": "50580000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "77000000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "77000000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "32367063_2",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "16011773855979898336123",
+        "blockNumber": {
+          "$bigint": "32367063"
+        },
+        "logIndex": 2,
+        "timestamp": 1792888812,
+        "txHash": "0x10c60ce54f755698c37b58d917f796774a31065a7e513387bc93e3777bf461ec",
+        "sizeBefore": {
+          "$bigint": "-4959000"
+        },
+        "sizeAfter": {
+          "$bigint": "-273000"
+        },
+        "closedSize": {
+          "$bigint": "4686000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "80944882214156079854808"
+        },
+        "entryPriceAfter": {
+          "$bigint": "80944882214156079854808"
+        },
+        "exitPrice": {
+          "$bigint": "80949800000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-230447444646098004"
+        }
+      },
+      {
+        "id": "32367063_7",
+        "kind": "CLOSE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "16011773855979898336123",
+        "blockNumber": {
+          "$bigint": "32367063"
+        },
+        "logIndex": 7,
+        "timestamp": 1792888812,
+        "txHash": "0x10c60ce54f755698c37b58d917f796774a31065a7e513387bc93e3777bf461ec",
+        "sizeBefore": {
+          "$bigint": "-273000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "273000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "80944882214156079854808"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "80950000000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-13971555353901997"
+        }
+      }
+    ],
+    "funding": [
+      {
+        "id": "0x1041467adce5c487c2c03cdc7daecb169dd9bc3890a725b907e192cf3d5f501d_2",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "amount": {
+          "$bigint": "2680237961204861608"
+        },
+        "timestamp": 1792113852,
+        "txHash": "0x1041467adce5c487c2c03cdc7daecb169dd9bc3890a725b907e192cf3d5f501d"
+      },
+      {
+        "id": "0xcdb9f8f082e03788884cb963a2ea5ca8d1047b7b1ae531420eebd33bd9851fff_33",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "amount": {
+          "$bigint": "-6016899708492217405"
+        },
+        "timestamp": 1792464680,
+        "txHash": "0xcdb9f8f082e03788884cb963a2ea5ca8d1047b7b1ae531420eebd33bd9851fff"
+      },
+      {
+        "id": "0x94baabb2eafa9f46abcb83e7e2cad333c7f1920e0d821030b91f01f937cef6cb_24",
+        "pool": "0xd6cb1dd58580b84d76068ac21594219ce03aeddf",
+        "amount": {
+          "$bigint": "-43395041572334265"
+        },
+        "timestamp": 1792474625,
+        "txHash": "0x94baabb2eafa9f46abcb83e7e2cad333c7f1920e0d821030b91f01f937cef6cb"
+      },
+      {
+        "id": "0xd6fec04b34c96d8dfd76e4655f6c10fb0a52fc90c9602879bb5d405ba26baeb4_17",
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "amount": {
+          "$bigint": "-103398751293641142"
+        },
+        "timestamp": 1792546042,
+        "txHash": "0xd6fec04b34c96d8dfd76e4655f6c10fb0a52fc90c9602879bb5d405ba26baeb4"
+      },
+      {
+        "id": "0xab8d798889ad678a30f30dd0c467fa9590be5c99c54f22fcf06714d022b04e1e_1",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "amount": {
+          "$bigint": "-141932362857896064470"
+        },
+        "timestamp": 1792648185,
+        "txHash": "0xab8d798889ad678a30f30dd0c467fa9590be5c99c54f22fcf06714d022b04e1e"
+      },
+      {
+        "id": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8_12",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "amount": {
+          "$bigint": "-19266013499655231862"
+        },
+        "timestamp": 1792662180,
+        "txHash": "0x94a89dabfe69716e28b7445a4ccd0a300f411c9863088fd4c6ea515ffdb378c8"
+      },
+      {
+        "id": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283_15",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "amount": {
+          "$bigint": "202623100698479378419"
+        },
+        "timestamp": 1792806429,
+        "txHash": "0xa8d689e1cce1087ffa6f5db21b289f239c01a7a56f3dbd01da3095e27e924283"
+      },
+      {
+        "id": "0x10c60ce54f755698c37b58d917f796774a31065a7e513387bc93e3777bf461ec_1",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "amount": {
+          "$bigint": "-13740554550925303387"
+        },
+        "timestamp": 1792888812,
+        "txHash": "0x10c60ce54f755698c37b58d917f796774a31065a7e513387bc93e3777bf461ec"
+      }
+    ],
+    "fees": [],
+    "marginEvents": [
+      {
+        "id": "0x29e4d9049a241e8f09454b454a1eddb650abf483941e3b255bbd0e7a15f717d3_291",
+        "kind": "Credited",
+        "amount": {
+          "$bigint": "1000000000000000000000"
+        },
+        "timestamp": 1791812099
+      },
+      {
+        "id": "0xc6ab547aaf99495012f76910edf1e4531a5b32712af2de5833c08ef94601ef13_68",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "199095554474089978160"
+        },
+        "timestamp": 1791876430
+      },
+      {
+        "id": "0x0a277effedd207d6692f491505847d3bc0015ac8c38a1b262357cef9d602d544_0",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "80071450200000000000"
+        },
+        "timestamp": 1791876454
+      },
+      {
+        "id": "0x0a277effedd207d6692f491505847d3bc0015ac8c38a1b262357cef9d602d544_1",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "80071450200000000000"
+        },
+        "timestamp": 1791876454
+      },
+      {
+        "id": "0xadbcc23d1bf3103afe246c2951c16aea0ed106bcee4088fe016fd22dcd8558e9_47",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "79241118000000000000"
+        },
+        "timestamp": 1791876469
+      },
+      {
+        "id": "0xe323a33b36f206a7d480b91c5a305163beb7b4e5816c3c544bc30d8f6a349759_0",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "22504263432752473280"
+        },
+        "timestamp": 1791876497
+      },
+      {
+        "id": "0x7b4ea92562a5f152e888034199f458e571b1a7c57ef73f8cebd8f075fd71976f_0",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "70553520000000000000"
+        },
+        "timestamp": 1791876506
+      },
+      {
+        "id": "0xcdbb0352fbae805c19bec577d336aa827e98dbc8d265cff04f914704fc8eea1c_0",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "56748931812505200000"
+        },
+        "timestamp": 1791876533
+      },
+      {
+        "id": "0xcdbb0352fbae805c19bec577d336aa827e98dbc8d265cff04f914704fc8eea1c_1",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "56748931812505200000"
+        },
+        "timestamp": 1791876533
+      },
+      {
+        "id": "0xb6d8bb212b74354e0e5035f284a32fdd1099a18f39463560b6ab88a96d192e18_25",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "70553520000000000000"
+        },
+        "timestamp": 1791876538
+      },
+      {
+        "id": "0x3ea4d61aac3fe58a09c4953a2227dc7e8677bc6e5226c43054dfb877d28a62ee_14",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "176591291041337504880"
+        },
+        "timestamp": 1791876542
+      },
+      {
+        "id": "0xd9a799a74f6563181b004c4901007c167094f8e88fb24be240e34b57c19552ec_0",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "51695217930023082000"
+        },
+        "timestamp": 1791876543
+      },
+      {
+        "id": "0xd9a799a74f6563181b004c4901007c167094f8e88fb24be240e34b57c19552ec_1",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "51695217930023082000"
+        },
+        "timestamp": 1791876543
+      },
+      {
+        "id": "0xbdb9112c64b2f6444a7f990f0cf45f4fedfe1d20d72fbde544c50c86681b761d_1",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "79241118000000000000"
+        },
+        "timestamp": 1791876557
+      },
+      {
+        "id": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8_17",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "119223138700000000000"
+        },
+        "timestamp": 1791956172
+      },
+      {
+        "id": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8_18",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "94409353000000000000"
+        },
+        "timestamp": 1791956172
+      },
+      {
+        "id": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8_23",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "1086125300000000000"
+        },
+        "timestamp": 1791956172
+      },
+      {
+        "id": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8_28",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "1086125300000000000"
+        },
+        "timestamp": 1791956172
+      },
+      {
+        "id": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8_33",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "1086125300000000000"
+        },
+        "timestamp": 1791956172
+      },
+      {
+        "id": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8_38",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "1086125300000000000"
+        },
+        "timestamp": 1791956172
+      },
+      {
+        "id": "0xcb9dfcd3470415843f1e438487241c528171277fd51a8e268107cb5c4e9637f8_43",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "20469284500000000000"
+        },
+        "timestamp": 1791956172
+      },
+      {
+        "id": "0x20eafcba50a2cb4b1e53bc211192ff21ad9f21083cdcc198b8f9361f860ba11c_49",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "52639037901695055000"
+        },
+        "timestamp": 1791956178
+      },
+      {
+        "id": "0x20eafcba50a2cb4b1e53bc211192ff21ad9f21083cdcc198b8f9361f860ba11c_50",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "52639037901695055000"
+        },
+        "timestamp": 1791956178
+      },
+      {
+        "id": "0xa27b3df708a41c6d331335060df170a47dc65b659c5f4f6a0ddf2c7c9c92799c_0",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "865023096600000000000"
+        },
+        "timestamp": 1792025701
+      },
+      {
+        "id": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18_107",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "100013968800000000000"
+        },
+        "timestamp": 1792025702
+      },
+      {
+        "id": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18_117",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "100013968800000000000"
+        },
+        "timestamp": 1792025702
+      },
+      {
+        "id": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18_127",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "150020953200000000000"
+        },
+        "timestamp": 1792025702
+      },
+      {
+        "id": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18_137",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "200027937600000000000"
+        },
+        "timestamp": 1792025702
+      },
+      {
+        "id": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18_147",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "300041906400000000000"
+        },
+        "timestamp": 1792025702
+      },
+      {
+        "id": "0x73a2b67b3909dcf0d4ef17ea88fb2b92f60969cd0c3a6076d488b20152c36f18_157",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "14904361800000000000"
+        },
+        "timestamp": 1792025702
+      },
+      {
+        "id": "0xd5c2a3a98ac5d3f6c7f10b3350a3368713deddcbdd2b68beb1d9ad34cc2050db_15",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "77258729203800879280"
+        },
+        "timestamp": 1792379643
+      },
+      {
+        "id": "0x60bb2d9cbbb0c95c89914a1adeb52f786a1282af2cf66fe5dceb949c74ad2962_3",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "77258729203800879280"
+        },
+        "timestamp": 1792379652
+      },
+      {
+        "id": "0x765b75eb6a50c28553d2fd7b33121706c659dffe807be0e510955e925a517bd5_62",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "75365663500000000000"
+        },
+        "timestamp": 1792379656
+      },
+      {
+        "id": "0x765b75eb6a50c28553d2fd7b33121706c659dffe807be0e510955e925a517bd5_63",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "49306186000000000000"
+        },
+        "timestamp": 1792379656
+      },
+      {
+        "id": "0x765b75eb6a50c28553d2fd7b33121706c659dffe807be0e510955e925a517bd5_68",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "26059477500000000000"
+        },
+        "timestamp": 1792379656
+      },
+      {
+        "id": "0xbad6b512aa02cdd6ed87c3d1cfc188203dfbba6e747f2de0786402d8301e072e_237",
+        "kind": "Credited",
+        "amount": {
+          "$bigint": "1000000000000000000000"
+        },
+        "timestamp": 1792426809
+      },
+      {
+        "id": "0x617c6b3c6617d93df8ecdb0295010fd1cb804f743647915955d0589a428e4b51_91",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "188737228800000000000"
+        },
+        "timestamp": 1792464698
+      },
+      {
+        "id": "0x01b6f54cda9f82176242bebd9af11620c8bcbe05e90753688f009709dac8c942_2",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "188737228800000000000"
+        },
+        "timestamp": 1792464699
+      },
+      {
+        "id": "0x2a5538598bb36a9b4a0da1e391f341a585cc9e9833050e217068e875b437083e_58",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "115256822100000000000"
+        },
+        "timestamp": 1792464715
+      },
+      {
+        "id": "0x8fdc1e52ab829af15e38ee6f5ac2965396bccd71f46ea34fe7517ce7664b2d2f_99",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "115256822100000000000"
+        },
+        "timestamp": 1792464725
+      },
+      {
+        "id": "0xc2de2c9f25f3593760199c06ce3769aea3929d5409cc94b7f49cc070154e57a2_3",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "108205128000000000000"
+        },
+        "timestamp": 1792464747
+      },
+      {
+        "id": "0x009d125642985776c21cb8b28504b115399fca0179b1c194dc0b50cdff43d6b8_137",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "108205128000000000000"
+        },
+        "timestamp": 1792464755
+      },
+      {
+        "id": "0x10873da0949f70957452d03d585f0133db1f9185b20d7212f5f39b22df34f390_0",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "168393712500000000000"
+        },
+        "timestamp": 1792464769
+      },
+      {
+        "id": "0x46f156f3c94e5480524cb76d9fd3ac9db767f4a111cb1c37920e4defd5687bdc_33",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "153564270300000000000"
+        },
+        "timestamp": 1792464805
+      },
+      {
+        "id": "0xff610dda46841da29ea60dd87c9579dabb44a349a9d5a7046f1f8a497ff352ec_94",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "153564270300000000000"
+        },
+        "timestamp": 1792464806
+      },
+      {
+        "id": "0x3409dc6fcd52bf6502306d42cbda5e22c7a0b22f0ce18ba6420dfeaa8607f333_14",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "108760200000000000000"
+        },
+        "timestamp": 1792464850
+      },
+      {
+        "id": "0x7fc8ad637b531479f02a1e28cea1931ebb8063282f43e335bff2de4363e73933_74",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "108760200000000000000"
+        },
+        "timestamp": 1792464851
+      },
+      {
+        "id": "0x3cfa1485a6ca052f8c9e2c53a94cad8ef49d9ea6c047c64449ce09bfc1811d1a_116",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "99784525000000000000"
+        },
+        "timestamp": 1792464902
+      },
+      {
+        "id": "0x3a59ab6d11bbe1979220933bcf12ccac7aa28473f8696b8822b523c135381861_58",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "49983437500000000000"
+        },
+        "timestamp": 1792464917
+      },
+      {
+        "id": "0x7eda9189ee90ebf74b8ca4c94be82a6b4e72fbb7996cff99288872456ff6e3cc_182",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "18625750000000000000"
+        },
+        "timestamp": 1792464932
+      },
+      {
+        "id": "0xc4f682d4aea527663da2bac306f66e95fe7499c6294b2a37b3875e5ff0145e03_4",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "1950249389800000000000"
+        },
+        "timestamp": 1792546057
+      },
+      {
+        "id": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13_39",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "49277236700000000000"
+        },
+        "timestamp": 1792546059
+      },
+      {
+        "id": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13_48",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "50066004600000000000"
+        },
+        "timestamp": 1792546059
+      },
+      {
+        "id": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13_57",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "75140521000000000000"
+        },
+        "timestamp": 1792546059
+      },
+      {
+        "id": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13_66",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "100173523300000000000"
+        },
+        "timestamp": 1792546059
+      },
+      {
+        "id": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13_75",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "150281042000000000000"
+        },
+        "timestamp": 1792546059
+      },
+      {
+        "id": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13_81",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "225463077100000000000"
+        },
+        "timestamp": 1792546059
+      },
+      {
+        "id": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13_87",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "350711116800000000000"
+        },
+        "timestamp": 1792546059
+      },
+      {
+        "id": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13_93",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "601248710300000000000"
+        },
+        "timestamp": 1792546059
+      },
+      {
+        "id": "0x7dfe004a068ef89f1801e6b591de09079ac6674dd4185dcf7af8690e266b0d13_99",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "347888158000000000000"
+        },
+        "timestamp": 1792546059
+      },
+      {
+        "id": "0x237d15661bd20a314ccfd8d16d39394658cc73949d4e9e566ac5753fff424114_14",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "2517475762031908989840"
+        },
+        "timestamp": 1792717596
+      },
+      {
+        "id": "0xfec61cb56e6287e8a9385efe9dc36eeefd8259fd33879114d4c7a763c5eefbae_7",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "54465448500758814240"
+        },
+        "timestamp": 1792718370
+      },
+      {
+        "id": "0x1515685e09ab581e4b3580a3acbb4566612c2364fee701849fe891a20db416b7_3",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "91048649273815960830"
+        },
+        "timestamp": 1792718422
+      },
+      {
+        "id": "0x5dfb013b8a34d8aaf96235d5e9f64c831009a719b51e91ec76088cae7cb7b098_2",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "88463264060172346230"
+        },
+        "timestamp": 1792718437
+      },
+      {
+        "id": "0x81605b6fe3dd3e7cacb35acb7bac94247d7a3e114bd58177b3a20d5788ba2e95_12",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "90876290259573053190"
+        },
+        "timestamp": 1792718467
+      },
+      {
+        "id": "0x94ca0ef42b6337bd92a0ba1a8c4ec08e144e9ca1ee528058a69b3c669d8e1eea_18",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "91048649273815960830"
+        },
+        "timestamp": 1792718467
+      },
+      {
+        "id": "0xc44aea41ecd77375e5cf7d9a670a7ff293dfd64a2d1a2c132dead0df897d6620_0",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "95960881179738828570"
+        },
+        "timestamp": 1792718502
+      },
+      {
+        "id": "0x2f8245482e0cf1359cf53ff10d79a900908c0fd26a7b6befb9a0307a580ae3f6_28",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "53000396879694099300"
+        },
+        "timestamp": 1792718691
+      },
+      {
+        "id": "0x2f8245482e0cf1359cf53ff10d79a900908c0fd26a7b6befb9a0307a580ae3f6_36",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "53000396879694099300"
+        },
+        "timestamp": 1792718691
+      },
+      {
+        "id": "0x2f8245482e0cf1359cf53ff10d79a900908c0fd26a7b6befb9a0307a580ae3f6_44",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "79500595319541148950"
+        },
+        "timestamp": 1792718691
+      },
+      {
+        "id": "0x2f8245482e0cf1359cf53ff10d79a900908c0fd26a7b6befb9a0307a580ae3f6_52",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "106000793759388198600"
+        },
+        "timestamp": 1792718691
+      },
+      {
+        "id": "0x2f8245482e0cf1359cf53ff10d79a900908c0fd26a7b6befb9a0307a580ae3f6_60",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "159001190639082297900"
+        },
+        "timestamp": 1792718691
+      },
+      {
+        "id": "0x7e07b48e3732141101f3bc635526c5b041dc3b404db139224b5c878601e73643_61",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "53000396879694099300"
+        },
+        "timestamp": 1792718691
+      },
+      {
+        "id": "0x7e07b48e3732141101f3bc635526c5b041dc3b404db139224b5c878601e73643_69",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "53000396879694099300"
+        },
+        "timestamp": 1792718691
+      },
+      {
+        "id": "0x7e07b48e3732141101f3bc635526c5b041dc3b404db139224b5c878601e73643_77",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "79500595319541148950"
+        },
+        "timestamp": 1792718691
+      },
+      {
+        "id": "0x0c9f25f8de40ab0e7c1a88e33ef63725e43a382b409cd442ee74e424f3cf69ea_11",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "91177918534498141560"
+        },
+        "timestamp": 1792718693
+      },
+      {
+        "id": "0xb9dd07b862ca24dd48da8fffff58eb07e7a56c9b674589f7b9ca851598374d4b_5",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "95831611919056647840"
+        },
+        "timestamp": 1792718706
+      },
+      {
+        "id": "0x43644957dd68225d99f9407ba1524f2f2cbdc5a062b142a51c2cdf5ffcca8ffe_140",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "1182598286474150044950"
+        },
+        "timestamp": 1792718707
+      },
+      {
+        "id": "0x2b938ae12087912bdcd8a85aa35cf5c756459a7ac6584233be798acc21a115b0_26",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "200664943200000000000"
+        },
+        "timestamp": 1792806438
+      },
+      {
+        "id": "0x2b938ae12087912bdcd8a85aa35cf5c756459a7ac6584233be798acc21a115b0_27",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "49326591200000000000"
+        },
+        "timestamp": 1792806438
+      },
+      {
+        "id": "0x2b938ae12087912bdcd8a85aa35cf5c756459a7ac6584233be798acc21a115b0_32",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "50095422400000000000"
+        },
+        "timestamp": 1792806438
+      },
+      {
+        "id": "0x2b938ae12087912bdcd8a85aa35cf5c756459a7ac6584233be798acc21a115b0_37",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "75143133600000000000"
+        },
+        "timestamp": 1792806438
+      },
+      {
+        "id": "0x2b938ae12087912bdcd8a85aa35cf5c756459a7ac6584233be798acc21a115b0_42",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "26099796000000000000"
+        },
+        "timestamp": 1792806438
+      },
+      {
+        "id": "0xfa2bb59e90fc62ae3889e3aa51dcb51316a7d3b02b5e13fcbb7615f813d40eb5_3",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "203871565442624670000"
+        },
+        "timestamp": 1792806447
+      },
+      {
+        "id": "0xfa2bb59e90fc62ae3889e3aa51dcb51316a7d3b02b5e13fcbb7615f813d40eb5_4",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "806135094672300000"
+        },
+        "timestamp": 1792806447
+      },
+      {
+        "id": "0x0db3af8c6d024f104bab43c9f85898d370eb16b6fe01833cefbe725222648b66_53",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "45707859867919410000"
+        },
+        "timestamp": 1792806451
+      },
+      {
+        "id": "0x4f29add14c03507dd1c027e74f68de0088af2026e2f8d2a381bbea4f2e6da292_27",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "157357570480032960000"
+        },
+        "timestamp": 1792806451
+      }
+    ],
+    "marginPulls": [],
+    "liquidations": [],
+    "stopOrders": [
+      {
+        "id": "0x52e2ccebaec9332672c247e9a90aa3d61fb615ef_6253446240987537999343",
+        "status": "TRIGGERED",
+        "isBid": true,
+        "triggerOperator": 1,
+        "triggerPrice": {
+          "$bigint": "83500000000000000000000"
+        },
+        "quantity": {
+          "$bigint": "1427000"
+        },
+        "createdAt": 1791956186,
+        "updatedAt": 1791956188,
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "placedOrderId": "18797232211110037010682"
+      },
+      {
+        "id": "0x85a0879d19777c343eb317a890d5058ab92b8f5d_2619437658466756329924",
+        "status": "TRIGGERED",
+        "isBid": true,
+        "triggerOperator": 1,
+        "triggerPrice": {
+          "$bigint": "107200000000000000000"
+        },
+        "quantity": {
+          "$bigint": "4890000000"
+        },
+        "createdAt": 1791956197,
+        "updatedAt": 1791956208,
+        "pool": "0xb483ec1fb34996638677c20ab087b16f1896fa53",
+        "placedOrderId": "479615345916452176495"
+      },
+      {
+        "id": "0x52e2ccebaec9332672c247e9a90aa3d61fb615ef_3246626956972881088939",
+        "status": "TRIGGERED",
+        "isBid": true,
+        "triggerOperator": 1,
+        "triggerPrice": {
+          "$bigint": "81728000000000000000000"
+        },
+        "quantity": {
+          "$bigint": "1822000"
+        },
+        "createdAt": 1792464678,
+        "updatedAt": 1792464680,
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "placedOrderId": "1881567895518380707218"
+      },
+      {
+        "id": "0x52e2ccebaec9332672c247e9a90aa3d61fb615ef_3246626956972881088940",
+        "status": "TRIGGERED",
+        "isBid": true,
+        "triggerOperator": 1,
+        "triggerPrice": {
+          "$bigint": "81669000000000000000000"
+        },
+        "quantity": {
+          "$bigint": "4608000"
+        },
+        "createdAt": 1792464726,
+        "updatedAt": 1792464750,
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "placedOrderId": "7747632510958018121284"
+      },
+      {
+        "id": "0xf3a51c26ead3f84c2221336484bb42b8cfca076e_1807780919223536059528",
+        "status": "TRIGGERED",
+        "isBid": true,
+        "triggerOperator": 1,
+        "triggerPrice": {
+          "$bigint": "4840000000000000000"
+        },
+        "quantity": {
+          "$bigint": "223200000000000000000000000"
+        },
+        "createdAt": 1792464782,
+        "updatedAt": 1792465060,
+        "pool": "0x1cd15ae8bff0fe0a7f49233be8b90734775ba454",
+        "placedOrderId": "387381625547907641888"
+      },
+      {
+        "id": "0x44bfa5b28684e8d2156d15b85902da18f02b3a34_166020696663385969712",
+        "status": "TRIGGERED",
+        "isBid": true,
+        "triggerOperator": 1,
+        "triggerPrice": {
+          "$bigint": "2396000000000000000000"
+        },
+        "quantity": {
+          "$bigint": "480900000000000000"
+        },
+        "createdAt": 1792464788,
+        "updatedAt": 1792474625,
+        "pool": "0xd6cb1dd58580b84d76068ac21594219ce03aeddf",
+        "placedOrderId": "17524406870024080801678"
+      },
+      {
+        "id": "0x487fd1e8bcedf4334a2e83aa86b426fd70e4e921_18446744073709551972",
+        "status": "TRIGGERED",
+        "isBid": true,
+        "triggerOperator": 1,
+        "triggerPrice": {
+          "$bigint": "728500000000000000000"
+        },
+        "quantity": {
+          "$bigint": "2107000000000000000"
+        },
+        "createdAt": 1792464835,
+        "updatedAt": 1792464855,
+        "pool": "0x3d2a99fe1e2bdeaa25024515a2d2202daf9531ad",
+        "placedOrderId": "276701161105646257918"
+      },
+      {
+        "id": "0xfdcfb2f985049cad3ac27472b6ae80c7a53ede89_903890459611768029564",
+        "status": "TRIGGERED",
+        "isBid": true,
+        "triggerOperator": 1,
+        "triggerPrice": {
+          "$bigint": "998000000000000000"
+        },
+        "quantity": {
+          "$bigint": "1090000000000"
+        },
+        "createdAt": 1792464897,
+        "updatedAt": 1792465035,
+        "pool": "0x1be21287cfb865a7c462ff3c4f275e70bcccefe4",
+        "placedOrderId": "996124179980319446011"
+      },
+      {
+        "id": "0x655e89a7e52490a421ad4c04fb6a7dd295cf1a5f_534955578137576997322",
+        "status": "TRIGGERED",
+        "isBid": true,
+        "triggerOperator": 1,
+        "triggerPrice": {
+          "$bigint": "1300000000000000000"
+        },
+        "quantity": {
+          "$bigint": "2299700000"
+        },
+        "createdAt": 1792464922,
+        "updatedAt": 1792466080,
+        "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+        "placedOrderId": "719423018874676641272"
+      }
+    ]
+  },
+  "markets": [
+    {
+      "pool": "0xf71b619450bafe953f47b9b556416a3a67b443b5",
+      "symbol": "LINK",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "900000000000000000"
+      },
+      "stopRegistry": "0x1c3fabc41871ec838960f80329dcd920fec241c9"
+    },
+    {
+      "pool": "0xfa9b9e50cc1745113d57893991af200a74c86b6f",
+      "symbol": "1000PEPE",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "100000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "2700000000000000000000"
+      },
+      "stopRegistry": "0x9942cd840dbbc0a51589027fef271dd9be836f08"
+    },
+    {
+      "pool": "0x352636ab146039851ef06d6367a106d5fb4e6409",
+      "symbol": "VVV",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "10000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "440000000000000000"
+      },
+      "stopRegistry": "0x6ba14290fc5067578020e649ad066df08915e5cf"
+    },
+    {
+      "pool": "0x3d2a99fe1e2bdeaa25024515a2d2202daf9531ad",
+      "symbol": "BNB",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "14000000000000000"
+      },
+      "stopRegistry": "0x487fd1e8bcedf4334a2e83aa86b426fd70e4e921"
+    },
+    {
+      "pool": "0xde9762b6b441133d1314c68864ae4e63a6ee45c7",
+      "symbol": "AVAX",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "1400000000000000000"
+      },
+      "stopRegistry": "0xc33db2dab35c46295cb435730f14f91a3cfd0367"
+    },
+    {
+      "pool": "0x34fa62909f77699a7a6278d992f72ff31c7a619d",
+      "symbol": "ADA",
+      "baseDecimals": 6,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000"
+      },
+      "minQuantity": {
+        "$bigint": "46000000"
+      },
+      "stopRegistry": "0x3a76c35c1cc0a0dbde646ce51a30805b077d211b"
+    },
+    {
+      "pool": "0xdcb0ad226727b2ce92857f0af5751389d42b2a3f",
+      "symbol": "LIT",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "2800000000000000000"
+      },
+      "stopRegistry": "0x6243c81d782ca091f47923e049a9ddc1070cb57a"
+    },
+    {
+      "pool": "0x2a1822b02039ddf0e293f3f7243673fc03eaf16c",
+      "symbol": "ZRO",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "5100000000000000000"
+      },
+      "stopRegistry": "0x1667a20a7481d704b1f75e8932d42a6bbafbd539"
+    },
+    {
+      "pool": "0x2a73129f26917124bd2a47a9b355c395c537f050",
+      "symbol": "ZEC",
+      "baseDecimals": 8,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000"
+      },
+      "minQuantity": {
+        "$bigint": "900000"
+      },
+      "stopRegistry": "0xbfe6f500627a0344270c72a61c4f9f9f31db9a05"
+    },
+    {
+      "pool": "0xb483ec1fb34996638677c20ab087b16f1896fa53",
+      "symbol": "SOL",
+      "baseDecimals": 9,
+      "tickSize": {
+        "$bigint": "10000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "10000000"
+      },
+      "minQuantity": {
+        "$bigint": "100000000"
+      },
+      "stopRegistry": "0x85a0879d19777c343eb317a890d5058ab92b8f5d"
+    },
+    {
+      "pool": "0x63b47ed4a7de0fde659b0d82441dd74828b7297a",
+      "symbol": "HYPE",
+      "baseDecimals": 6,
+      "tickSize": {
+        "$bigint": "10000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "10000"
+      },
+      "minQuantity": {
+        "$bigint": "120000"
+      },
+      "stopRegistry": "0x44c24cd26cf41037c6ebf337948a6c9bbc0ee055"
+    },
+    {
+      "pool": "0x0f464d57c1fd839e4d87a408bbccdab8f77e6394",
+      "symbol": "WLD",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "26000000000000000000"
+      },
+      "stopRegistry": "0x092ba74067cdd5400f38f8b4e91b1a4cf8f7716d"
+    },
+    {
+      "pool": "0x1cd15ae8bff0fe0a7f49233be8b90734775ba454",
+      "symbol": "NEAR",
+      "baseDecimals": 24,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "5100000000000000000000000"
+      },
+      "stopRegistry": "0xf3a51c26ead3f84c2221336484bb42b8cfca076e"
+    },
+    {
+      "pool": "0xd6cb1dd58580b84d76068ac21594219ce03aeddf",
+      "symbol": "ETH",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "10000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "4000000000000000"
+      },
+      "stopRegistry": "0x44bfa5b28684e8d2156d15b85902da18f02b3a34"
+    },
+    {
+      "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+      "symbol": "XRP",
+      "baseDecimals": 6,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000"
+      },
+      "minQuantity": {
+        "$bigint": "6900000"
+      },
+      "stopRegistry": "0x655e89a7e52490a421ad4c04fb6a7dd295cf1a5f"
+    },
+    {
+      "pool": "0x76c981a52530cdf9497559140aafcd8cd16836e7",
+      "symbol": "PUMP",
+      "baseDecimals": 6,
+      "tickSize": {
+        "$bigint": "1000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000"
+      },
+      "minQuantity": {
+        "$bigint": "1800000000"
+      },
+      "stopRegistry": "0xe09c7550c2ef41a6ddabe368cbde83c8ba5259b6"
+    },
+    {
+      "pool": "0xc410012e39765cd5f772e84bacb19554aec040df",
+      "symbol": "DOGE",
+      "baseDecimals": 8,
+      "tickSize": {
+        "$bigint": "10000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000000"
+      },
+      "minQuantity": {
+        "$bigint": "12000000000"
+      },
+      "stopRegistry": "0xb09cf2f2f91045f1ff1e4e824f9cf0fa29698757"
+    },
+    {
+      "pool": "0xd9b6a347a3ae9fd6ba21179d3343f2c8a922f697",
+      "symbol": "TAO",
+      "baseDecimals": 9,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000"
+      },
+      "minQuantity": {
+        "$bigint": "44000000"
+      },
+      "stopRegistry": "0x450b968dc94e3a854c47e37f38e2f6af6e1650b7"
+    },
+    {
+      "pool": "0x74b05b9b8c8f180b53b7891018f3b254b3e658c9",
+      "symbol": "XLM",
+      "baseDecimals": 7,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "10000000"
+      },
+      "minQuantity": {
+        "$bigint": "540000000"
+      },
+      "stopRegistry": "0xa1b615be784784420f7dd7ef4a2a5a392bdb7242"
+    },
+    {
+      "pool": "0x1be21287cfb865a7c462ff3c4f275e70bcccefe4",
+      "symbol": "SUI",
+      "baseDecimals": 9,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000000"
+      },
+      "minQuantity": {
+        "$bigint": "13000000000"
+      },
+      "stopRegistry": "0xfdcfb2f985049cad3ac27472b6ae80c7a53ede89"
+    },
+    {
+      "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+      "symbol": "BTC",
+      "baseDecimals": 8,
+      "tickSize": {
+        "$bigint": "100000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000"
+      },
+      "minQuantity": {
+        "$bigint": "13000"
+      },
+      "stopRegistry": "0x52e2ccebaec9332672c247e9a90aa3d61fb615ef"
+    }
+  ],
+  "openPositions": []
+}

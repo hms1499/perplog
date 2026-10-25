@@ -14,5 +14,10 @@
     "tsx": "^4.23.15",
     "typescript": "5.9.3",
     "vitest": "^5.0.5"
+  },
+  "dependencies": {
+    "@perplog/core": "workspace:*",
+    "@perplog/chain": "workspace:*",
+    "viem": "^2.57"
   }
 }

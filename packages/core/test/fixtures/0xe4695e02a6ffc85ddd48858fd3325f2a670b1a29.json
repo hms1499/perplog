@@ -1,0 +1,539 @@
+{
+  "account": "0xe4695e02a6ffc85ddd48858fd3325f2a670b1a29",
+  "asOfBlock": {
+    "$bigint": "32696535"
+  },
+  "asOfTimestamp": 1792921772,
+  "collateralRaw": {
+    "$bigint": "999675900999999999999"
+  },
+  "history": {
+    "account": "0xe4695e02a6ffc85ddd48858fd3325f2a670b1a29",
+    "asOfTimestamp": 1792921772,
+    "truncated": false,
+    "changes": [
+      {
+        "id": "32364057_14",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21914731959566954852423",
+        "blockNumber": {
+          "$bigint": "32364057"
+        },
+        "logIndex": 14,
+        "timestamp": 1792888511,
+        "txHash": "0x4b364101d85ffe6e192382f65935473b3de79b8d5014975cc1eede169a44007f",
+        "sizeBefore": {
+          "$bigint": "19000"
+        },
+        "sizeAfter": {
+          "$bigint": "1256000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "80968400000000000000000"
+        },
+        "entryPriceAfter": {
+          "$bigint": "80974210748407643312101"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "32364057_20",
+        "kind": "INCREASE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21914731959566954852423",
+        "blockNumber": {
+          "$bigint": "32364057"
+        },
+        "logIndex": 20,
+        "timestamp": 1792888511,
+        "txHash": "0x4b364101d85ffe6e192382f65935473b3de79b8d5014975cc1eede169a44007f",
+        "sizeBefore": {
+          "$bigint": "1256000"
+        },
+        "sizeAfter": {
+          "$bigint": "2142000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": {
+          "$bigint": "80974210748407643312101"
+        },
+        "entryPriceAfter": {
+          "$bigint": "80976067647058823529411"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "32364057_8",
+        "kind": "OPEN",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21914731959566954852423",
+        "blockNumber": {
+          "$bigint": "32364057"
+        },
+        "logIndex": 8,
+        "timestamp": 1792888511,
+        "txHash": "0x4b364101d85ffe6e192382f65935473b3de79b8d5014975cc1eede169a44007f",
+        "sizeBefore": {
+          "$bigint": "0"
+        },
+        "sizeAfter": {
+          "$bigint": "19000"
+        },
+        "closedSize": {
+          "$bigint": "0"
+        },
+        "entryPriceBefore": null,
+        "entryPriceAfter": {
+          "$bigint": "80968400000000000000000"
+        },
+        "exitPrice": null,
+        "realizedPnl": {
+          "$bigint": "0"
+        }
+      },
+      {
+        "id": "32364146_2",
+        "kind": "REDUCE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21914731959566954852452",
+        "blockNumber": {
+          "$bigint": "32364146"
+        },
+        "logIndex": 2,
+        "timestamp": 1792888520,
+        "txHash": "0xd63d2610b61d1749d1e673266cf817cff736ab73d5221a601c0945479ed19c7a",
+        "sizeBefore": {
+          "$bigint": "2142000"
+        },
+        "sizeAfter": {
+          "$bigint": "879000"
+        },
+        "closedSize": {
+          "$bigint": "1263000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "80976067647058823529411"
+        },
+        "entryPriceAfter": {
+          "$bigint": "80976067647058823529411"
+        },
+        "exitPrice": {
+          "$bigint": "80966600000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-119576382352941177"
+        }
+      },
+      {
+        "id": "32364146_6",
+        "kind": "CLOSE",
+        "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+        "orderId": "21914731959566954852452",
+        "blockNumber": {
+          "$bigint": "32364146"
+        },
+        "logIndex": 6,
+        "timestamp": 1792888520,
+        "txHash": "0xd63d2610b61d1749d1e673266cf817cff736ab73d5221a601c0945479ed19c7a",
+        "sizeBefore": {
+          "$bigint": "879000"
+        },
+        "sizeAfter": {
+          "$bigint": "0"
+        },
+        "closedSize": {
+          "$bigint": "879000"
+        },
+        "entryPriceBefore": {
+          "$bigint": "80976067647058823529411"
+        },
+        "entryPriceAfter": {
+          "$bigint": "0"
+        },
+        "exitPrice": {
+          "$bigint": "80952800000000000000000"
+        },
+        "realizedPnl": {
+          "$bigint": "-204522617647058824"
+        }
+      }
+    ],
+    "funding": [],
+    "fees": [],
+    "marginEvents": [
+      {
+        "id": "0x7be47c7140367164d7674fd521bec05f126eb66766d7ee278535950cda388eb5_123",
+        "kind": "Credited",
+        "amount": {
+          "$bigint": "1000000000000000000000"
+        },
+        "timestamp": 1792887325
+      },
+      {
+        "id": "0x4b364101d85ffe6e192382f65935473b3de79b8d5014975cc1eede169a44007f_12",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "57800765290395626280"
+        },
+        "timestamp": 1792888511
+      },
+      {
+        "id": "0x4b364101d85ffe6e192382f65935473b3de79b8d5014975cc1eede169a44007f_18",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "41399739731035185840"
+        },
+        "timestamp": 1792888511
+      },
+      {
+        "id": "0x4b364101d85ffe6e192382f65935473b3de79b8d5014975cc1eede169a44007f_5",
+        "kind": "Locked",
+        "amount": {
+          "$bigint": "100088309823789354480"
+        },
+        "timestamp": 1792888511
+      },
+      {
+        "id": "0x4b364101d85ffe6e192382f65935473b3de79b8d5014975cc1eede169a44007f_6",
+        "kind": "Unlocked",
+        "amount": {
+          "$bigint": "887804802358542360"
+        },
+        "timestamp": 1792888511
+      }
+    ],
+    "marginPulls": [],
+    "liquidations": [],
+    "stopOrders": []
+  },
+  "markets": [
+    {
+      "pool": "0xf71b619450bafe953f47b9b556416a3a67b443b5",
+      "symbol": "LINK",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "900000000000000000"
+      },
+      "stopRegistry": "0x1c3fabc41871ec838960f80329dcd920fec241c9"
+    },
+    {
+      "pool": "0xfa9b9e50cc1745113d57893991af200a74c86b6f",
+      "symbol": "1000PEPE",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "100000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "2700000000000000000000"
+      },
+      "stopRegistry": "0x9942cd840dbbc0a51589027fef271dd9be836f08"
+    },
+    {
+      "pool": "0x352636ab146039851ef06d6367a106d5fb4e6409",
+      "symbol": "VVV",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "10000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "440000000000000000"
+      },
+      "stopRegistry": "0x6ba14290fc5067578020e649ad066df08915e5cf"
+    },
+    {
+      "pool": "0x3d2a99fe1e2bdeaa25024515a2d2202daf9531ad",
+      "symbol": "BNB",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "14000000000000000"
+      },
+      "stopRegistry": "0x487fd1e8bcedf4334a2e83aa86b426fd70e4e921"
+    },
+    {
+      "pool": "0xde9762b6b441133d1314c68864ae4e63a6ee45c7",
+      "symbol": "AVAX",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "1400000000000000000"
+      },
+      "stopRegistry": "0xc33db2dab35c46295cb435730f14f91a3cfd0367"
+    },
+    {
+      "pool": "0x34fa62909f77699a7a6278d992f72ff31c7a619d",
+      "symbol": "ADA",
+      "baseDecimals": 6,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000"
+      },
+      "minQuantity": {
+        "$bigint": "46000000"
+      },
+      "stopRegistry": "0x3a76c35c1cc0a0dbde646ce51a30805b077d211b"
+    },
+    {
+      "pool": "0xdcb0ad226727b2ce92857f0af5751389d42b2a3f",
+      "symbol": "LIT",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "2800000000000000000"
+      },
+      "stopRegistry": "0x6243c81d782ca091f47923e049a9ddc1070cb57a"
+    },
+    {
+      "pool": "0x2a1822b02039ddf0e293f3f7243673fc03eaf16c",
+      "symbol": "ZRO",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "5100000000000000000"
+      },
+      "stopRegistry": "0x1667a20a7481d704b1f75e8932d42a6bbafbd539"
+    },
+    {
+      "pool": "0x2a73129f26917124bd2a47a9b355c395c537f050",
+      "symbol": "ZEC",
+      "baseDecimals": 8,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000"
+      },
+      "minQuantity": {
+        "$bigint": "900000"
+      },
+      "stopRegistry": "0xbfe6f500627a0344270c72a61c4f9f9f31db9a05"
+    },
+    {
+      "pool": "0xb483ec1fb34996638677c20ab087b16f1896fa53",
+      "symbol": "SOL",
+      "baseDecimals": 9,
+      "tickSize": {
+        "$bigint": "10000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "10000000"
+      },
+      "minQuantity": {
+        "$bigint": "100000000"
+      },
+      "stopRegistry": "0x85a0879d19777c343eb317a890d5058ab92b8f5d"
+    },
+    {
+      "pool": "0x63b47ed4a7de0fde659b0d82441dd74828b7297a",
+      "symbol": "HYPE",
+      "baseDecimals": 6,
+      "tickSize": {
+        "$bigint": "10000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "10000"
+      },
+      "minQuantity": {
+        "$bigint": "120000"
+      },
+      "stopRegistry": "0x44c24cd26cf41037c6ebf337948a6c9bbc0ee055"
+    },
+    {
+      "pool": "0x0f464d57c1fd839e4d87a408bbccdab8f77e6394",
+      "symbol": "WLD",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "26000000000000000000"
+      },
+      "stopRegistry": "0x092ba74067cdd5400f38f8b4e91b1a4cf8f7716d"
+    },
+    {
+      "pool": "0x1cd15ae8bff0fe0a7f49233be8b90734775ba454",
+      "symbol": "NEAR",
+      "baseDecimals": 24,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "5100000000000000000000000"
+      },
+      "stopRegistry": "0xf3a51c26ead3f84c2221336484bb42b8cfca076e"
+    },
+    {
+      "pool": "0xd6cb1dd58580b84d76068ac21594219ce03aeddf",
+      "symbol": "ETH",
+      "baseDecimals": 18,
+      "tickSize": {
+        "$bigint": "10000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000000000"
+      },
+      "minQuantity": {
+        "$bigint": "4000000000000000"
+      },
+      "stopRegistry": "0x44bfa5b28684e8d2156d15b85902da18f02b3a34"
+    },
+    {
+      "pool": "0x7058579f3248559963f79adb937c6de9f953e060",
+      "symbol": "XRP",
+      "baseDecimals": 6,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000"
+      },
+      "minQuantity": {
+        "$bigint": "6900000"
+      },
+      "stopRegistry": "0x655e89a7e52490a421ad4c04fb6a7dd295cf1a5f"
+    },
+    {
+      "pool": "0x76c981a52530cdf9497559140aafcd8cd16836e7",
+      "symbol": "PUMP",
+      "baseDecimals": 6,
+      "tickSize": {
+        "$bigint": "1000000000000"
+      },
+      "lotSize": {
+        "$bigint": "100000000"
+      },
+      "minQuantity": {
+        "$bigint": "1800000000"
+      },
+      "stopRegistry": "0xe09c7550c2ef41a6ddabe368cbde83c8ba5259b6"
+    },
+    {
+      "pool": "0xc410012e39765cd5f772e84bacb19554aec040df",
+      "symbol": "DOGE",
+      "baseDecimals": 8,
+      "tickSize": {
+        "$bigint": "10000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000000"
+      },
+      "minQuantity": {
+        "$bigint": "12000000000"
+      },
+      "stopRegistry": "0xb09cf2f2f91045f1ff1e4e824f9cf0fa29698757"
+    },
+    {
+      "pool": "0xd9b6a347a3ae9fd6ba21179d3343f2c8a922f697",
+      "symbol": "TAO",
+      "baseDecimals": 9,
+      "tickSize": {
+        "$bigint": "1000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000"
+      },
+      "minQuantity": {
+        "$bigint": "44000000"
+      },
+      "stopRegistry": "0x450b968dc94e3a854c47e37f38e2f6af6e1650b7"
+    },
+    {
+      "pool": "0x74b05b9b8c8f180b53b7891018f3b254b3e658c9",
+      "symbol": "XLM",
+      "baseDecimals": 7,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "10000000"
+      },
+      "minQuantity": {
+        "$bigint": "540000000"
+      },
+      "stopRegistry": "0xa1b615be784784420f7dd7ef4a2a5a392bdb7242"
+    },
+    {
+      "pool": "0x1be21287cfb865a7c462ff3c4f275e70bcccefe4",
+      "symbol": "SUI",
+      "baseDecimals": 9,
+      "tickSize": {
+        "$bigint": "100000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000000000"
+      },
+      "minQuantity": {
+        "$bigint": "13000000000"
+      },
+      "stopRegistry": "0xfdcfb2f985049cad3ac27472b6ae80c7a53ede89"
+    },
+    {
+      "pool": "0x4181dd08e73bbcdd1ba3e615a18f6abd941b94c0",
+      "symbol": "BTC",
+      "baseDecimals": 8,
+      "tickSize": {
+        "$bigint": "100000000000000000"
+      },
+      "lotSize": {
+        "$bigint": "1000"
+      },
+      "minQuantity": {
+        "$bigint": "13000"
+      },
+      "stopRegistry": "0x52e2ccebaec9332672c247e9a90aa3d61fb615ef"
+    }
+  ],
+  "openPositions": []
+}
