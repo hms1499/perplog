@@ -6,6 +6,8 @@ import { useSearchParams } from "next/navigation";
 import type { ReactNode } from "react";
 import { parseRange, RANGES } from "@/lib/use-account";
 import { HealthPanel } from "./health-panel";
+import { JournalPanel } from "./journal-panel";
+import { LeaksPanel } from "./leaks-panel";
 
 const TABS = [
   { value: "health", label: "Health" },
@@ -71,7 +73,10 @@ export function AccountView({
           </Link>
         ))}
       </nav>
-      {tab === "health" ? <HealthPanel address={address} range={range} /> : (panels?.[tab] ?? null)}
+      {tab === "health" && <HealthPanel address={address} range={range} />}
+      {tab === "journal" && <JournalPanel address={address} range={range} />}
+      {tab === "leaks" && <LeaksPanel address={address} range={range} />}
+      {tab === "positions" && (panels?.positions ?? null)}
     </div>
   );
 }
