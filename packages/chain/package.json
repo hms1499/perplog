@@ -1,0 +1,18 @@
+{
+  "name": "@perplog/chain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@perplog/core": "workspace:*",
+    "@somnia-chain/markets-sdk": "0.32.1",
+    "viem": "^2.57",
+    "zod": "^4"
+  }
+}
