@@ -64,24 +64,28 @@ export async function getOpenPositions(args: {
     if (position.size === 0n) return null;
     const [state, liquidationPrice] = await Promise.all([
       client.getPerpState(pool),
-      client.getLiquidationPrice(ref).catch(() => null),
+      client
+        .getLiquidationPrice(ref)
+        .then((price) => (price !== null && price > 0n ? price : null))
+        .catch(() => null),
     ]);
     const mark = perpMarkForPnl(state);
     const market = args.markets.get(pool);
     const side = position.size > 0n ? "long" : "short";
+    const baseDecimals = market?.baseDecimals ?? 18;
     return {
       pool,
       symbol: market?.symbol ?? shortAddress(pool),
       side,
       sizeRaw: position.size,
+      baseDecimals,
       entryPrice: position.avgEntryPrice,
       markPrice: mark.price,
       markFromIndex: mark.fromIndex,
       liquidationPrice,
       liqDistanceBps:
         liquidationPrice === null ? null : ratioBps(absBig(mark.price - liquidationPrice), mark.price),
-      unrealizedPnlRaw:
-        ((mark.price - position.avgEntryPrice) * position.size) / 10n ** BigInt(market?.baseDecimals ?? 18),
+      unrealizedPnlRaw: ((mark.price - position.avgEntryPrice) * position.size) / 10n ** BigInt(baseDecimals),
       stopCoverageBps: stopCoverageBps(side, position.size, pool, args.stopOrders),
       fundingLast24hRaw: args.funding
         .filter((f) => f.pool === pool && f.timestamp >= args.nowSec - DAY)

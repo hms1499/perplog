@@ -187,6 +187,7 @@ export interface OpenPosition {
   symbol: string;
   side: Side;
   sizeRaw: bigint;
+  baseDecimals: number;
   entryPrice: bigint;
   markPrice: bigint;
   markFromIndex: boolean;

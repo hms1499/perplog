@@ -3,11 +3,11 @@
 import { type Address, shortAddress } from "@perplog/core";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import type { ReactNode } from "react";
 import { parseRange, RANGES } from "@/lib/use-account";
 import { HealthPanel } from "./health-panel";
 import { JournalPanel } from "./journal-panel";
 import { LeaksPanel } from "./leaks-panel";
+import { PositionsPanel } from "./positions-panel";
 
 const TABS = [
   { value: "health", label: "Health" },
@@ -18,13 +18,7 @@ const TABS = [
 
 type Tab = (typeof TABS)[number]["value"];
 
-export function AccountView({
-  address,
-  panels,
-}: {
-  address: Address;
-  panels?: Partial<Record<Tab, ReactNode>>;
-}) {
+export function AccountView({ address }: { address: Address }) {
   const params = useSearchParams();
   const tab = (TABS.find((t) => t.value === params.get("tab"))?.value ?? "health") as Tab;
   const range = parseRange(params.get("range"));
@@ -76,7 +70,7 @@ export function AccountView({
       {tab === "health" && <HealthPanel address={address} range={range} />}
       {tab === "journal" && <JournalPanel address={address} range={range} />}
       {tab === "leaks" && <LeaksPanel address={address} range={range} />}
-      {tab === "positions" && (panels?.positions ?? null)}
+      {tab === "positions" && <PositionsPanel address={address} />}
     </div>
   );
 }

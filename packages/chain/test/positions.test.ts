@@ -93,3 +93,27 @@ test("liqDistanceBps from mark and liquidation price", async () => {
   });
   expect(p?.liqDistanceBps).toBe(1000);
 });
+
+test("positions carry the market's base decimals for display", async () => {
+  const btc: MarketInfo = { ...ETH, symbol: "BTC", baseDecimals: 8 };
+  const [p] = await getOpenPositions({
+    ...base,
+    markets: new Map([[POOL, btc]]),
+    client: fakeClient({ size: 13000n, entry: 80000n * E18, mark: 80000n * E18, liq: 70000n * E18 }) as never,
+    activePools: [POOL],
+    stopOrders: [],
+    funding: [],
+  });
+  expect(p?.baseDecimals).toBe(8);
+});
+
+test("a zero liquidation price means there is none", async () => {
+  const [p] = await getOpenPositions({
+    ...base,
+    client: fakeClient({ size: E18, entry: 100n * E18, mark: 100n * E18, liq: 0n }) as never,
+    activePools: [POOL],
+    stopOrders: [],
+    funding: [],
+  });
+  expect(p).toMatchObject({ liquidationPrice: null, liqDistanceBps: null });
+});

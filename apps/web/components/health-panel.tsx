@@ -5,7 +5,9 @@ import type { HealthResponse } from "@/lib/account-service";
 import type { Wire } from "@/lib/api";
 import { formatTime, pct, signClass } from "@/lib/format";
 import { useAccountQuery } from "@/lib/use-account";
+import { useAllTrades } from "@/lib/use-trades";
 import { EmptyState } from "./empty-state";
+import { EquityChart } from "./equity-chart";
 import { ErrorState } from "./error-state";
 import { ReconcileBadge } from "./reconcile-badge";
 
@@ -27,6 +29,7 @@ export function HealthPanel({ address, range }: { address: string; range: Range 
   const { data, error, isPending, refetch } = useAccountQuery<Wire<HealthResponse>>(address, "health", {
     range,
   });
+  const trades = useAllTrades(address, range);
   if (isPending) return <p className="py-10 text-muted">Reading the chain…</p>;
   if (error) return <ErrorState onRetry={() => refetch()} />;
   if (data.empty) return <EmptyState />;
@@ -87,6 +90,8 @@ export function HealthPanel({ address, range }: { address: string; range: Range 
           </div>
         )}
       </dl>
+
+      <EquityChart trades={trades.data?.trades ?? []} />
 
       {data.topLeak && (
         <p data-testid="top-leak" className="border-loss border-l-4 pl-4 text-lg lg:col-span-2">
