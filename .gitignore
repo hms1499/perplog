@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.env*
+!.env.example
+playwright-report/
+test-results/
+.DS_Store
+.playwright-mcp/
+.superpowers/
+*.tsbuildinfo
+.vercel/
+coverage/
