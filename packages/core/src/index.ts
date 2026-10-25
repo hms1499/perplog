@@ -7,6 +7,7 @@ export * from "./coverage";
 export * from "./enrich";
 export * from "./exit-type";
 export * from "./fixture";
+export * from "./leaks";
 export * from "./reconcile";
 export * from "./trades";
 export type * from "./types";
