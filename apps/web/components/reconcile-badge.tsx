@@ -1,0 +1,29 @@
+import { formatUsd, type ReconcileResult } from "@perplog/core";
+import type { Wire } from "@/lib/api";
+
+export function ReconcileBadge({
+  reconcile,
+  truncated,
+}: {
+  reconcile: Wire<ReconcileResult> | null;
+  truncated: boolean;
+}) {
+  if (truncated || !reconcile) {
+    return <span className="text-muted text-sm">Not reconciled: history truncated</span>;
+  }
+  if (reconcile.ok) {
+    return (
+      <span
+        className="inline-block rounded-sm bg-marker px-2 py-0.5 font-semibold text-marker-ink text-sm"
+        title="The sum of every indexed event equals your collateral on-chain right now."
+      >
+        ✓ Reconciled with chain
+      </span>
+    );
+  }
+  return (
+    <span className="font-semibold text-loss text-sm">
+      ⚠ Unreconciled (delta {formatUsd(BigInt(reconcile.deltaRaw))})
+    </span>
+  );
+}

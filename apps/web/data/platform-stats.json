@@ -1,0 +1,10 @@
+{
+  "generatedAt": "2026-10-25T08:30:00Z",
+  "windowHours": 9.2,
+  "newPositions": 834,
+  "realTraders": 343,
+  "noStopPct": 79,
+  "liquidationFees7dRaw": "147079100000000000000000",
+  "liquidatedAccounts7d": 571,
+  "method": "Placeholder from the 2026-10-25 research run; regenerate with scripts/platform-stats.ts."
+}

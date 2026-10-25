@@ -10,15 +10,17 @@
     "e2e": "playwright test"
   },
   "dependencies": {
+    "@perplog/chain": "workspace:*",
+    "@perplog/core": "workspace:*",
+    "@tanstack/react-query": "^5.104.5",
+    "lru-cache": "^11",
     "next": "16.4.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "@perplog/core": "workspace:*",
-    "@perplog/chain": "workspace:*",
-    "lru-cache": "^11",
     "zod": "^4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^24",
     "@types/react": "^19",
