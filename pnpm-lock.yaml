@@ -257,7 +257,10 @@ importers:
         version: link:../core
       '@somnia-chain/markets-sdk':
         specifier: 0.32.1
-        version: 0.32.1(graphql@17.0.2)(react@19.3.0)(viem@2.57.11(typescript@5.9.3)(zod@4.6.7))
+        version: 0.32.1(@somnia-chain/reactivity@0.2.1(viem@2.57.11(typescript@5.9.3)(zod@4.6.7)))(graphql@17.0.2)(react@19.3.0)(viem@2.57.11(typescript@5.9.3)(zod@4.6.7))
+      '@somnia-chain/reactivity':
+        specifier: ^0.2.1
+        version: 0.2.1(viem@2.57.11(typescript@5.9.3)(zod@4.6.7))
       viem:
         specifier: ^2.57
         version: 2.57.11(typescript@5.9.3)(zod@4.6.7)
@@ -909,6 +912,11 @@ packages:
         optional: true
       react:
         optional: true
+
+  '@somnia-chain/reactivity@0.2.1':
+    resolution: {integrity: sha512-sLv+vN6JGbJ0O3LmsU7R+nGAMNpUJerJQ1v/xfC9nj2OjP3ze5nrmABhdp4TTknTdOAEU0oED0a4Z0Q8cAXP/g==}
+    peerDependencies:
+      viem: ^2.48.2
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -2103,7 +2111,7 @@ snapshots:
     dependencies:
       viem: 2.57.11(typescript@5.9.3)(zod@4.6.7)
 
-  '@somnia-chain/markets-sdk@0.32.1(graphql@17.0.2)(react@19.3.0)(viem@2.57.11(typescript@5.9.3)(zod@4.6.7))':
+  '@somnia-chain/markets-sdk@0.32.1(@somnia-chain/reactivity@0.2.1(viem@2.57.11(typescript@5.9.3)(zod@4.6.7)))(graphql@17.0.2)(react@19.3.0)(viem@2.57.11(typescript@5.9.3)(zod@4.6.7))':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@17.0.2)
       '@somnia-chain/accounts-sdk': 0.4.0(viem@2.57.11(typescript@5.9.3)(zod@4.6.7))
@@ -2112,11 +2120,16 @@ snapshots:
       ws: 8.22.0
       zod: 4.6.7
     optionalDependencies:
+      '@somnia-chain/reactivity': 0.2.1(viem@2.57.11(typescript@5.9.3)(zod@4.6.7))
       react: 19.3.0
     transitivePeerDependencies:
       - bufferutil
       - graphql
       - utf-8-validate
+
+  '@somnia-chain/reactivity@0.2.1(viem@2.57.11(typescript@5.9.3)(zod@4.6.7))':
+    dependencies:
+      viem: 2.57.11(typescript@5.9.3)(zod@4.6.7)
 
   '@standard-schema/spec@1.1.0': {}
 

@@ -13,6 +13,7 @@
   "dependencies": {
     "@perplog/core": "workspace:*",
     "@somnia-chain/markets-sdk": "0.32.1",
+    "@somnia-chain/reactivity": "^0.2.1",
     "viem": "^2.57",
     "zod": "^4"
   }
