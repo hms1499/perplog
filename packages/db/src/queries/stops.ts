@@ -1,7 +1,14 @@
 import type { Address, StopStatus } from "@perplog/core";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import type { Db } from "../client";
-import { executions, type NewExecution, type NewStop, type StopRow, stops } from "../schema";
+import {
+  type ExecutionRow,
+  executions,
+  type NewExecution,
+  type NewStop,
+  type StopRow,
+  stops,
+} from "../schema";
 
 const TERMINAL: readonly StopStatus[] = ["done", "failed", "cancelled"];
 
@@ -45,6 +52,11 @@ export async function listStops(db: Db, statuses: StopStatus[]): Promise<StopRow
   return db.select().from(stops).where(inArray(stops.status, statuses));
 }
 
+export async function getStop(db: Db, id: string): Promise<StopRow | undefined> {
+  const [row] = await db.select().from(stops).where(eq(stops.id, id)).limit(1);
+  return row;
+}
+
 export async function listAccountStops(db: Db, account: Address, statuses: StopStatus[]): Promise<StopRow[]> {
   if (statuses.length === 0) return [];
   return db
@@ -64,6 +76,11 @@ export async function updateExecution(db: Db, id: string, patch: Partial<NewExec
     .update(executions)
     .set({ ...rest, updatedAt: new Date() })
     .where(eq(executions.id, id));
+}
+
+/** Every execution recorded for one stop, oldest first. */
+export async function listStopExecutions(db: Db, stopId: string): Promise<ExecutionRow[]> {
+  return db.select().from(executions).where(eq(executions.stopId, stopId)).orderBy(asc(executions.createdAt));
 }
 
 /** Tx hashes of the bot's stop-close orders for this account, so the UI can tell them from user trades. */

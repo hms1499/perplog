@@ -1,8 +1,10 @@
 import type { Address } from "@perplog/core";
 import {
   createBotKeyRequest,
+  getStop,
   insertStop,
   listAccountStops,
+  listStopExecutions,
   listStops,
   type NewStop,
   recordExecution,
@@ -100,4 +102,37 @@ test("executions are recorded, updated and their tx hashes listed per account", 
   await updateExecution(db, id, { status: "confirmed", txHash: "0xabc", filledRaw: 5n });
   expect(await stopCloseTxHashes(db, ACCOUNT)).toEqual(new Set(["0xabc"]));
   expect(await stopCloseTxHashes(db, POOL)).toEqual(new Set());
+});
+
+test("getStop reads one stop by id, undefined when missing", async () => {
+  const { db, armedStop } = await setup();
+  const s = await insertStop(db, armedStop());
+  expect((await getStop(db, s.id))?.status).toBe("armed");
+  await transitionStop(db, s.id, ["armed"], "triggered", { triggeredAt: new Date() });
+  expect((await getStop(db, s.id))?.status).toBe("triggered");
+  expect(await getStop(db, "00000000-0000-0000-0000-000000000000")).toBeUndefined();
+});
+
+test("listStopExecutions returns one stop's executions oldest first", async () => {
+  const { db, key, armedStop } = await setup();
+  const s = await insertStop(db, armedStop());
+  const other = await insertStop(db, armedStop({ pool: POOL2 }));
+  const exec = (stopId: string, qtyRaw: bigint) =>
+    recordExecution(db, {
+      kind: "stop_close",
+      status: "sending",
+      account: ACCOUNT,
+      pool: POOL,
+      botKeyId: key.id,
+      stopId,
+      isBid: false,
+      qtyRaw,
+      priceBound: 1n,
+    });
+  const first = await exec(s.id, 1n);
+  await exec(other.id, 9n);
+  const second = await exec(s.id, 2n);
+  const rows = await listStopExecutions(db, s.id);
+  expect(rows.map((r) => r.id)).toEqual([first, second]);
+  expect(rows.map((r) => r.qtyRaw)).toEqual([1n, 2n]);
 });

@@ -24,6 +24,9 @@ const worker = await startWorker({
   env,
   chain: liveChain(networkFromEnv(env)),
   log,
+  // The lock heartbeat failed: the loops are already stopped. Exit and let the host restart us; in-progress
+  // stops resume on the next boot (re-reading the size first).
+  onFatal: () => process.exit(1),
 });
 
 let shuttingDown = false;

@@ -4,7 +4,11 @@ import { startWorker } from "../src/start";
 import { fakeChain, fakeEnv, fakeLogger } from "./fakes";
 
 const lockConn = (answers: boolean[]) => ({
-  query: vi.fn(async () => ({ rows: [{ ok: answers.length > 1 ? answers.shift() : answers[0] }] })),
+  query: vi.fn(async (sql: string) =>
+    sql === "SELECT 1"
+      ? { rows: [{ "?column?": 1 }] }
+      : { rows: [{ ok: answers.length > 1 ? answers.shift() : answers[0] }] },
+  ),
 });
 
 test("with the lock: logs it, migrates, starts the bot-key-minter loop and mints a requested key", async () => {
@@ -19,6 +23,7 @@ test("with the lock: logs it, migrates, starts the bot-key-minter loop and mints
     env: fakeEnv(),
     chain: fakeChain(),
     log,
+    onFatal: vi.fn(),
   });
   try {
     await vi.waitFor(async () => expect((await getBotKey(db, req.id))?.status).toBe("pending"));
@@ -28,7 +33,7 @@ test("with the lock: logs it, migrates, starts the bot-key-minter loop and mints
     expect(order.indexOf("migrations applied")).toBeGreaterThan(order.indexOf("signer lock acquired"));
     expect(log.entries.find((e) => e.msg === "loop started")?.obj.name).toBe("bot-key-minter");
     const loops = log.entries.filter((e) => e.msg === "loop started").map((e) => e.obj.name);
-    expect(loops).toEqual(["bot-key-minter", "link-watcher"]);
+    expect(loops).toEqual(["bot-key-minter", "link-watcher", "stop-engine"]);
     expect(log.has("standby")).toBe(false);
   } finally {
     await w.stop();
@@ -47,6 +52,7 @@ test("without the lock: logs standby and does not migrate or mint", async () => 
     env: fakeEnv(),
     chain: fakeChain(),
     log,
+    onFatal: vi.fn(),
     standbyRetryMs: 60_000,
   });
   try {
@@ -55,6 +61,7 @@ test("without the lock: logs standby and does not migrate or mint", async () => 
     expect(log.has("signer lock acquired")).toBe(false);
     expect(migrate).not.toHaveBeenCalled();
     expect((await getBotKey(db, req.id))?.status).toBe("requested");
+    expect(log.has("loop started")).toBe(false);
   } finally {
     await w.stop();
   }
@@ -71,6 +78,7 @@ test("a standby worker takes over once the lock frees up", async () => {
     env: fakeEnv(),
     chain: fakeChain(),
     log,
+    onFatal: vi.fn(),
     standbyRetryMs: 50,
   });
   try {
@@ -92,9 +100,85 @@ test("stop() halts the loops: later requests are not minted", async () => {
     env: fakeEnv(),
     chain: fakeChain(),
     log,
+    onFatal: vi.fn(),
   });
   await w.stop();
   const req = await createBotKeyRequest(db);
   await new Promise((r) => setTimeout(r, 700));
   expect((await getBotKey(db, req.id))?.status).toBe("requested");
+});
+
+/** Grants the lock, then answers the heartbeat with `beat`. */
+const lockConnBeating = (beat: () => Promise<unknown>) => ({
+  query: vi.fn(async (sql: string) => {
+    if (sql === "SELECT 1") {
+      await beat();
+      return { rows: [{ "?column?": 1 }] };
+    }
+    return { rows: [{ ok: true }] };
+  }),
+});
+
+test("a healthy lock connection is pinged every heartbeat and nothing stops", async () => {
+  const db = await createTestDb();
+  const log = fakeLogger();
+  const conn = lockConnBeating(async () => {});
+  const onFatal = vi.fn();
+  const w = await startWorker({
+    db,
+    lockConn: conn,
+    migrate: async () => {},
+    env: fakeEnv(),
+    chain: fakeChain(),
+    log,
+    onFatal,
+    lockHeartbeatMs: 20,
+  });
+  try {
+    await vi.waitFor(() =>
+      expect(conn.query.mock.calls.filter(([q]) => q === "SELECT 1").length).toBeGreaterThanOrEqual(3),
+    );
+    expect(onFatal).not.toHaveBeenCalled();
+    expect(log.has("signer_lock_lost")).toBe(false);
+    const req = await createBotKeyRequest(db);
+    await vi.waitFor(async () => expect((await getBotKey(db, req.id))?.status).toBe("pending"));
+  } finally {
+    await w.stop();
+  }
+});
+
+test.each([
+  ["fails", () => Promise.reject(new Error("Connection terminated unexpectedly"))],
+  ["hangs", () => new Promise(() => {})],
+])("a heartbeat that %s means the lock is lost: loops stop, then onFatal", async (_name, beat) => {
+  const db = await createTestDb();
+  const log = fakeLogger();
+  const conn = lockConnBeating(beat);
+  const onFatal = vi.fn();
+  const w = await startWorker({
+    db,
+    lockConn: conn,
+    migrate: async () => {},
+    env: fakeEnv(),
+    chain: fakeChain(),
+    log,
+    onFatal,
+    lockHeartbeatMs: 20,
+  });
+  try {
+    await vi.waitFor(() => expect(onFatal).toHaveBeenCalledOnce());
+    expect(onFatal.mock.calls[0]?.[0]).toBeInstanceOf(Error);
+    expect(log.entries.find((e) => e.msg === "signer_lock_lost")?.level).toBe("error");
+    // The loops are down: a new request is never minted.
+    const req = await createBotKeyRequest(db);
+    await new Promise((r) => setTimeout(r, 700));
+    expect((await getBotKey(db, req.id))?.status).toBe("requested");
+    // No further heartbeats after the loss.
+    const beats = conn.query.mock.calls.filter(([q]) => q === "SELECT 1").length;
+    await new Promise((r) => setTimeout(r, 100));
+    expect(conn.query.mock.calls.filter(([q]) => q === "SELECT 1").length).toBe(beats);
+    expect(onFatal).toHaveBeenCalledOnce();
+  } finally {
+    await w.stop();
+  }
 });
