@@ -94,8 +94,8 @@ test("liqDistanceBps from mark and liquidation price", async () => {
   expect(p?.liqDistanceBps).toBe(1000);
 });
 
-test("positions carry the market's base decimals for display", async () => {
-  const btc: MarketInfo = { ...ETH, symbol: "BTC", baseDecimals: 8 };
+test("positions carry the market's display precision", async () => {
+  const btc: MarketInfo = { ...ETH, symbol: "BTC", baseDecimals: 8, tickSize: 10n ** 17n, lotSize: 1000n };
   const [p] = await getOpenPositions({
     ...base,
     markets: new Map([[POOL, btc]]),
@@ -104,7 +104,7 @@ test("positions carry the market's base decimals for display", async () => {
     stopOrders: [],
     funding: [],
   });
-  expect(p?.baseDecimals).toBe(8);
+  expect(p).toMatchObject({ baseDecimals: 8, sizeDecimals: 5, priceDecimals: 1 });
 });
 
 test("a zero liquidation price means there is none", async () => {

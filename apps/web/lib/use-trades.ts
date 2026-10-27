@@ -5,7 +5,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { getJson, type Wire } from "./api";
 import { useAccountQuery } from "./use-account";
 
-export type TradePage = { trades: Wire<EnrichedTrade>[]; nextCursor: string | null };
+export type TradePage = { trades: Wire<EnrichedTrade>[]; nextCursor: string | null; empty: boolean };
 
 export function useTradePages(address: string, filters: Record<string, string>) {
   return useInfiniteQuery({
@@ -19,7 +19,7 @@ export function useTradePages(address: string, filters: Record<string, string>) 
   });
 }
 
-/** Up to 200 trades of the range, for filter options and leak evidence. */
+/** Up to 200 trades of the range, for the market filter options. */
 export function useAllTrades(address: string, range: Range) {
   return useAccountQuery<TradePage>(address, "trades", { range, limit: "200" });
 }

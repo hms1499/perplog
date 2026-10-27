@@ -50,3 +50,31 @@ test("no positions gives zeros", () => {
     noStopPct: 0,
   });
 });
+
+test("only a stop-loss for the opened side counts, and too-recent opens are left out", () => {
+  const changes: Owned<PositionChange>[] = [
+    // Long protected only by a take-profit (sell-at-or-above): unprotected.
+    { ...change({ id: "l1", kind: "OPEN", pool: "0xp", timestamp: 1000, sizeAfter: 5n }), owner: "0xa" },
+    // Short protected by a buy-at-or-above stop: protected.
+    { ...change({ id: "s1", kind: "OPEN", pool: "0xq", timestamp: 1000, sizeAfter: -5n }), owner: "0xa" },
+    // Opened 5 minutes before the window end: its stop could still arrive.
+    { ...change({ id: "r1", kind: "OPEN", pool: "0xr", timestamp: 9700, sizeAfter: 5n }), owner: "0xa" },
+    {
+      ...change({ id: "c1", kind: "CLOSE", pool: "0xp", timestamp: 2000, realizedPnl: -5n * E18 }),
+      owner: "0xa",
+    },
+  ];
+  const stops: Owned<StopOrderRecord>[] = [
+    { ...stop({ id: "tp", pool: "0xp", createdAt: 1010, isBid: false, triggerOperator: 0 }), owner: "0xa" },
+    { ...stop({ id: "sl", pool: "0xq", createdAt: 1010, isBid: true, triggerOperator: 0 }), owner: "0xa" },
+  ];
+  expect(
+    computeNoStopStats(
+      changes,
+      stops,
+      (c) => (c as Owned<PositionChange>).owner,
+      (s) => (s as Owned<StopOrderRecord>).owner,
+      10_000,
+    ),
+  ).toEqual({ newPositions: 2, accounts: 1, withStopPct: 50, noStopPct: 50 });
+});

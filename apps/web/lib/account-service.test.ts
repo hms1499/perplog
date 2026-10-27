@@ -1,5 +1,5 @@
 import type { AccountHistory, Address, MarketInfo, PositionChange } from "@perplog/core";
-import { type AccountServiceDeps, createAccountService } from "./account-service";
+import { type AccountServiceDeps, ChainUnavailableError, createAccountService } from "./account-service";
 
 const ACCOUNT: Address = "0x00000000000000000000000000000000000000aa";
 const POOL: Address = "0x00000000000000000000000000000000000000e1";
@@ -151,4 +151,110 @@ test("getTrades paginates with cursor and filters by exit type", async () => {
   expect(page2.nextCursor).toBeNull();
   const liquidated = await service.getTrades(ACCOUNT, { range: "all", exit: "LIQUIDATED" });
   expect(liquidated.trades.map((t) => t.exitType)).toEqual(["LIQUIDATED"]);
+});
+
+test("a failed collateral read degrades to an unreconciled report instead of failing", async () => {
+  const d = deps(emptyHistory({ changes: roundTrip(1, 5n * E18) }));
+  d.fetchCollateral = async () => {
+    throw new Error("WebSocket closed");
+  };
+  const service = createAccountService(d);
+  const health = await service.getHealth(ACCOUNT, "all");
+  expect(health).toMatchObject({ empty: false, tradeCount: 1, netPnlRaw: 5n * E18, truncated: false });
+  expect(health.reconcile).toBeNull();
+  expect(health.chainReadFailed).toBe(true);
+  expect((await service.getTrades(ACCOUNT, { range: "all" })).trades).toHaveLength(1);
+});
+
+test("positions report the chain as unavailable when the collateral read failed", async () => {
+  const d = deps(emptyHistory({ changes: roundTrip(1, E18) }));
+  d.fetchCollateral = async () => {
+    throw new Error("WebSocket closed");
+  };
+  await expect(createAccountService(d).getPositions(ACCOUNT)).rejects.toBeInstanceOf(ChainUnavailableError);
+});
+
+test("positions report the chain as unavailable when the position read fails", async () => {
+  const d = deps(emptyHistory({ changes: roundTrip(1, E18) }));
+  d.fetchOpenPositions = async () => {
+    throw new Error("request timed out");
+  };
+  await expect(createAccountService(d).getPositions(ACCOUNT)).rejects.toBeInstanceOf(ChainUnavailableError);
+});
+
+test("a degraded result is retried soon instead of being cached for the full TTL", async () => {
+  const clock = { now: NOW };
+  const d = deps(emptyHistory({ changes: roundTrip(1, E18) }), clock);
+  let rpcUp = false;
+  d.fetchCollateral = async () => {
+    if (!rpcUp) throw new Error("WebSocket closed");
+    return { collateralRaw: 0n, activePools: [] };
+  };
+  const service = createAccountService(d, 60_000);
+  expect((await service.getHealth(ACCOUNT, "all")).chainReadFailed).toBe(true);
+  rpcUp = true;
+  clock.now += 11;
+  expect((await service.getHealth(ACCOUNT, "all")).chainReadFailed).toBe(false);
+  expect(d.calls.history).toBe(2);
+});
+
+test("getTrades tells an active account with nothing in range apart from an empty one", async () => {
+  const old = roundTrip(1, E18).map((c) => ({ ...c, timestamp: c.timestamp - 8 * 86_400 }));
+  const active = await createAccountService(deps(emptyHistory({ changes: old }))).getTrades(ACCOUNT, {
+    range: "7d",
+  });
+  expect(active).toMatchObject({ trades: [], empty: false });
+  const empty = await createAccountService(deps(emptyHistory())).getTrades(ACCOUNT, { range: "7d" });
+  expect(empty).toMatchObject({ trades: [], empty: true });
+});
+
+test("getTrades narrows to one leak's evidence and paginates it", async () => {
+  const changes = [
+    ...roundTrip(1, -E18, true),
+    ...roundTrip(2, 2n * E18),
+    ...roundTrip(3, -2n * E18, true),
+    ...roundTrip(4, 3n * E18),
+    ...roundTrip(5, -3n * E18, true),
+  ];
+  const history = emptyHistory({
+    changes,
+    liquidations: [{ id: "l", kind: "PositionLiquidated", pool: POOL, txHash: "0xliq", timestamp: NOW }],
+  });
+  const service = createAccountService(deps(history));
+  const page1 = await service.getTrades(ACCOUNT, { range: "all", leak: "LIQUIDATION_COST", limit: 2 });
+  expect(page1.trades.map((t) => t.realizedPnl)).toEqual([-3n * E18, -2n * E18]);
+  expect(page1.nextCursor).toBe("2");
+  const page2 = await service.getTrades(ACCOUNT, { range: "all", leak: "LIQUIDATION_COST", cursor: "2" });
+  expect(page2.trades.map((t) => t.realizedPnl)).toEqual([-E18]);
+  expect(page2.nextCursor).toBeNull();
+});
+
+test("the cache is bounded by the rows it holds, not only by the number of accounts", async () => {
+  const OTHER: Address = "0x00000000000000000000000000000000000000bb";
+  // 4 changes + 2 trades = 6 rows per account.
+  const history = emptyHistory({ changes: [...roundTrip(1, E18), ...roundTrip(2, E18)] });
+  const roomy = deps(history);
+  const big = createAccountService(roomy, 60_000, 100);
+  await big.getHealth(ACCOUNT, "all");
+  await big.getHealth(OTHER, "all");
+  await big.getHealth(ACCOUNT, "all");
+  expect(roomy.calls.history).toBe(2);
+
+  const tight = deps(history);
+  const small = createAccountService(tight, 60_000, 10);
+  await small.getHealth(ACCOUNT, "all");
+  await small.getHealth(OTHER, "all");
+  await small.getHealth(ACCOUNT, "all");
+  expect(tight.calls.history).toBe(3);
+});
+
+test("ranges use the clock of the account asked about", async () => {
+  const OTHER: Address = "0x00000000000000000000000000000000000000bb";
+  const d = deps(emptyHistory({ changes: roundTrip(1, E18) }));
+  // Fixture mode pins each account to its own capture time.
+  d.now = (account?: Address) => (account === OTHER ? NOW + 30 * 86_400 : NOW);
+  const service = createAccountService(d);
+  expect((await service.getHealth(ACCOUNT, "7d")).tradeCount).toBe(1);
+  expect((await service.getHealth(OTHER, "7d")).tradeCount).toBe(0);
+  expect((await service.getTrades(OTHER, { range: "7d" })).trades).toHaveLength(0);
 });

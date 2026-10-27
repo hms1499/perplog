@@ -19,8 +19,8 @@ const ETH: MarketInfo = {
   pool: "0xp",
   symbol: "ETH",
   baseDecimals: 18,
-  tickSize: 1n,
-  lotSize: 1n,
+  tickSize: 10n ** 16n,
+  lotSize: 10n ** 14n,
   minQuantity: 1n,
   stopRegistry: null,
 };
@@ -41,6 +41,9 @@ test("enrich computes notional and symbol for known pools", () => {
     maxNotional: 5000n * 10n ** 18n,
     exitType: "MANUAL",
     hadStop: false,
+    baseDecimals: 18,
+    sizeDecimals: 4,
+    priceDecimals: 2,
   });
 });
 
@@ -56,5 +59,11 @@ test("enrich falls back for unknown pools", () => {
     new Map(),
     1000,
   );
-  expect(t).toMatchObject({ symbol: "0x1234…abcd", maxNotional: 0n });
+  expect(t).toMatchObject({
+    symbol: "0x1234…abcd",
+    maxNotional: 0n,
+    baseDecimals: 18,
+    sizeDecimals: 4,
+    priceDecimals: 4,
+  });
 });

@@ -50,6 +50,9 @@ export const enriched = (o: Partial<EnrichedTrade> = {}): EnrichedTrade => ({
   hadStop: true,
   maxNotional: 100n,
   symbol: "ETH",
+  baseDecimals: 18,
+  sizeDecimals: 4,
+  priceDecimals: 2,
   ...o,
 });
 

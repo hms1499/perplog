@@ -37,3 +37,50 @@ export function ratioBps(num: bigint, den: bigint): number {
   if (den === 0n) return 0;
   return Number((num * 10_000n) / den);
 }
+
+/** Index of the first element of the ascending `values` that is `>= target` (`values.length` if none). */
+export function lowerBound(values: readonly number[], target: number): number {
+  let lo = 0;
+  let hi = values.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if ((values[mid] as number) < target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+
+/** Number of elements of the ascending `values` that are `<= target`. */
+export function upperBound(values: readonly number[], target: number): number {
+  let lo = 0;
+  let hi = values.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if ((values[mid] as number) <= target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+
+/** Running maximum of `values`, so it can be binary searched. */
+export function prefixMax(values: readonly number[]): number[] {
+  const out: number[] = [];
+  let max = Number.NEGATIVE_INFINITY;
+  for (const v of values) {
+    max = Math.max(max, v);
+    out.push(max);
+  }
+  return out;
+}
+
+/** Fraction digits needed to show values that move in steps of `stepRaw` at `decimals` scale (a tick or a lot). */
+export function stepDecimals(stepRaw: bigint, decimals: number): number {
+  if (stepRaw <= 0n) return decimals;
+  let digits = decimals;
+  let step = stepRaw;
+  while (digits > 0 && step % 10n === 0n) {
+    step /= 10n;
+    digits -= 1;
+  }
+  return digits;
+}

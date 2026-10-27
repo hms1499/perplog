@@ -1,21 +1,14 @@
 "use client";
 
-import { formatAmount } from "@perplog/core";
+import { type EquityPoint, formatAmount } from "@perplog/core";
 import { Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import type { TradePage } from "@/lib/use-trades";
+import type { Wire } from "@/lib/api";
 
 const toNumber = (raw: bigint) => Number(formatAmount(raw, 18, 6).replace(/,/g, ""));
 
-export function EquityChart({ trades }: { trades: TradePage["trades"] }) {
-  const closed = trades
-    .filter((t) => t.closedAt !== null)
-    .sort((a, b) => (a.closedAt ?? 0) - (b.closedAt ?? 0));
-  if (closed.length < 2) return null;
-  let total = 0n;
-  const points = closed.map((t) => {
-    total += BigInt(t.netPnl);
-    return { at: (t.closedAt ?? 0) * 1000, net: toNumber(total) };
-  });
+export function EquityChart({ points: equity }: { points: Wire<EquityPoint>[] }) {
+  if (equity.length < 2) return null;
+  const points = equity.map((p) => ({ at: p.at * 1000, net: toNumber(BigInt(p.netRaw)) }));
   const last = points.at(-1)?.net ?? 0;
   return (
     <figure data-testid="equity-chart" className="lg:col-span-2">

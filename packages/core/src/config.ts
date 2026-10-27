@@ -8,3 +8,9 @@ export const RECONCILE_TOLERANCE_RAW = 10n ** 16n;
 export const COHORT_MAX_CHANGES = 6;
 /** 1 USDso. */
 export const COHORT_MAX_ABS_PNL_RAW = 10n ** 18n;
+/** Enough for a smooth chart, small enough for a heavy account's payload. */
+export const EQUITY_MAX_POINTS = 500;
+/** Prices and USDso amounts are 18-decimal fixed point. */
+export const PRICE_DECIMALS = 18;
+/** Display precision for pools missing from the market list. */
+export const FALLBACK_DISPLAY_DECIMALS = 4;

@@ -65,6 +65,7 @@ async function main(): Promise<void> {
     stops.rows.map((r) => r.row),
     (c) => changeOwner.get(c) as Address,
     (s) => stopOwner.get(s) as Address,
+    now,
   );
   const stats = {
     generatedAt: new Date(now * 1000).toISOString(),
@@ -76,8 +77,8 @@ async function main(): Promise<void> {
     liquidatedAccounts7d: new Set(liquidationFees.rows.map((r) => r.account.toLowerCase())).size,
     method:
       `Latest ${changes.rows.length} position changes (last ${Math.round((now - windowStart) / 360) / 10} hours). ` +
-      "A new position counts as protected when a stop order on the same account and market was created between " +
-      "60 seconds before and 10 minutes after it opened. Accounts with at most 6 position changes and less than " +
+      "A new position counts as protected when a stop-loss on the same account and market was created between " +
+      "60 seconds before and 10 minutes after it opened; positions opened in the last 10 minutes are left out. Accounts with at most 6 position changes and less than " +
       "1 USDso of realized PnL in the window are treated as automated and excluded. Liquidation fees are summed " +
       "over the last 7 days.",
   };

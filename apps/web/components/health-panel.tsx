@@ -5,7 +5,6 @@ import type { HealthResponse } from "@/lib/account-service";
 import type { Wire } from "@/lib/api";
 import { formatTime, pct, signClass } from "@/lib/format";
 import { useAccountQuery } from "@/lib/use-account";
-import { useAllTrades } from "@/lib/use-trades";
 import { EmptyState } from "./empty-state";
 import { EquityChart } from "./equity-chart";
 import { ErrorState } from "./error-state";
@@ -29,9 +28,8 @@ export function HealthPanel({ address, range }: { address: string; range: Range 
   const { data, error, isPending, refetch } = useAccountQuery<Wire<HealthResponse>>(address, "health", {
     range,
   });
-  const trades = useAllTrades(address, range);
   if (isPending) return <p className="py-10 text-muted">Reading the chain…</p>;
-  if (error) return <ErrorState onRetry={() => refetch()} />;
+  if (error) return <ErrorState error={error} onRetry={() => refetch()} />;
   if (data.empty) return <EmptyState />;
 
   const realized = BigInt(data.realizedPnlRaw);
@@ -58,7 +56,11 @@ export function HealthPanel({ address, range }: { address: string; range: Range 
           </div>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-          <ReconcileBadge reconcile={data.reconcile} truncated={data.truncated} />
+          <ReconcileBadge
+            reconcile={data.reconcile}
+            truncated={data.truncated}
+            chainReadFailed={data.chainReadFailed}
+          />
           <span className="text-muted text-sm">Data as of {formatTime(data.asOfTimestamp)}</span>
         </div>
       </div>
@@ -91,7 +93,7 @@ export function HealthPanel({ address, range }: { address: string; range: Range 
         )}
       </dl>
 
-      <EquityChart trades={trades.data?.trades ?? []} />
+      <EquityChart points={data.equity} />
 
       {data.topLeak && (
         <p data-testid="top-leak" className="border-loss border-l-4 pl-4 text-lg lg:col-span-2">

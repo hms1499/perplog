@@ -1,6 +1,12 @@
 "use client";
 
-import { formatAmount, formatUsd, LIQ_DISTANCE_WARN_BPS, type OpenPosition } from "@perplog/core";
+import {
+  formatAmount,
+  formatUsd,
+  LIQ_DISTANCE_WARN_BPS,
+  type OpenPosition,
+  PRICE_DECIMALS,
+} from "@perplog/core";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { getJson, type Wire } from "@/lib/api";
@@ -37,7 +43,6 @@ export function PositionsPanel({ address }: { address: string }) {
     queryFn: () => getJson<Wire<OpenPosition>[]>(`/api/accounts/${address}/positions`),
     refetchInterval: 5000,
   });
-  const price = (raw: string | null) => (raw === null ? "—" : formatAmount(BigInt(raw), 18, 4));
 
   return (
     <section className="py-6">
@@ -49,7 +54,7 @@ export function PositionsPanel({ address }: { address: string }) {
       {isPending ? (
         <p className="py-10 text-muted">Reading open positions…</p>
       ) : error ? (
-        <ErrorState onRetry={() => refetch()} />
+        <ErrorState error={error} onRetry={() => refetch()} />
       ) : data.length === 0 ? (
         <p className="py-10 text-lg">No open positions.</p>
       ) : (
@@ -73,6 +78,8 @@ export function PositionsPanel({ address }: { address: string }) {
               {data.map((p) => {
                 const size = BigInt(p.sizeRaw);
                 const funding = BigInt(p.fundingLast24hRaw);
+                const price = (raw: string | null) =>
+                  raw === null ? "—" : formatAmount(BigInt(raw), PRICE_DECIMALS, p.priceDecimals);
                 return (
                   <tr key={p.pool} data-testid="position-row" className="border-rule border-b">
                     <td className="py-3 font-bold">{p.symbol}</td>
@@ -80,7 +87,7 @@ export function PositionsPanel({ address }: { address: string }) {
                       {p.side === "long" ? "Long" : "Short"}
                     </td>
                     <td className="py-3 text-right">
-                      {formatAmount(size < 0n ? -size : size, p.baseDecimals ?? 18, 4)}
+                      {formatAmount(size < 0n ? -size : size, p.baseDecimals, p.sizeDecimals)}
                     </td>
                     <td className="py-3 text-right">{price(p.entryPrice)}</td>
                     <td className="py-3 text-right">

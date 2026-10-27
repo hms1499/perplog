@@ -1,4 +1,5 @@
 import { IndexerError } from "@perplog/chain";
+import { ChainUnavailableError } from "@/lib/account-service";
 import { accountService } from "@/lib/service";
 import { GET as health } from "./[address]/health/route";
 import { GET as leaks } from "./[address]/leaks/route";
@@ -23,6 +24,13 @@ beforeEach(() => vi.clearAllMocks());
 
 test("health 400 on invalid address", async () => {
   const res = await health(req("/api/accounts/nope/health"), ctx("nope"));
+  expect(res.status).toBe(400);
+  expect(await res.json()).toEqual({ error: "invalid_address" });
+});
+
+test("a stray percent sign is an invalid address, not a server error", async () => {
+  // Next hands route handlers already-decoded params: /api/accounts/%25/health arrives as "%".
+  const res = await health(req("/api/accounts/%25/health"), ctx("%"));
   expect(res.status).toBe(400);
   expect(await res.json()).toEqual({ error: "invalid_address" });
 });
@@ -56,7 +64,7 @@ test("invalid range is rejected", async () => {
 });
 
 test("trades passes validated filters to the service", async () => {
-  service.getTrades.mockResolvedValue({ trades: [], nextCursor: null });
+  service.getTrades.mockResolvedValue({ trades: [], nextCursor: null, empty: false });
   const res = await trades(
     req(`/api/accounts/${ADDRESS}/trades?range=all&exit=LIQUIDATED&side=short&cursor=50&limit=20`),
     ctx(ADDRESS),
@@ -84,4 +92,20 @@ test("unexpected errors become a generic 500", async () => {
   const res = await leaks(req(`/api/accounts/${ADDRESS}/leaks`), ctx(ADDRESS));
   expect(res.status).toBe(500);
   expect(await res.json()).toEqual({ error: "internal" });
+});
+
+test("positions 503 chain_unavailable when the chain read fails", async () => {
+  service.getPositions.mockRejectedValue(new ChainUnavailableError(new Error("timeout")));
+  const res = await positions(req(`/api/accounts/${ADDRESS}/positions`), ctx(ADDRESS));
+  expect(res.status).toBe(503);
+  expect(await res.json()).toEqual({ error: "chain_unavailable" });
+});
+
+test("trades accepts a leak filter and rejects unknown leaks", async () => {
+  service.getTrades.mockResolvedValue({ trades: [], nextCursor: null, empty: false });
+  const ok = await trades(req(`/api/accounts/${ADDRESS}/trades?range=7d&leak=NO_STOP_LOSSES`), ctx(ADDRESS));
+  expect(ok.status).toBe(200);
+  expect(service.getTrades).toHaveBeenCalledWith(ADDRESS, { range: "7d", leak: "NO_STOP_LOSSES" });
+  const bad = await trades(req(`/api/accounts/${ADDRESS}/trades?leak=EVERYTHING`), ctx(ADDRESS));
+  expect(bad.status).toBe(400);
 });

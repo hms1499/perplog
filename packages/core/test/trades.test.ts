@@ -168,3 +168,65 @@ test("history starting mid-position is flagged partial", () => {
 test("unordered input is sorted by block then logIndex", () => {
   expect(reconstructTrades("0x3952", [...real].reverse())[0]?.realizedPnl).toBe(38463004000000000000n);
 });
+
+test("full OPEN → INCREASE → REDUCE → INCREASE → FLIP → CLOSE lifecycle (spec §14.1)", () => {
+  const step = (n: number, o: Partial<PositionChange>) =>
+    ch({ id: `${n}`, blockNumber: BigInt(n), timestamp: n * 10, txHash: `0x${n}`, ...o });
+  const trades = reconstructTrades("0xa", [
+    step(1, { kind: "OPEN", sizeAfter: 1n, entryPriceAfter: 100n }),
+    step(2, { kind: "INCREASE", sizeBefore: 1n, sizeAfter: 3n, entryPriceAfter: 120n }),
+    step(3, {
+      kind: "REDUCE",
+      sizeBefore: 3n,
+      sizeAfter: 2n,
+      closedSize: 1n,
+      exitPrice: 130n,
+      realizedPnl: 10n,
+    }),
+    // Adding after a reduction moves the on-chain average, but the trade keeps its entry.
+    step(4, { kind: "INCREASE", sizeBefore: 2n, sizeAfter: 4n, entryPriceAfter: 125n }),
+    step(5, {
+      kind: "FLIP",
+      sizeBefore: 4n,
+      sizeAfter: -2n,
+      closedSize: 4n,
+      exitPrice: 110n,
+      entryPriceAfter: 110n,
+      realizedPnl: -40n,
+    }),
+    step(6, {
+      kind: "CLOSE",
+      sizeBefore: -2n,
+      sizeAfter: 0n,
+      closedSize: 2n,
+      exitPrice: 105n,
+      realizedPnl: 10n,
+    }),
+  ]);
+  expect(trades).toHaveLength(2);
+  expect(trades[0]).toMatchObject({
+    side: "long",
+    openedAt: 10,
+    closedAt: 50,
+    entryPrice: 120n,
+    maxSize: 4n,
+    closedSize: 5n,
+    realizedPnl: -30n,
+    // (1 × 130 + 4 × 110) / 5
+    exitVwap: 114n,
+    txHashes: ["0x1", "0x2", "0x3", "0x4", "0x5"],
+    partialHistory: false,
+  });
+  expect(trades[1]).toMatchObject({
+    side: "short",
+    openedAt: 50,
+    closedAt: 60,
+    entryPrice: 110n,
+    maxSize: 2n,
+    closedSize: 2n,
+    realizedPnl: 10n,
+    exitVwap: 105n,
+    txHashes: ["0x5", "0x6"],
+    partialHistory: false,
+  });
+});

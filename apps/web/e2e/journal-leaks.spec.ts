@@ -9,6 +9,7 @@ test("journal shows liquidated trade with explorer link and filters by exit", as
   await expect(page.getByTestId("trade-card")).toHaveCount(2);
   const card = page.getByTestId("trade-card").first();
   await expect(card).toContainText("Liquidated");
+  await expect(card).toContainText(/Max size \d/);
   await expect(card.getByRole("link", { name: "View tx" })).toHaveAttribute(
     "href",
     /explorer\.testnet\.somnia\.network\/tokyo\/tx\/0x/,

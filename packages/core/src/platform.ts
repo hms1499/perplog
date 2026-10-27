@@ -1,4 +1,5 @@
 import { isAutomatedCohort } from "./cohort";
+import { isStopLossFor } from "./coverage";
 import type { Address, PositionChange, StopOrderRecord } from "./types";
 
 const STOP_WINDOW_BEFORE_SEC = 60;
@@ -14,14 +15,16 @@ export interface NoStopStats {
 const pct = (n: number, total: number) => (total === 0 ? 0 : Math.round((100 * n) / total));
 
 /**
- * Share of new positions that got a stop within −60s..+600s of opening,
- * excluding the automated cohort (spec §1, E1).
+ * Share of new positions that got a stop-loss within −60s..+600s of opening,
+ * excluding the automated cohort (spec §1, E1). Positions opened less than
+ * 600s before `nowSec` are left out, since their window has not closed yet.
  */
 export function computeNoStopStats(
   changes: PositionChange[],
   stops: StopOrderRecord[],
   accountOf: (c: PositionChange) => Address,
   ownerOf: (s: StopOrderRecord) => Address,
+  nowSec = Number.POSITIVE_INFINITY,
 ): NoStopStats {
   const perAccount = new Map<Address, { count: number; pnl: bigint }>();
   for (const c of changes) {
@@ -35,17 +38,25 @@ export function computeNoStopStats(
     const agg = perAccount.get(a);
     return agg !== undefined && !isAutomatedCohort(agg.count, agg.pnl);
   };
-  const stopTimes = new Map<string, number[]>();
+  const stopsByKey = new Map<string, StopOrderRecord[]>();
   for (const s of stops) {
     const key = `${ownerOf(s)}:${s.pool}`;
-    stopTimes.set(key, [...(stopTimes.get(key) ?? []), s.createdAt]);
+    const list = stopsByKey.get(key);
+    if (list) list.push(s);
+    else stopsByKey.set(key, [s]);
   }
-  const opens = changes.filter((c) => c.kind === "OPEN" && real(accountOf(c)));
-  const withStop = opens.filter((c) =>
-    (stopTimes.get(`${accountOf(c)}:${c.pool}`) ?? []).some(
-      (t) => t >= c.timestamp - STOP_WINDOW_BEFORE_SEC && t <= c.timestamp + STOP_WINDOW_AFTER_SEC,
-    ),
-  ).length;
+  const opens = changes.filter(
+    (c) => c.kind === "OPEN" && c.timestamp <= nowSec - STOP_WINDOW_AFTER_SEC && real(accountOf(c)),
+  );
+  const withStop = opens.filter((c) => {
+    const side = c.sizeAfter < 0n ? "short" : "long";
+    return (stopsByKey.get(`${accountOf(c)}:${c.pool}`) ?? []).some(
+      (s) =>
+        isStopLossFor(side, s) &&
+        s.createdAt >= c.timestamp - STOP_WINDOW_BEFORE_SEC &&
+        s.createdAt <= c.timestamp + STOP_WINDOW_AFTER_SEC,
+    );
+  }).length;
   return {
     newPositions: opens.length,
     accounts: new Set(opens.map(accountOf)).size,

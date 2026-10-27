@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   createReadClient,
@@ -8,7 +8,7 @@ import {
   getOpenPositions,
   HIDEKI,
 } from "@perplog/chain";
-import { type AccountFixture, type Address, readFixture } from "@perplog/core";
+import { type AccountFixture, type Address, type MarketInfo, readFixture } from "@perplog/core";
 import { type AccountServiceDeps, createAccountService } from "./account-service";
 
 function liveDeps(): AccountServiceDeps {
@@ -34,26 +34,34 @@ function liveDeps(): AccountServiceDeps {
 
 /** Serves captured fixtures instead of the network (demos and deterministic e2e tests). */
 function fixtureDeps(dir: string): AccountServiceDeps {
+  // Only hits are kept, so arbitrary addresses cannot grow the map.
+  const loaded = new Map<Address, AccountFixture>();
   const load = (account: Address): AccountFixture | null => {
+    const hit = loaded.get(account);
+    if (hit) return hit;
     try {
-      return readFixture(readFileSync(join(dir, `${account}.json`), "utf8"));
+      const fixture = readFixture(readFileSync(join(dir, `${account}.json`), "utf8"));
+      loaded.set(account, fixture);
+      return fixture;
     } catch {
       return null;
     }
   };
-  let lastAsOf = Math.floor(Date.now() / 1000);
+  const wallClock = () => Math.floor(Date.now() / 1000);
   return {
     fetchMarkets: async () => {
-      const any = readFileSync(join(dir, "0x395225eab84c1b9304d42cb647238dcc90003951.json"), "utf8");
-      return readFixture(any).markets;
+      // Union of every fixture's market list, so any captured account resolves its pools.
+      const markets = new Map<Address, MarketInfo>();
+      for (const file of readdirSync(dir).filter((f) => f.endsWith(".json"))) {
+        for (const m of readFixture(readFileSync(join(dir, file), "utf8")).markets) markets.set(m.pool, m);
+      }
+      return [...markets.values()];
     },
     fetchHistory: async (account) => {
-      const f = load(account);
-      if (f) lastAsOf = f.asOfTimestamp;
       return (
-        f?.history ?? {
+        load(account)?.history ?? {
           account,
-          asOfTimestamp: lastAsOf,
+          asOfTimestamp: wallClock(),
           truncated: false,
           changes: [],
           funding: [],
@@ -70,7 +78,8 @@ function fixtureDeps(dir: string): AccountServiceDeps {
       activePools: [],
     }),
     fetchOpenPositions: async (account) => load(account)?.openPositions ?? [],
-    now: () => lastAsOf,
+    // Ranges are measured from each fixture's capture time; the cache runs on the wall clock.
+    now: (account) => (account && load(account)?.asOfTimestamp) || wallClock(),
   };
 }
 

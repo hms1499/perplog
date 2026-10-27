@@ -1,28 +1,35 @@
 import {
   type Address,
   absBig,
+  FALLBACK_DISPLAY_DECIMALS,
   type FundingPayment,
   type MarketInfo,
   type OpenPosition,
+  PRICE_DECIMALS,
   ratioBps,
   type StopOrderRecord,
   shortAddress,
+  stepDecimals,
   stopCoverageBps,
 } from "@perplog/core";
 import { perpMarkForPnl, SomniaMarkets, type SomniaMarketsClient } from "@somnia-chain/markets-sdk";
 import { HIDEKI, type Network } from "./networks";
 
-let readClient: SomniaMarketsClient | undefined;
+const readClients = new Map<Network, SomniaMarketsClient>();
 
-/** Read-only SDK client (no signer), shared per process. */
+/** Read-only SDK client (no signer), shared per process and network. */
 export function createReadClient(network: Network = HIDEKI): SomniaMarketsClient {
-  readClient ??= new SomniaMarkets({
-    chain: network.chain,
-    wsRpcUrl: network.rpcWs,
-    indexerUrl: network.indexer,
-    addresses: network.sdkAddresses,
-  }).client;
-  return readClient;
+  let client = readClients.get(network);
+  if (!client) {
+    client = new SomniaMarkets({
+      chain: network.chain,
+      wsRpcUrl: network.rpcWs,
+      indexerUrl: network.indexer,
+      addresses: network.sdkAddresses,
+    }).client;
+    readClients.set(network, client);
+  }
+  return client;
 }
 
 export interface CollateralRead {
@@ -79,6 +86,8 @@ export async function getOpenPositions(args: {
       side,
       sizeRaw: position.size,
       baseDecimals,
+      sizeDecimals: market ? stepDecimals(market.lotSize, baseDecimals) : FALLBACK_DISPLAY_DECIMALS,
+      priceDecimals: market ? stepDecimals(market.tickSize, PRICE_DECIMALS) : FALLBACK_DISPLAY_DECIMALS,
       entryPrice: position.avgEntryPrice,
       markPrice: mark.price,
       markFromIndex: mark.fromIndex,

@@ -1,4 +1,4 @@
-import { type EnrichedTrade, type ExitType, formatAmount, formatUsd } from "@perplog/core";
+import { type EnrichedTrade, type ExitType, formatAmount, formatUsd, PRICE_DECIMALS } from "@perplog/core";
 import type { Wire } from "@/lib/api";
 import { formatTime, signClass } from "@/lib/format";
 
@@ -32,7 +32,10 @@ function Money({ label, raw, strong = false }: { label: string; raw: bigint; str
 }
 
 export function TradeCard({ trade }: { trade: Wire<EnrichedTrade> }) {
-  const price = (raw: string | null) => (raw === null ? "—" : formatAmount(BigInt(raw), 18, 4));
+  const price = (raw: string | null) =>
+    raw === null ? "—" : formatAmount(BigInt(raw), PRICE_DECIMALS, trade.priceDecimals);
+  // A trade whose history starts mid-position may not know its entry price.
+  const entry = trade.partialHistory && trade.entryPrice === "0" ? "—" : price(trade.entryPrice);
   return (
     <article
       data-testid="trade-card"
@@ -54,13 +57,24 @@ export function TradeCard({ trade }: { trade: Wire<EnrichedTrade> }) {
               No stop-loss
             </span>
           )}
+          {trade.partialHistory && (
+            <span
+              className="rounded-sm border border-rule px-1.5 py-0.5 text-muted text-xs"
+              title="The indexed history starts after this position was opened."
+            >
+              History starts mid-trade
+            </span>
+          )}
         </div>
         <p className="mt-1 text-muted text-sm">
           {formatTime(trade.openedAt)}
           {trade.closedAt !== null && ` to ${formatTime(trade.closedAt)}`}
         </p>
         <p className="mt-1 text-sm">
-          Entry {price(trade.entryPrice)} → exit {price(trade.exitVwap)}
+          Entry {entry} → exit {price(trade.exitVwap)}
+          <span className="ml-3 text-muted">
+            Max size {formatAmount(BigInt(trade.maxSize), trade.baseDecimals, trade.sizeDecimals)}
+          </span>
           <a
             href={`${EXPLORER_TX}${trade.lastChange.txHash}`}
             target="_blank"

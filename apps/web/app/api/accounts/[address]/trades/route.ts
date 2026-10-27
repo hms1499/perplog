@@ -16,6 +16,7 @@ const query = z.object({
     .optional(),
   exit: z.enum(["LIQUIDATED", "NATIVE_STOP", "PERPLOG_STOP", "MANUAL", "OPEN"]).optional(),
   side: z.enum(["long", "short"]).optional(),
+  leak: z.enum(["LIQUIDATION_COST", "NO_STOP_LOSSES", "FUNDING_DRAG", "SIZE_UP_AFTER_LOSS"]).optional(),
   cursor: z.string().regex(/^\d+$/).optional(),
   limit: z.coerce.number().int().min(1).max(200).optional(),
 });

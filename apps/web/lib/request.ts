@@ -7,8 +7,9 @@ export const rangeSchema = z.enum(["7d", "30d", "all"]).default("7d");
 export type Parsed<T> = { ok: true; value: T } | { ok: false; response: Response };
 
 export async function parseAddress(params: Promise<{ address: string }>): Promise<Parsed<Address>> {
+  // Next already decodes route params; decoding again throws on a literal "%".
   const { address } = await params;
-  const normalized = normalizeAddress(decodeURIComponent(address));
+  const normalized = normalizeAddress(address);
   return normalized
     ? { ok: true, value: normalized }
     : { ok: false, response: json({ error: "invalid_address" }, { status: 400 }) };

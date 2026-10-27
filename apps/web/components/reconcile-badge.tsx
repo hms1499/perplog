@@ -4,12 +4,17 @@ import type { Wire } from "@/lib/api";
 export function ReconcileBadge({
   reconcile,
   truncated,
+  chainReadFailed,
 }: {
   reconcile: Wire<ReconcileResult> | null;
   truncated: boolean;
+  chainReadFailed: boolean;
 }) {
-  if (truncated || !reconcile) {
+  if (truncated) {
     return <span className="text-muted text-sm">Not reconciled: history truncated</span>;
+  }
+  if (chainReadFailed || !reconcile) {
+    return <span className="text-muted text-sm">Not reconciled: chain read failed</span>;
   }
   if (reconcile.ok) {
     return (

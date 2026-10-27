@@ -1,0 +1,177 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`attribution and enrichment of 0x0a606f1daac74a3c0265b94057822533521664cf.json are unchanged 1`] = `
+{
+  "digest": "8c5f4036699088d2",
+  "trades": 29,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x0d863e380c7793a29267699f0c594516f9652b29.json are unchanged 1`] = `
+{
+  "digest": "c023ca16a936fc96",
+  "trades": 22,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x1d78dee0329baba38bc11d42e7e5543854e6207d.json are unchanged 1`] = `
+{
+  "digest": "a1e48e1806a4bec2",
+  "trades": 1,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x5ce801abdca4ddfea9be1735b60b394e9ebe4872.json are unchanged 1`] = `
+{
+  "digest": "5781abf5ee2f3df5",
+  "trades": 1,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x6aad29cca6ed7e1a5e8181e5dcbcbf8a58df0f75.json are unchanged 1`] = `
+{
+  "digest": "b673cae71f129137",
+  "trades": 73,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x6e8eb6c75b2c146b8290ffaec79f07ba2cce907c.json are unchanged 1`] = `
+{
+  "digest": "83472de56fd0be97",
+  "trades": 54,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x7e8ff1ae7caebe3d44d9305fdb91b2168a876172.json are unchanged 1`] = `
+{
+  "digest": "eecb0f1acb06d1f5",
+  "trades": 10,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x31b0480ff2ec5d0a4d9480a9f8c8802897c08281.json are unchanged 1`] = `
+{
+  "digest": "9bc0a953995ca7e9",
+  "trades": 19,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x75ba27464afe2c3c1a904ee9d6e5d5ccb3e52e8f.json are unchanged 1`] = `
+{
+  "digest": "60abca28a4c620f5",
+  "trades": 76,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x82b8c30420254b65c3049e327705882f94bf75ea.json are unchanged 1`] = `
+{
+  "digest": "c901511a0e21fbeb",
+  "trades": 1,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x88f440eea83f9a7a297886d8d0bb4eb8ba2717b2.json are unchanged 1`] = `
+{
+  "digest": "e1f32f59dc55e2af",
+  "trades": 72,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0x395225eab84c1b9304d42cb647238dcc90003951.json are unchanged 1`] = `
+{
+  "digest": "f5c2442f3696e42c",
+  "trades": 39,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0xa18c1072103a1c4b7a32fd74b52617b3658b2678.json are unchanged 1`] = `
+{
+  "digest": "5165eb695f890da8",
+  "trades": 116,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0xb829fd794dd669d32125bfeb1d9fd266831a3644.json are unchanged 1`] = `
+{
+  "digest": "e63801eaf66bb2b6",
+  "trades": 35,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0xc985242918864200f42914bba676fdd95b75ff16.json are unchanged 1`] = `
+{
+  "digest": "e18f47a68e521f9e",
+  "trades": 1,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0xca165304e15e46a8bac4ef35a1aba6820a69ed56.json are unchanged 1`] = `
+{
+  "digest": "9fb784c2a7a40c84",
+  "trades": 136,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0xcc7c140f296d25bfb068b1ade94d1fa812140bb8.json are unchanged 1`] = `
+{
+  "digest": "0470ef66a86cacec",
+  "trades": 64,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0xd5ce8a6ca2da555219e59f7a7ed23e5c407ca184.json are unchanged 1`] = `
+{
+  "digest": "a01e36758d92e7ff",
+  "trades": 81,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0xdb7e5a8d618ecaef5267954c05a81a143cc842ac.json are unchanged 1`] = `
+{
+  "digest": "f1da8877f1178b45",
+  "trades": 59,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0xe4695e02a6ffc85ddd48858fd3325f2a670b1a29.json are unchanged 1`] = `
+{
+  "digest": "5a1d1b6570519080",
+  "trades": 1,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0xeb129b226101fb70c7c1a6e8d1f6ffe3ddf1da49.json are unchanged 1`] = `
+{
+  "digest": "9acf0f708f0da5b1",
+  "trades": 73,
+  "unattributedFunding": "0",
+}
+`;
+
+exports[`attribution and enrichment of 0xf1a114c1604a272ec6a1da07803fc68a786480e7.json are unchanged 1`] = `
+{
+  "digest": "c72403d2e50fc414",
+  "trades": 13,
+  "unattributedFunding": "0",
+}
+`;

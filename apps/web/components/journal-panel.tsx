@@ -1,6 +1,7 @@
 "use client";
 
 import type { Range } from "@perplog/core";
+import Link from "next/link";
 import { useId, useState } from "react";
 import { useAllTrades, useTradePages } from "@/lib/use-trades";
 import { EmptyState } from "./empty-state";
@@ -25,7 +26,7 @@ export function JournalPanel({ address, range }: { address: string; range: Range
     (a, b) => a[1].localeCompare(b[1]),
   );
 
-  if (pages.error) return <ErrorState onRetry={() => pages.refetch()} />;
+  if (pages.error) return <ErrorState error={pages.error} onRetry={() => pages.refetch()} />;
   const trades = pages.data?.pages.flatMap((p) => p.trades) ?? [];
   const noFilters = !market && !exit && !side;
 
@@ -82,10 +83,26 @@ export function JournalPanel({ address, range }: { address: string; range: Range
       {pages.isPending ? (
         <p className="py-10 text-muted">Rebuilding your trades…</p>
       ) : trades.length === 0 ? (
-        noFilters ? (
+        !noFilters ? (
+          <p className="py-10 text-muted">No trades match these filters.</p>
+        ) : pages.data?.pages[0]?.empty ? (
           <EmptyState />
         ) : (
-          <p className="py-10 text-muted">No trades match these filters.</p>
+          <p className="py-10 text-muted">
+            No closed trades in this period.
+            {range !== "all" && (
+              <>
+                {" "}
+                <Link
+                  href={`/a/${address}?tab=journal&range=all`}
+                  scroll={false}
+                  className="text-ink underline underline-offset-2"
+                >
+                  See all trades
+                </Link>
+              </>
+            )}
+          </p>
         )
       ) : (
         <>

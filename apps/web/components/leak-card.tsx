@@ -1,10 +1,11 @@
 "use client";
 
-import { formatUsd, type Leak } from "@perplog/core";
+import { formatUsd, type Leak, type Range } from "@perplog/core";
 import Link from "next/link";
 import { useState } from "react";
 import type { Wire } from "@/lib/api";
-import type { TradePage } from "@/lib/use-trades";
+import { useTradePages } from "@/lib/use-trades";
+import { ErrorState } from "./error-state";
 import { TradeCard } from "./trade-card";
 
 const WHY: Record<Leak["id"], string> = {
@@ -14,18 +15,35 @@ const WHY: Record<Leak["id"], string> = {
   SIZE_UP_AFTER_LOSS: "Losses on oversized trades opened within 30 minutes of a losing trade.",
 };
 
-export function LeakCard({
-  leak,
-  address,
-  trades,
-}: {
-  leak: Wire<Leak>;
-  address: string;
-  trades: TradePage["trades"];
-}) {
+/** Fetched page by page from the server, so heavy accounts still show every trade. */
+function Evidence({ address, range, leak }: { address: string; range: Range; leak: Leak["id"] }) {
+  const pages = useTradePages(address, { range, leak });
+  if (pages.isPending) return <p className="mt-4 text-muted text-sm">Loading trades…</p>;
+  if (pages.error) return <ErrorState error={pages.error} onRetry={() => pages.refetch()} />;
+  return (
+    <div className="mt-4 border-rule border-l-2 pl-4">
+      {pages.data.pages
+        .flatMap((p) => p.trades)
+        .map((t) => (
+          <TradeCard key={t.id} trade={t} />
+        ))}
+      {pages.hasNextPage && (
+        <button
+          type="button"
+          onClick={() => pages.fetchNextPage()}
+          disabled={pages.isFetchingNextPage}
+          className="mt-4 rounded-md border border-ink px-3 py-1.5 font-semibold text-sm"
+        >
+          {pages.isFetchingNextPage ? "Loading…" : "Load more"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function LeakCard({ leak, address, range }: { leak: Wire<Leak>; address: string; range: Range }) {
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState(false);
-  const evidence = trades.filter((t) => leak.evidenceTradeIds.includes(t.id));
   const positionsHref = `/a/${address}?tab=positions${leak.fix === "SHOW_FUNDING" ? "" : "&note=protect"}`;
 
   return (
@@ -71,13 +89,7 @@ export function LeakCard({
           Risk-sized entries (Plan & Place) are coming in the next release.
         </p>
       )}
-      {open && (
-        <div className="mt-4 border-rule border-l-2 pl-4">
-          {evidence.map((t) => (
-            <TradeCard key={t.id} trade={t} />
-          ))}
-        </div>
-      )}
+      {open && <Evidence address={address} range={range} leak={leak.id} />}
     </article>
   );
 }

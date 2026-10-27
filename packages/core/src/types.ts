@@ -145,6 +145,10 @@ export interface EnrichedTrade extends CostedTrade {
   hadStop: boolean;
   maxNotional: bigint;
   symbol: string;
+  /** Display precision from the market (lot and tick); defaults when the market is unknown. */
+  baseDecimals: number;
+  sizeDecimals: number;
+  priceDecimals: number;
 }
 
 export interface ReconcileResult {
@@ -168,6 +172,12 @@ export interface Leak {
 
 export type Range = "7d" | "30d" | "all";
 
+/** Cumulative net PnL after the event at `at` (unix seconds). */
+export interface EquityPoint {
+  at: number;
+  netRaw: bigint;
+}
+
 export interface HealthSummary {
   range: Range;
   tradeCount: number;
@@ -180,6 +190,8 @@ export interface HealthSummary {
   winRatePct: number;
   topLeak: Leak | null;
   reconcile: ReconcileResult | null;
+  /** Ends at `netPnlRaw`; thinned out to at most `EQUITY_MAX_POINTS`. */
+  equity: EquityPoint[];
 }
 
 export interface OpenPosition {
@@ -188,6 +200,8 @@ export interface OpenPosition {
   side: Side;
   sizeRaw: bigint;
   baseDecimals: number;
+  sizeDecimals: number;
+  priceDecimals: number;
   entryPrice: bigint;
   markPrice: bigint;
   markFromIndex: boolean;

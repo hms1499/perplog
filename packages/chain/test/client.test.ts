@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { gql, IndexerError, paginateDesc } from "../src/indexer/client";
+import { FUNDING_FIELDS, fundingRow } from "../src/indexer/schemas";
 
 const respond = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
 
@@ -24,6 +25,47 @@ test("gql throws IndexerError when the response does not match the schema", asyn
   const fetchImpl = vi.fn(async () => respond({ data: { n: "not a number" } }));
   await expect(
     gql({ url: "u", queryName: "Q", query: "{x}", schema: z.object({ n: z.number() }), fetchImpl }),
+  ).rejects.toBeInstanceOf(IndexerError);
+});
+
+test("gql gives up on a stalled indexer with IndexerError", { timeout: 2000 }, async () => {
+  // Accepts the request and never answers, unless the caller aborts.
+  const fetchImpl = vi.fn(
+    (_url: string | URL | Request, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener("abort", () => reject(init.signal?.reason));
+      }),
+  );
+  await expect(
+    gql({ url: "u", queryName: "Q", query: "{x}", schema: z.any(), fetchImpl, timeoutMs: 20 }),
+  ).rejects.toBeInstanceOf(IndexerError);
+});
+
+test("gql throws IndexerError when a 200 response is not JSON", async () => {
+  const fetchImpl = vi.fn(async () => new Response("<html>gateway</html>", { status: 200 }));
+  await expect(
+    gql({ url: "u", queryName: "Q", query: "{x}", schema: z.any(), fetchImpl }),
+  ).rejects.toBeInstanceOf(IndexerError);
+});
+
+test("paginateDesc throws IndexerError when a bigint field is not an integer", async () => {
+  const fetchImpl = vi.fn(async () =>
+    respond({
+      data: { FundingPayment: [{ id: "f1", pool: "0xA", amount: "1.5", timestamp: "10", txHash: "0xB" }] },
+    }),
+  );
+  await expect(
+    paginateDesc({
+      url: "u",
+      queryName: "Q",
+      table: "FundingPayment",
+      fields: FUNDING_FIELDS,
+      where: "{}",
+      orderField: "timestamp",
+      rowSchema: fundingRow,
+      maxRows: 10,
+      fetchImpl,
+    }),
   ).rejects.toBeInstanceOf(IndexerError);
 });
 
@@ -79,4 +121,29 @@ test("paginateDesc truncates at maxRows", async () => {
   expect(result.rows).toHaveLength(1500);
   expect(result.truncated).toBe(true);
   expect(fetchImpl).toHaveBeenCalledTimes(2);
+});
+
+test("paginateDesc does not flag truncation when the history is exactly maxRows long", async () => {
+  // A fake indexer holding exactly 2000 rows that honours the query's limit.
+  const all = rows(2000, 2000);
+  let served = 0;
+  const fetchImpl = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+    const limit = Number(/limit: (\d+)/.exec(String(init?.body))?.[1]);
+    const page = all.slice(served, served + limit);
+    served += page.length;
+    return respond({ data: { T: page } });
+  });
+  const result = await paginateDesc({
+    url: "u",
+    queryName: "Q",
+    table: "T",
+    fields: "id timestamp",
+    where: "{}",
+    orderField: "timestamp",
+    rowSchema: row,
+    maxRows: 2000,
+    fetchImpl,
+  });
+  expect(result.rows).toHaveLength(2000);
+  expect(result.truncated).toBe(false);
 });
