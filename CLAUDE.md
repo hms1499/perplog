@@ -14,6 +14,8 @@ implementation plans live in `docs/superpowers/plans/`.
   Outside CI it reuses a server already on port 3200, so stop a stale one first.
 - DB tests need no Postgres: `createTestDb()` from `@perplog/db/testing` runs PGlite with the real migrations.
 - New migration after editing `packages/db/src/schema.ts`: `cd packages/db && pnpm exec drizzle-kit generate`.
+- Local secrets live in `apps/worker/.env` (loaded by the worker's `start` script; real env vars win) and
+  `apps/web/.env.local`. Never print, commit or echo their values; `.dockerignore` must keep `**/.env*` out of images.
 - Lint is Biome (`biome check .`, line width 110, double quotes, organized imports); Markdown and `docs/` are excluded.
 
 ## Invariants (break these and the product is unsafe)

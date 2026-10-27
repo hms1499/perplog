@@ -3,5 +3,6 @@ node_modules
 .git
 .next
 .env*
+**/.env*
 .superpowers
 coverage

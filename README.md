@@ -126,20 +126,28 @@ PERPLOG_FIXTURE_DIR=../../packages/core/test/fixtures pnpm dev
 
 ## Run the worker
 
-Protection needs Postgres and the worker. Without `DATABASE_URL` the web app stays read-only. Every variable is
-listed in [`apps/worker/.env.example`](apps/worker/.env.example) and [`apps/web/.env.example`](apps/web/.env.example);
-the processes read the real environment, not these files.
+Protection needs Postgres and the worker. Without `DATABASE_URL` the web app stays read-only.
+
+Keep secrets in env files, never on the command line:
+
+```bash
+cp apps/worker/.env.example apps/worker/.env && chmod 600 apps/worker/.env
+echo "KEY_ENCRYPTION_KEY=$(openssl rand -base64 32)" >> apps/worker/.env   # then set DATABASE_URL, TREASURY_PRIVATE_KEY
+cp apps/web/.env.example apps/web/.env.local                             # DATABASE_URL only
+```
+
+The worker's `start` script loads `apps/worker/.env` when it exists; variables already set in the environment win
+over the file, so hosted deploys set them on the dashboard instead. Next.js loads `apps/web/.env.local`. Both files
+are gitignored, and `.dockerignore` keeps them out of the worker image.
 
 Any Postgres 16 works: a local Docker container or a Neon database (see [Neon](#neon) for which URL each
 process takes).
 
 ```bash
-docker run -d --name perplog-pg -e POSTGRES_PASSWORD=pg -p 5433:5432 postgres:16
-export KEY_ENCRYPTION_KEY=$(openssl rand -base64 32)
-DATABASE_URL=postgres://postgres:pg@localhost:5433/postgres NETWORK=hideki \
-  pnpm --filter @perplog/worker start
+docker run -d --name perplog-pg -e POSTGRES_PASSWORD=pg -p 5433:5432 postgres:16   # or use Neon, see below
+pnpm --filter @perplog/worker start      # reads apps/worker/.env
 # in another terminal:
-DATABASE_URL=postgres://postgres:pg@localhost:5433/postgres pnpm --filter @perplog/web dev
+pnpm --filter @perplog/web dev           # reads apps/web/.env.local
 ```
 
 The worker logs `signer lock acquired` and `migrations applied`, then starts its loops. A second instance logs
@@ -168,12 +176,10 @@ Keep `KEY_ENCRYPTION_KEY` safe: every bot key is encrypted with it, and a new on
 - The worker's 10 s lock heartbeat keeps the compute awake: a running worker uses compute hours the whole time.
 
 ```bash
-# worker
-DATABASE_URL='postgresql://USER:PASS@ep-xxx.REGION.aws.neon.tech/neondb?sslmode=require' \
-  KEY_ENCRYPTION_KEY=... NETWORK=hideki pnpm --filter @perplog/worker start
-# web
-DATABASE_URL='postgresql://USER:PASS@ep-xxx-pooler.REGION.aws.neon.tech/neondb?sslmode=require' \
-  pnpm --filter @perplog/web dev
+# apps/worker/.env
+DATABASE_URL=postgresql://USER:PASS@ep-xxx.REGION.aws.neon.tech/neondb?sslmode=require
+# apps/web/.env.local
+DATABASE_URL=postgresql://USER:PASS@ep-xxx-pooler.REGION.aws.neon.tech/neondb?sslmode=require
 ```
 
 ## Deploy
