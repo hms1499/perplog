@@ -15,11 +15,13 @@ import {
   type LeakId,
   type MarketInfo,
   type OpenPosition,
+  type QtyMode,
   type Range,
   type ReconcileResult,
   reconcile,
   reconstructTrades,
   type Side,
+  type StopStatus,
 } from "@perplog/core";
 import { LRUCache } from "lru-cache";
 
@@ -30,6 +32,19 @@ export class ChainUnavailableError extends Error {
     super(`chain read failed: ${(cause as Error)?.message ?? String(cause)}`, { cause });
   }
 }
+
+/** A PerpLog (bot-held) stop as the Positions API and the stops routes show it. */
+export interface StopView {
+  id: string;
+  pool: Address;
+  positionSide: Side;
+  triggerPrice: bigint;
+  qtyMode: QtyMode;
+  qtyRaw: bigint | null;
+  status: StopStatus;
+}
+
+export type PositionView = OpenPosition & { perplogStop: StopView | null };
 
 export interface AccountData {
   account: Address;
@@ -50,6 +65,10 @@ export interface AccountServiceDeps {
   fetchHistory(account: Address, perpPools: ReadonlySet<Address>): Promise<AccountHistory>;
   fetchCollateral(account: Address): Promise<{ collateralRaw: bigint; activePools: Address[] }>;
   fetchOpenPositions(account: Address, data: AccountData): Promise<OpenPosition[]>;
+  /** The account's live PerpLog stops (armed, paused, triggered, executing). Absent without a database. */
+  fetchPerplogStops?(account: Address): Promise<StopView[]>;
+  /** Tx hashes of the bot's stop-close orders, so exits through them classify as PERPLOG_STOP. */
+  fetchPerplogStopTxs?(account: Address): Promise<Set<string>>;
   /**
    * Unix seconds. With an account, the "now" its ranges are measured from:
    * fixture mode pins each account to its own capture time.
@@ -88,6 +107,26 @@ interface Entry<T> {
   expiresAt: number;
   /** Rows held once loaded; 1 while pending. */
   rows?: number;
+}
+
+/** Armed, triggered and executing stops protect the position; a paused one (grant gone) does not. */
+const COVERING: readonly StopStatus[] = ["armed", "triggered", "executing"];
+
+function withPerplogStop(position: OpenPosition, stops: StopView[]): PositionView {
+  const mine = stops.filter((s) => s.pool === position.pool && s.positionSide === position.side);
+  // At most one armed/paused stop exists per pool; a triggered or executing one may sit beside it.
+  const stop =
+    mine.find((s) => s.status === "armed" || s.status === "paused") ??
+    mine.find((s) => s.status === "triggered" || s.status === "executing") ??
+    null;
+  if (!stop) return { ...position, perplogStop: null };
+  const size = position.sizeRaw < 0n ? -position.sizeRaw : position.sizeRaw;
+  let perplog = 0n;
+  if (COVERING.includes(stop.status)) {
+    perplog = stop.qtyMode === "entire" || size === 0n ? 10_000n : ((stop.qtyRaw ?? 0n) * 10_000n) / size;
+  }
+  const coverage = Math.min(10_000, position.stopCoverageBps + Number(perplog > 10_000n ? 10_000n : perplog));
+  return { ...position, perplogStop: stop, stopCoverageBps: coverage };
 }
 
 const rowsOf = (data: AccountData): number => {
@@ -134,11 +173,16 @@ export function createAccountService(
     const marketMap = new Map(marketList.map((m) => [m.pool, m]));
     // Collateral only feeds the reconcile badge and the positions read, so an RPC
     // failure must not take the indexer-backed report down with it.
-    const [history, collateral] = await Promise.all([
+    const [history, collateral, perplogStopTxs] = await Promise.all([
       deps.fetchHistory(account, new Set(marketMap.keys())),
       deps.fetchCollateral(account).catch((error: unknown) => {
         console.error(error);
         return null;
+      }),
+      // Only the exit label depends on this, so a database hiccup degrades to MANUAL rather than failing.
+      (deps.fetchPerplogStopTxs?.(account) ?? Promise.resolve(new Set<string>())).catch((error: unknown) => {
+        console.error(error);
+        return new Set<string>();
       }),
     ]);
     const attribution = attributeCosts(
@@ -146,7 +190,7 @@ export function createAccountService(
       history.funding,
       history.fees,
     );
-    const trades = enrichTrades(attribution, history, marketMap, history.asOfTimestamp);
+    const trades = enrichTrades(attribution, history, marketMap, history.asOfTimestamp, perplogStopTxs);
     return {
       account,
       markets: marketMap,
@@ -239,15 +283,19 @@ export function createAccountService(
     return leaksOf(await getAccountData(account), range);
   }
 
-  async function getPositions(account: Address): Promise<OpenPosition[]> {
+  async function getPositions(account: Address): Promise<PositionView[]> {
     const data = await getAccountData(account);
     // Without the collateral read there are no active pools, and "no open positions" would be a lie.
     if (data.collateralRaw === null) throw new ChainUnavailableError("collateral read failed");
+    let positions: OpenPosition[];
     try {
-      return await deps.fetchOpenPositions(account, data);
+      positions = await deps.fetchOpenPositions(account, data);
     } catch (error) {
       throw new ChainUnavailableError(error);
     }
+    // Not cached: arming or cancelling a stop must show on the next read.
+    const stops = (await deps.fetchPerplogStops?.(account)) ?? [];
+    return positions.map((position) => withPerplogStop(position, stops));
   }
 
   return { getAccountData, getHealth, getTrades, getLeaks, getPositions };

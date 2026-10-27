@@ -33,10 +33,18 @@ export const chain = {
       throw new ChainUnavailableError(error);
     }
   },
-  readPositionSize(account: Address, pool: Address): Promise<bigint> {
-    return readPositionSize(createReadClient(HIDEKI), HIDEKI.marginBank, account, pool);
+  async readPositionSize(account: Address, pool: Address): Promise<bigint> {
+    try {
+      return await readPositionSize(createReadClient(HIDEKI), HIDEKI.marginBank, account, pool);
+    } catch (error) {
+      throw new ChainUnavailableError(error);
+    }
   },
-  readMark(pool: Address): Promise<{ price: bigint; fromIndex: boolean }> {
-    return readMark(createReadClient(HIDEKI), pool);
+  async readMark(pool: Address): Promise<{ price: bigint; fromIndex: boolean }> {
+    try {
+      return await readMark(createReadClient(HIDEKI), pool);
+    } catch (error) {
+      throw new ChainUnavailableError(error);
+    }
   },
 };

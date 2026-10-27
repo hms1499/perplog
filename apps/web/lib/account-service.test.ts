@@ -1,5 +1,10 @@
-import type { AccountHistory, Address, MarketInfo, PositionChange } from "@perplog/core";
-import { type AccountServiceDeps, ChainUnavailableError, createAccountService } from "./account-service";
+import type { AccountHistory, Address, MarketInfo, OpenPosition, PositionChange } from "@perplog/core";
+import {
+  type AccountServiceDeps,
+  ChainUnavailableError,
+  createAccountService,
+  type StopView,
+} from "./account-service";
 
 const ACCOUNT: Address = "0x00000000000000000000000000000000000000aa";
 const POOL: Address = "0x00000000000000000000000000000000000000e1";
@@ -257,4 +262,101 @@ test("ranges use the clock of the account asked about", async () => {
   expect((await service.getHealth(ACCOUNT, "7d")).tradeCount).toBe(1);
   expect((await service.getHealth(OTHER, "7d")).tradeCount).toBe(0);
   expect((await service.getTrades(OTHER, { range: "7d" })).trades).toHaveLength(0);
+});
+
+const position = (o: Partial<OpenPosition> = {}): OpenPosition => ({
+  pool: POOL,
+  symbol: "ETH",
+  side: "long",
+  sizeRaw: 20_000n,
+  baseDecimals: 18,
+  sizeDecimals: 4,
+  priceDecimals: 2,
+  entryPrice: 100n,
+  markPrice: 100n,
+  markFromIndex: false,
+  liquidationPrice: null,
+  liqDistanceBps: null,
+  unrealizedPnlRaw: 0n,
+  stopCoverageBps: 0,
+  fundingLast24hRaw: 0n,
+  ...o,
+});
+
+const stopView = (o: Partial<StopView> = {}): StopView => ({
+  id: "s1",
+  pool: POOL,
+  positionSide: "long",
+  triggerPrice: 90n,
+  qtyMode: "entire",
+  qtyRaw: null,
+  status: "armed",
+  ...o,
+});
+
+function positionDeps(pos: OpenPosition[], stops: StopView[] | undefined) {
+  const d = deps(emptyHistory({ changes: roundTrip(1, E18) }));
+  d.fetchOpenPositions = async () => pos;
+  if (stops) d.fetchPerplogStops = async () => stops;
+  return d;
+}
+
+test("positions without PerpLog stop deps carry a null stop and unchanged coverage", async () => {
+  const d = positionDeps([position({ stopCoverageBps: 4_000 })], undefined);
+  const [p] = await createAccountService(d).getPositions(ACCOUNT);
+  expect(p).toMatchObject({ perplogStop: null, stopCoverageBps: 4_000 });
+});
+
+test("positions carry the PerpLog stop and combined coverage", async () => {
+  const entire = stopView();
+  const [p] = await createAccountService(positionDeps([position()], [entire])).getPositions(ACCOUNT);
+  expect(p).toMatchObject({ perplogStop: entire, stopCoverageBps: 10_000 });
+
+  const half = stopView({ qtyMode: "fixed", qtyRaw: 10_000n });
+  const [q] = await createAccountService(
+    positionDeps([position({ stopCoverageBps: 3_000 })], [half]),
+  ).getPositions(ACCOUNT);
+  expect(q?.stopCoverageBps).toBe(8_000);
+
+  const [r] = await createAccountService(
+    positionDeps([position({ stopCoverageBps: 8_000 })], [half]),
+  ).getPositions(ACCOUNT);
+  expect(r?.stopCoverageBps).toBe(10_000);
+});
+
+test("a short position's coverage uses its absolute size", async () => {
+  const stop = stopView({ positionSide: "short", qtyMode: "fixed", qtyRaw: 5_000n });
+  const [p] = await createAccountService(
+    positionDeps([position({ side: "short", sizeRaw: -20_000n })], [stop]),
+  ).getPositions(ACCOUNT);
+  expect(p).toMatchObject({ perplogStop: stop, stopCoverageBps: 2_500 });
+});
+
+test("a stop on another pool or the opposite side is not attached; a paused stop is shown but not counted", async () => {
+  const other = stopView({ pool: "0x00000000000000000000000000000000000000e2" as Address });
+  const flipped = stopView({ positionSide: "short" });
+  const [p] = await createAccountService(positionDeps([position()], [other, flipped])).getPositions(ACCOUNT);
+  expect(p).toMatchObject({ perplogStop: null, stopCoverageBps: 0 });
+
+  const paused = stopView({ status: "paused" });
+  const [q] = await createAccountService(positionDeps([position()], [paused])).getPositions(ACCOUNT);
+  expect(q).toMatchObject({ perplogStop: paused, stopCoverageBps: 0 });
+});
+
+test("trades closed by a PerpLog stop_close tx classify as PERPLOG_STOP", async () => {
+  const d = deps(emptyHistory({ changes: [...roundTrip(1, E18), ...roundTrip(2, E18)] }));
+  d.fetchPerplogStopTxs = async () => new Set(["0xc1"]);
+  const { trades } = await createAccountService(d).getTrades(ACCOUNT, { range: "all" });
+  expect(trades.map((t) => t.exitType).sort()).toEqual(["MANUAL", "PERPLOG_STOP"]);
+});
+
+test("a failing stop-tx read degrades the classification instead of failing the report", async () => {
+  const d = deps(emptyHistory({ changes: roundTrip(1, E18) }));
+  d.fetchPerplogStopTxs = async () => {
+    throw new Error("db down");
+  };
+  const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+  const { trades } = await createAccountService(d).getTrades(ACCOUNT, { range: "all" });
+  spy.mockRestore();
+  expect(trades.map((t) => t.exitType)).toEqual(["MANUAL"]);
 });

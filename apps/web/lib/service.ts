@@ -8,11 +8,32 @@ import {
   getOpenPositions,
   HIDEKI,
 } from "@perplog/chain";
-import { type AccountFixture, type Address, type MarketInfo, readFixture } from "@perplog/core";
+import {
+  ACTIVE_STOP_STATUSES,
+  type AccountFixture,
+  type Address,
+  type MarketInfo,
+  readFixture,
+} from "@perplog/core";
+import { listAccountStops, stopCloseTxHashes } from "@perplog/db";
 import { type AccountServiceDeps, createAccountService } from "./account-service";
+import { getDb } from "./db";
+import { toStopView } from "./stops";
+
+/** PerpLog stop reads, present only when a database is configured. */
+function stopDeps(): Pick<AccountServiceDeps, "fetchPerplogStops" | "fetchPerplogStopTxs"> {
+  const db = getDb();
+  if (!db) return {};
+  return {
+    fetchPerplogStops: async (account) =>
+      (await listAccountStops(db, account, [...ACTIVE_STOP_STATUSES])).map(toStopView),
+    fetchPerplogStopTxs: (account) => stopCloseTxHashes(db, account),
+  };
+}
 
 function liveDeps(): AccountServiceDeps {
   return {
+    ...stopDeps(),
     fetchMarkets: () => fetchPerpMarkets(HIDEKI.indexer),
     fetchHistory: (account, perpPools) =>
       fetchAccountHistory(account, { indexerUrl: HIDEKI.indexer, perpPools }),
