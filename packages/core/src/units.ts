@@ -84,3 +84,18 @@ export function stepDecimals(stepRaw: bigint, decimals: number): number {
   }
   return digits;
 }
+
+/**
+ * A user-typed decimal ("1,234.5") as raw units at `decimals`. Null when it is not a plain non-negative decimal
+ * or has more fraction digits than the unit can hold (rounding a price or size silently would be worse).
+ */
+export function parseAmount(input: string, decimals: number): bigint | null {
+  const text = input.trim().replaceAll(",", "");
+  const match = /^(\d*)(?:\.(\d*))?$/.exec(text);
+  if (!match) return null;
+  const whole = match[1] ?? "";
+  const fraction = (match[2] ?? "").replace(/0+$/, "");
+  if (whole === "" && (match[2] ?? "") === "") return null;
+  if (fraction.length > decimals) return null;
+  return BigInt(whole || "0") * 10n ** BigInt(decimals) + BigInt(fraction.padEnd(decimals, "0") || "0");
+}

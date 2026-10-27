@@ -1,4 +1,4 @@
-import { formatAmount, formatUsd, notionalRaw, ratioBps, stepDecimals } from "../src/units";
+import { formatAmount, formatUsd, notionalRaw, parseAmount, ratioBps, stepDecimals } from "../src/units";
 
 test("formatUsd negative with separators", () => {
   expect(formatUsd(-1234567000000000000000n)).toBe("-1,234.57 USDso");
@@ -40,4 +40,15 @@ test("stepDecimals shows exactly the digits a tick or lot can move", () => {
   expect(stepDecimals(5n * 10n ** 15n, 18)).toBe(3);
   expect(stepDecimals(10n ** 18n, 18)).toBe(0);
   expect(stepDecimals(0n, 18)).toBe(18);
+});
+
+test("parseAmount turns a decimal string into raw units, or null when it is not one", () => {
+  expect(parseAmount("1900", 18)).toBe(1900n * 10n ** 18n);
+  expect(parseAmount(" 0.5 ", 18)).toBe(5n * 10n ** 17n);
+  expect(parseAmount("1,234.25", 2)).toBe(123_425n);
+  expect(parseAmount(".25", 2)).toBe(25n);
+  expect(parseAmount("1.", 2)).toBe(100n);
+  expect(parseAmount("0.001", 2)).toBeNull(); // more precision than the unit has
+  expect(parseAmount("0.100", 2)).toBe(10n); // trailing zeros are not precision
+  for (const bad of ["", ".", "-1", "1e3", "abc", "1.2.3", "0x10"]) expect(parseAmount(bad, 18)).toBeNull();
 });

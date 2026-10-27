@@ -10,7 +10,9 @@ test("positions tab lists open positions with coverage and distance", async ({ p
 
 test("protect note appears when arriving from a leak fix", async ({ page }) => {
   await page.goto("/a/0xf1a114c1604a272ec6a1da07803fc68a786480e7?tab=positions&note=protect");
-  await expect(page.getByText("One-click protection is coming in the next release.")).toBeVisible();
+  // Fixture mode has no database, so the note points to the app's own stop-loss instead of Protect.
+  await expect(page.getByText("Set a stop-loss on each open position in the dreamDEX app.")).toBeVisible();
+  await expect(page.getByText("One-click protection is coming in the next release.")).toHaveCount(0);
 });
 
 test("account without open positions says so", async ({ page }) => {

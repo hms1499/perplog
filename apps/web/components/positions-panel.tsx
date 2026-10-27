@@ -1,17 +1,18 @@
 "use client";
 
-import {
-  formatAmount,
-  formatUsd,
-  LIQ_DISTANCE_WARN_BPS,
-  type OpenPosition,
-  PRICE_DECIMALS,
-} from "@perplog/core";
-import { useQuery } from "@tanstack/react-query";
+import { formatAmount, formatUsd, LIQ_DISTANCE_WARN_BPS, PRICE_DECIMALS, shortAddress } from "@perplog/core";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { getJson, type Wire } from "@/lib/api";
+import { useCallback, useState } from "react";
+import type { PositionView } from "@/lib/account-service";
+import { ApiError, getJson, type Wire } from "@/lib/api";
 import { signClass } from "@/lib/format";
+import { useProtectionAvailable, useSessionState } from "@/lib/use-protection";
 import { ErrorState } from "./error-state";
+import { LinkWizard } from "./link-wizard";
+import { ProtectForm } from "./protect-form";
+
+type Position = Wire<PositionView>;
 
 function coverage(bps: number): string {
   if (bps === 0) return "None";
@@ -36,19 +37,72 @@ function Distance({ bps }: { bps: number | null }) {
   );
 }
 
+async function cancelStop(id: string): Promise<void> {
+  const res = await fetch(`/api/stops/${id}`, { method: "DELETE" });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new ApiError(res.status, (body as { error?: string }).error ?? "unknown");
+}
+
+/** The PerpLog stop on a row, with Cancel while the worker has not picked it up yet. */
+function PerplogStopBadge({ position, onCancelled }: { position: Position; onCancelled: () => void }) {
+  const stop = position.perplogStop;
+  const cancel = useMutation({ mutationFn: cancelStop, onSuccess: onCancelled });
+  if (!stop) return null;
+  const price = formatAmount(BigInt(stop.triggerPrice), PRICE_DECIMALS, position.priceDecimals);
+  const cancellable = stop.status === "armed" || stop.status === "paused";
+  return (
+    <span className="flex items-center gap-2">
+      <span data-testid="perplog-stop" className="rounded-sm border border-ink px-2 py-0.5 text-xs">
+        PerpLog stop @ {price} · {stop.status}
+      </span>
+      {cancellable && (
+        <button
+          type="button"
+          onClick={() => cancel.mutate(stop.id)}
+          disabled={cancel.isPending}
+          className="font-semibold text-xs underline disabled:opacity-50"
+        >
+          Cancel stop
+        </button>
+      )}
+      {cancel.isError && (
+        <span role="alert" className="text-loss text-xs">
+          {cancel.error instanceof ApiError && cancel.error.code === "stop_in_progress"
+            ? "Already executing."
+            : "Could not cancel."}
+        </span>
+      )}
+    </span>
+  );
+}
+
 export function PositionsPanel({ address }: { address: string }) {
   const params = useSearchParams();
   const { data, error, isPending, refetch } = useQuery({
     queryKey: [address, "positions"],
-    queryFn: () => getJson<Wire<OpenPosition>[]>(`/api/accounts/${address}/positions`),
+    queryFn: () => getJson<Position[]>(`/api/accounts/${address}/positions`),
     refetchInterval: 5000,
   });
+  const available = useProtectionAvailable();
+  const session = useSessionState(available);
+  // `?protect={pool}` (from alert toasts) opens the form for that row.
+  const [protectPool, setProtectPool] = useState<string | null>(
+    () => params.get("protect")?.toLowerCase() ?? null,
+  );
+  const target = data?.find((p) => p.pool.toLowerCase() === protectPool) ?? null;
+  const linkedAccount =
+    session.data?.status === "linked" ? (session.data.account?.toLowerCase() ?? null) : null;
+  const refetchSession = session.refetch;
+  const onLinked = useCallback(() => void refetchSession(), [refetchSession]);
+  const onChanged = useCallback(() => void refetch(), [refetch]);
 
   return (
     <section className="py-6">
       {params.get("note") === "protect" && (
         <p role="status" className="mb-4 rounded-sm bg-marker/35 px-3 py-2">
-          One-click protection is coming in the next release.
+          {available
+            ? "Press Protect on an open position to arm a PerpLog stop-loss."
+            : "Set a stop-loss on each open position in the dreamDEX app."}
         </p>
       )}
       {isPending ? (
@@ -72,6 +126,7 @@ export function PositionsPanel({ address }: { address: string }) {
                 <th className="py-2 pl-6 font-normal">Distance</th>
                 <th className="py-2 font-normal">Stop-loss coverage</th>
                 <th className="py-2 text-right font-normal">Funding (24h)</th>
+                {available && <th className="py-2 pl-4 font-normal">PerpLog</th>}
               </tr>
             </thead>
             <tbody>
@@ -105,12 +160,48 @@ export function PositionsPanel({ address }: { address: string }) {
                       {coverage(p.stopCoverageBps)}
                     </td>
                     <td className={`py-3 text-right ${signClass(-funding)}`}>{formatUsd(-funding)}</td>
+                    {available && (
+                      <td className="py-3 pl-4">
+                        <span className="flex items-center gap-3">
+                          <PerplogStopBadge position={p} onCancelled={onChanged} />
+                          <button
+                            type="button"
+                            onClick={() => setProtectPool(p.pool.toLowerCase())}
+                            className="rounded-md border border-ink px-3 py-1 font-semibold"
+                          >
+                            Protect
+                          </button>
+                        </span>
+                      </td>
+                    )}
                   </tr>
                 );
               })}
             </tbody>
           </table>
-          <p className="mt-4 text-muted text-sm">Protect buttons arrive in the next release.</p>
+        </div>
+      )}
+      {available && target && (
+        <div className="mt-6">
+          {session.isPending ? (
+            <p className="text-muted">Checking PerpLog's link…</p>
+          ) : linkedAccount === address.toLowerCase() ? (
+            <ProtectForm
+              key={target.pool}
+              position={target}
+              onArmed={() => {
+                setProtectPool(null);
+                onChanged();
+              }}
+            />
+          ) : linkedAccount !== null ? (
+            <p role="status" className="rounded-sm bg-marker/35 px-3 py-2">
+              This browser's PerpLog bot is linked to {shortAddress(linkedAccount as `0x${string}`)}. Open
+              that account to protect its positions.
+            </p>
+          ) : (
+            <LinkWizard account={address} onLinked={onLinked} />
+          )}
         </div>
       )}
     </section>
