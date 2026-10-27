@@ -130,6 +130,9 @@ Protection needs Postgres and the worker. Without `DATABASE_URL` the web app sta
 listed in [`apps/worker/.env.example`](apps/worker/.env.example) and [`apps/web/.env.example`](apps/web/.env.example);
 the processes read the real environment, not these files.
 
+Any Postgres 16 works: a local Docker container or a Neon database (see [Neon](#neon) for which URL each
+process takes).
+
 ```bash
 docker run -d --name perplog-pg -e POSTGRES_PASSWORD=pg -p 5433:5432 postgres:16
 export KEY_ENCRYPTION_KEY=$(openssl rand -base64 32)
@@ -144,7 +147,7 @@ The worker logs `signer lock acquired` and `migrations applied`, then starts its
 
 | Variable | web | worker | Notes |
 |---|---|---|---|
-| `DATABASE_URL` | ✓ | ✓ | Postgres; Neon's pooled URL in production |
+| `DATABASE_URL` | ✓ | ✓ | Postgres. On Neon: **direct** URL for the worker, pooled URL for the web |
 | `NETWORK` | | ✓ | `hideki` |
 | `RPC_HTTP_URL`, `RPC_WS_URL`, `INDEXER_URL` | | ✓ | Optional; defaults in `packages/chain/src/networks.ts` |
 | `KEY_ENCRYPTION_KEY` | ✗ | ✓ | 32 bytes base64 (`openssl rand -base64 32`); **worker only** |
@@ -154,14 +157,33 @@ The worker logs `signer lock acquired` and `migrations applied`, then starts its
 
 Keep `KEY_ENCRYPTION_KEY` safe: every bot key is encrypted with it, and a new one cannot decrypt the old keys.
 
+### Neon
+
+- **Worker: the direct URL** (host without `-pooler`), with `?sslmode=require`. The worker holds its signer lock
+  with a session-level `pg_try_advisory_lock` on one dedicated connection. Neon's pooled URL goes through
+  PgBouncer in transaction mode, which does not support session-level advisory locks, so through it the lock
+  would no longer guarantee a single signer.
+- **Web: the pooled URL.** It only runs short queries.
+- Use a separate Neon branch (for example `dev`) for local testing, so test rows never reach production.
+- The worker's 10 s lock heartbeat keeps the compute awake: a running worker uses compute hours the whole time.
+
+```bash
+# worker
+DATABASE_URL='postgresql://USER:PASS@ep-xxx.REGION.aws.neon.tech/neondb?sslmode=require' \
+  KEY_ENCRYPTION_KEY=... NETWORK=hideki pnpm --filter @perplog/worker start
+# web
+DATABASE_URL='postgresql://USER:PASS@ep-xxx-pooler.REGION.aws.neon.tech/neondb?sslmode=require' \
+  pnpm --filter @perplog/web dev
+```
+
 ## Deploy
 
-- **Database:** a Neon Postgres. Use its pooled `DATABASE_URL` for both apps; the worker applies migrations at
-  boot.
+- **Database:** a Neon Postgres. The worker takes the **direct** URL and the web the **pooled** URL (see
+  [Neon](#neon)); the worker applies migrations at boot.
 - **Worker:** a Railway service built from [`apps/worker/Dockerfile`](apps/worker/Dockerfile) through
   [`apps/worker/railway.toml`](apps/worker/railway.toml), with **1 replica**. Set `DATABASE_URL`,
   `KEY_ENCRYPTION_KEY`, `TREASURY_PRIVATE_KEY` and `NETWORK=hideki`.
-- **Web:** Vercel, with `DATABASE_URL` set.
+- **Web:** Vercel, with the pooled `DATABASE_URL` set.
 
 ## Tests
 
