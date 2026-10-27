@@ -17,6 +17,14 @@ export interface WorkerEnv {
   LOG_LEVEL: string;
 }
 
+function isPooledNeonUrl(url: string): boolean {
+  try {
+    return new URL(url).hostname.split(".")[0]?.endsWith("-pooler") ?? false;
+  } catch {
+    return false;
+  }
+}
+
 // A hosting dashboard often leaves a variable present but empty: that means "unset".
 const blankIsUnset = (v: unknown) => (v === "" ? undefined : v);
 const optional = <T extends z.ZodType>(schema: T) => z.preprocess(blankIsUnset, schema.optional());
@@ -34,7 +42,15 @@ const stt = (fallback: string) =>
 
 // Messages must never echo the offending value: two of these fields are secrets.
 const schema = z.object({
-  DATABASE_URL: z.string().min(1),
+  // The signer lock is a session-level advisory lock: it needs a direct connection. Neon's pooled endpoint
+  // ("ep-…-pooler.…") runs PgBouncer in transaction mode, where that lock no longer guarantees a single signer.
+  DATABASE_URL: z
+    .string()
+    .min(1)
+    .refine((v) => !isPooledNeonUrl(v), {
+      message:
+        "must be Neon's direct connection string: remove '-pooler' from the host (the signer lock needs a session)",
+    }),
   KEY_ENCRYPTION_KEY: z.string().transform((v, ctx) => {
     try {
       return parseKek(v);

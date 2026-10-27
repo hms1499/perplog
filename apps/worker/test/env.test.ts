@@ -49,3 +49,19 @@ test("a parse failure never echoes the key material", () => {
     expect(String(err)).not.toContain(secret);
   }
 });
+
+test("parseEnv rejects a Neon pooled DATABASE_URL without echoing it, and accepts the direct one", () => {
+  const host = "ep-weathered-moon-atjha43u.c-9.us-east-1.aws.neon.tech";
+  const pooled = `postgresql://owner:s3cret-pw@${host.replace(".", "-pooler.")}/neondb?sslmode=require`;
+  try {
+    parseEnv({ ...ok, DATABASE_URL: pooled });
+    expect.unreachable();
+  } catch (err) {
+    expect(String(err)).toContain("direct");
+    expect(String(err)).not.toContain("s3cret-pw");
+  }
+  const direct = `postgresql://owner:s3cret-pw@${host}/neondb?sslmode=require`;
+  expect(parseEnv({ ...ok, DATABASE_URL: direct }).DATABASE_URL).toBe(direct);
+  // Only the first host label marks Neon's pooler; "pooler" elsewhere is not a match.
+  expect(() => parseEnv({ ...ok, DATABASE_URL: "postgres://u:p@db.pooler-free.example/x" })).not.toThrow();
+});
