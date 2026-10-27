@@ -16,21 +16,8 @@
 // perp `...For` writes, so they are sent here with viem.
 
 import type { Address } from "@perplog/core";
-import { contractErrorsAbi, decodePlaceOrder, ORDER_TYPE, type OrderFill } from "@somnia-chain/markets-sdk";
-import {
-  BaseError,
-  ContractFunctionRevertedError,
-  createPublicClient,
-  createWalletClient,
-  type Hash,
-  type Hex,
-  http,
-  type PublicClient,
-  parseAbi,
-  type WalletClient,
-} from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import type { Network } from "./networks";
+import { contractErrorsAbi, type OrderFill } from "@somnia-chain/markets-sdk";
+import { type PublicClient, parseAbi } from "viem";
 
 /** The three selectors a linked bot key is granted, as the registry keys them. */
 export const OPERATOR_SELECTOR = {
@@ -53,13 +40,6 @@ export const OPERATOR_ABI = [
 
 /** Gas limit for every order write. Somnia bills gas used, not the limit. */
 export const ORDER_GAS = 20_000_000n;
-
-const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000" as const;
-
-/** Resting-order expiry the SDK uses: fifty years out, in nanoseconds. */
-function farFutureNs(): bigint {
-  return BigInt(Math.floor(Date.now() / 1000) + 50 * 365 * 24 * 3600) * 1_000_000_000n;
-}
 
 /** Pools (from `pools`) on which `bot` holds the `placeOrderFor` grant for `owner`. Failed reads count as not granted. */
 export async function grantedPools(
@@ -93,79 +73,4 @@ export function summarizeFills(fills: OrderFill[]): { filledRaw: bigint; avgPric
     notional += f.quantityFilled * f.fillPrice;
   }
   return { filledRaw, avgPrice: filledRaw === 0n ? null : notional / filledRaw };
-}
-
-/** A write that reverted, in simulation (named pool error) or on-chain (`reverted_onchain`). */
-export class OperatorRevert extends Error {
-  readonly errorName: string;
-  constructor(errorName: string) {
-    super(`placeOrderFor reverted: ${errorName}`);
-    this.name = "OperatorRevert";
-    this.errorName = errorName;
-  }
-}
-
-export interface BotWallet {
-  address: Address;
-  publicClient: PublicClient;
-  walletClient: WalletClient;
-}
-
-export function createBotWallet(privateKey: Hex, network: Network): BotWallet {
-  const account = privateKeyToAccount(privateKey);
-  const transport = http(network.rpcHttp);
-  return {
-    address: account.address.toLowerCase() as Address,
-    publicClient: createPublicClient({ chain: network.chain, transport }) as PublicClient,
-    walletClient: createWalletClient({ account, chain: network.chain, transport }),
-  };
-}
-
-export interface PlaceResult {
-  txHash: Hash;
-  orderId: bigint | null;
-  filledRaw: bigint;
-  avgPrice: bigint | null;
-  gasUsed: bigint;
-}
-
-/** IOC market `placeOrderFor` for `owner`. Simulates first so a revert arrives as its named error. */
-export async function placeMarketFor(
-  wallet: BotWallet,
-  p: { owner: Address; pool: Address; isBid: boolean; qtyRaw: bigint; priceBound: bigint },
-): Promise<PlaceResult> {
-  let request: unknown;
-  try {
-    ({ request } = await wallet.publicClient.simulateContract({
-      address: p.pool,
-      abi: OPERATOR_ABI,
-      functionName: "placeOrderFor",
-      args: [
-        p.owner,
-        p.isBid,
-        0n,
-        p.priceBound,
-        p.qtyRaw,
-        farFutureNs(),
-        ORDER_TYPE.MARKET,
-        0,
-        ZERO_ADDRESS,
-        0n,
-      ],
-      account: wallet.walletClient.account,
-      gas: ORDER_GAS,
-    }));
-  } catch (err) {
-    const cause =
-      err instanceof BaseError ? err.walk((e) => e instanceof ContractFunctionRevertedError) : null;
-    if (cause instanceof ContractFunctionRevertedError) {
-      throw new OperatorRevert(cause.data?.errorName ?? "unknown");
-    }
-    throw err;
-  }
-  const txHash = await wallet.walletClient.writeContract(request as never);
-  const receipt = await wallet.publicClient.waitForTransactionReceipt({ hash: txHash });
-  if (receipt.status !== "success") throw new OperatorRevert("reverted_onchain");
-  const { orderId, fills } = decodePlaceOrder(receipt, p.pool);
-  return { txHash, orderId: orderId ?? null, ...summarizeFills(fills), gasUsed: receipt.gasUsed };
 }
