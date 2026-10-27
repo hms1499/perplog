@@ -1389,3 +1389,20 @@ git commit -m "docs: protection, alerts, worker and deploy; Plan 2 acceptance lo
   - `p-queue` is replaced by the 20-line `KeyedSerial`;
   - spike (d), indexer pagination limits, was settled in Plan 1 (`limit` 1000 with a keyset cursor works), so P0 here has three spikes;
   - the worker's ReportJob (spec §5) belongs to Plan 3 with the weekly report.
+
+---
+
+## Acceptance log
+
+Local verification (2026-10-27, branch `feat/plan-2-protection`):
+- `pnpm lint && pnpm -r typecheck && pnpm test`: 52 files, 364 tests passed.
+- Playwright (fixture mode): 17/17 passed (10 from Plan 1, 3 alerts, 4 protect).
+- `pnpm --filter @perplog/web build`: lists `ƒ /api/session`, `ƒ /api/stops`, `ƒ /api/alerts`, `ƒ /api/watch`.
+
+Still open, blocked on the user's accounts and wallet (spec §17):
+- Task 3 Step 7, spike (a): `placeOrderFor` from a linked bot on a real account.
+- Task 5 Step 5: worker boot against a real Postgres (Docker daemon was not running; the boot logic is covered by
+  `apps/worker/test/start.test.ts` on PGlite).
+- Task 9 Step 6 and Task 14 Step 4: live stop on Hideki. Target `ms_since_trigger ≤ 3000` (§14.2 #3) and an
+  `unprotected_position` toast ≤ 90 s after opening (§14.2 #5). Record the tx hashes and timings here.
+- Task 14 Step 3: deploy (Neon `DATABASE_URL`, Railway worker with 1 replica, Vercel web).
