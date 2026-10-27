@@ -3,7 +3,7 @@
 import { formatAmount, formatUsd, LIQ_DISTANCE_WARN_BPS, PRICE_DECIMALS, shortAddress } from "@perplog/core";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { PositionView } from "@/lib/account-service";
 import { ApiError, getJson, type Wire } from "@/lib/api";
 import { signClass } from "@/lib/format";
@@ -85,10 +85,12 @@ export function PositionsPanel({ address }: { address: string }) {
   });
   const available = useProtectionAvailable();
   const session = useSessionState(available);
-  // `?protect={pool}` (from alert toasts) opens the form for that row.
-  const [protectPool, setProtectPool] = useState<string | null>(
-    () => params.get("protect")?.toLowerCase() ?? null,
-  );
+  // `?protect={pool}` (from alert toasts) opens the form for that row, also when it changes while mounted.
+  const protectParam = params.get("protect")?.toLowerCase() ?? null;
+  const [protectPool, setProtectPool] = useState<string | null>(protectParam);
+  useEffect(() => {
+    if (protectParam) setProtectPool(protectParam);
+  }, [protectParam]);
   const target = data?.find((p) => p.pool.toLowerCase() === protectPool) ?? null;
   const linkedAccount =
     session.data?.status === "linked" ? (session.data.account?.toLowerCase() ?? null) : null;

@@ -92,6 +92,32 @@ test("?protect={pool} opens the form for that position when already linked", asy
   await expect(page.getByTestId("link-wizard")).toHaveCount(0);
 });
 
+test("a toast's Protect link opens the form while already on the Positions tab", async ({ page }) => {
+  const state = await mockProtection(page, { linked: true });
+  await page.route("**/api/alerts?**", (route) =>
+    route.fulfill({
+      json: {
+        alerts: state.firstPool
+          ? [
+              {
+                id: "u1",
+                type: "unprotected_position",
+                pool: state.firstPool,
+                symbol: "ETH-PERP",
+                payload: { symbol: "ETH-PERP", side: "long", sizeRaw: "5" },
+                createdAt: new Date().toISOString(),
+              },
+            ]
+          : [],
+      },
+    }),
+  );
+  await page.goto(`/a/${ACCOUNT}?tab=positions`);
+  await expect(page.getByTestId("position-row").first()).toBeVisible();
+  await page.getByTestId("alert-toast").getByRole("link", { name: "Protect" }).click();
+  await expect(page.getByLabel("Trigger price")).toBeVisible();
+});
+
 test("API errors show one line; pool_not_linked shows the API's message", async ({ page }) => {
   await mockProtection(page, { linked: true });
   await page.route("**/api/stops", (route) =>
