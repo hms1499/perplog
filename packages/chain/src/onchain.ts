@@ -13,6 +13,7 @@ import {
   stopCoverageBps,
 } from "@perplog/core";
 import { perpMarkForPnl, SomniaMarkets, type SomniaMarketsClient } from "@somnia-chain/markets-sdk";
+import { createPublicClient, http, type PublicClient } from "viem";
 import { HIDEKI, type Network } from "./networks";
 
 const readClients = new Map<Network, SomniaMarketsClient>();
@@ -30,6 +31,37 @@ export function createReadClient(network: Network = HIDEKI): SomniaMarketsClient
     readClients.set(network, client);
   }
   return client;
+}
+
+const httpClients = new Map<Network, PublicClient>();
+
+/** Plain viem HTTP client (multicall, receipts), shared per process and network. */
+export function createHttpClient(network: Network = HIDEKI): PublicClient {
+  let client = httpClients.get(network);
+  if (!client) {
+    client = createPublicClient({ chain: network.chain, transport: http(network.rpcHttp) }) as PublicClient;
+    httpClients.set(network, client);
+  }
+  return client;
+}
+
+/** Live signed position size for one account on one pool (positive long, negative short, 0 flat). */
+export async function readPositionSize(
+  client: Pick<SomniaMarketsClient, "getPerpPosition">,
+  marginBank: Address,
+  account: Address,
+  pool: Address,
+): Promise<bigint> {
+  return (await client.getPerpPosition({ marginBank, account, pool })).size;
+}
+
+/** Mark price used for PnL and triggers; `fromIndex` is true when it fell back to the index price. */
+export async function readMark(
+  client: Pick<SomniaMarketsClient, "getPerpState">,
+  pool: Address,
+): Promise<{ price: bigint; fromIndex: boolean }> {
+  const mark = perpMarkForPnl(await client.getPerpState(pool));
+  return { price: mark.price, fromIndex: mark.fromIndex };
 }
 
 export interface CollateralRead {

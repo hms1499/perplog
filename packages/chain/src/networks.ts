@@ -14,4 +14,18 @@ export const HIDEKI = {
   sdkAddresses: SOMNIA_HIDEKI_TESTNET_ADDRESSES,
 } as const;
 
-export type Network = typeof HIDEKI;
+/** Structural network type: the endpoints are plain strings so they can be overridden (HIDEKI satisfies it). */
+export type Network = Omit<typeof HIDEKI, "rpcHttp" | "rpcWs" | "indexer"> & {
+  rpcHttp: string;
+  rpcWs: string;
+  indexer: string;
+};
+
+/** A copy of `network` with only the endpoints that are actually defined replaced. */
+export function withOverrides(
+  network: Network,
+  o: { rpcHttp?: string | undefined; rpcWs?: string | undefined; indexer?: string | undefined },
+): Network {
+  const defined = Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined));
+  return { ...network, ...defined };
+}
