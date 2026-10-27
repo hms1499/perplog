@@ -246,3 +246,44 @@ export function fakeTradingChain(markets: MarketInfo[]) {
     },
   };
 }
+
+/**
+ * Manual timers in the `{ setTimeout, clearTimeout, now }` shape that Reactivity's watchdog and the AlertEngine
+ * take. `advance(ms, settle)` fires due callbacks one at a time, in time order, and awaits `settle()` after each,
+ * so async work a callback starts (DB writes, a rescheduled poll) lands before the next timer is considered.
+ */
+export function manualTimers(start = 1_800_000_000_000) {
+  let t = start;
+  let seq = 0;
+  const due = new Map<number, { at: number; fn: () => void }>();
+  const setTimeoutFake = (fn: () => void, ms = 0) => {
+    seq += 1;
+    due.set(seq, { at: t + ms, fn });
+    return seq;
+  };
+  const clearTimeoutFake = (id: unknown) => {
+    due.delete(id as number);
+  };
+  return {
+    timers: {
+      setTimeout: setTimeoutFake as unknown as typeof setTimeout,
+      clearTimeout: clearTimeoutFake as unknown as typeof clearTimeout,
+      now: () => t,
+    },
+    now: () => t,
+    pending: () => due.size,
+    async advance(ms: number, settle: () => Promise<void> = async () => {}) {
+      const end = t + ms;
+      await settle();
+      for (;;) {
+        const next = [...due.entries()].filter(([, d]) => d.at <= end).sort((a, b) => a[1].at - b[1].at)[0];
+        if (!next) break;
+        due.delete(next[0]);
+        t = next[1].at;
+        next[1].fn();
+        await settle();
+      }
+      t = end;
+    },
+  };
+}

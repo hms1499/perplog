@@ -33,11 +33,29 @@ test("with the lock: logs it, migrates, starts the bot-key-minter loop and mints
     expect(order.indexOf("migrations applied")).toBeGreaterThan(order.indexOf("signer lock acquired"));
     expect(log.entries.find((e) => e.msg === "loop started")?.obj.name).toBe("bot-key-minter");
     const loops = log.entries.filter((e) => e.msg === "loop started").map((e) => e.obj.name);
-    expect(loops).toEqual(["bot-key-minter", "link-watcher", "stop-engine"]);
+    expect(loops).toEqual(["bot-key-minter", "link-watcher", "stop-engine", "watched-accounts"]);
     expect(log.has("standby")).toBe(false);
   } finally {
     await w.stop();
   }
+});
+
+test("with the lock: subscribes to Reactivity position updates", async () => {
+  const db = await createTestDb();
+  const unsubscribe = vi.fn(async () => {});
+  const chain = fakeChain({ subscribePositionUpdates: vi.fn(async () => ({ unsubscribe })) });
+  const w = await startWorker({
+    db,
+    lockConn: lockConn([true]),
+    migrate: vi.fn(async () => {}),
+    env: fakeEnv(),
+    chain,
+    log: fakeLogger(),
+    onFatal: vi.fn(),
+  });
+  await vi.waitFor(() => expect(chain.subscribePositionUpdates).toHaveBeenCalledOnce());
+  await w.stop();
+  expect(unsubscribe).toHaveBeenCalledOnce();
 });
 
 test("without the lock: logs standby and does not migrate or mint", async () => {

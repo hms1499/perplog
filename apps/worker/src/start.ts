@@ -1,5 +1,6 @@
 import { MARK_POLL_MS } from "@perplog/core";
 import type { Db } from "@perplog/db";
+import { createAlertEngine } from "./alert-engine";
 import { mintRequestedKeys } from "./bot-key-minter";
 import type { WorkerEnv } from "./env";
 import { checkLinks } from "./link-watcher";
@@ -7,10 +8,12 @@ import { type LockConn, tryAcquireSignerLock } from "./lock";
 import type { Logger } from "./log";
 import { every } from "./loop";
 import type { ChainPort } from "./ports";
+import { startReactivityListener } from "./reactivity-listener";
 import { createStopEngine } from "./stop-engine";
 
 export const MINTER_INTERVAL_MS = 300;
 export const LINK_WATCHER_INTERVAL_MS = 60_000;
+export const WATCHED_REFRESH_MS = 10_000;
 const STANDBY_RETRY_MS = 10_000;
 export const LOCK_HEARTBEAT_MS = 10_000;
 /** How long a lost lock waits for in-flight work to wind down before `onFatal`; a dead DB must not block exit. */
@@ -106,6 +109,20 @@ export async function startWorker(deps: WorkerDeps): Promise<{ stop(): Promise<v
         const poll = every(MARK_POLL_MS, "stop-engine", () => engine.tick(), log);
         // Stopping the poll alone would leave scheduled executions running: stop the engine too.
         loops.push({ stop: () => Promise.all([poll.stop(), engine.stop()]).then(() => undefined) });
+        const alerts = createAlertEngine({ db, chain: deps.chain, log });
+        const watchedRefresh = every(
+          WATCHED_REFRESH_MS,
+          "watched-accounts",
+          () => alerts.refreshWatched(),
+          log,
+        );
+        const listener = startReactivityListener(deps.chain, alerts, log);
+        loops.push({
+          stop: async () => {
+            alerts.stop();
+            await Promise.all([watchedRefresh.stop(), listener.stop(), alerts.idle()]);
+          },
+        });
         heartbeat = setTimeout(() => void beat(), heartbeatMs);
         active = true;
       } else {
