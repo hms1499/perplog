@@ -4,10 +4,12 @@ import { type Address, shortAddress } from "@perplog/core";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { parseRange, RANGES } from "@/lib/use-account";
+import { AlertToasts } from "./alert-toasts";
 import { HealthPanel } from "./health-panel";
 import { JournalPanel } from "./journal-panel";
 import { LeaksPanel } from "./leaks-panel";
 import { PositionsPanel } from "./positions-panel";
+import { WatchButton } from "./watch-button";
 
 const TABS = [
   { value: "health", label: "Health" },
@@ -34,9 +36,12 @@ export function AccountView({ address }: { address: Address }) {
       <div className="flex flex-wrap items-end justify-between gap-4 pt-8">
         <div>
           <p className="text-muted text-sm">Trading account</p>
-          <h1 className="font-extrabold text-3xl tracking-tight" title={address}>
-            {shortAddress(address)}
-          </h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="font-extrabold text-3xl tracking-tight" title={address}>
+              {shortAddress(address)}
+            </h1>
+            <WatchButton account={address} />
+          </div>
         </div>
         {tab !== "positions" && (
           <nav aria-label="Time range" className="flex rounded-md border border-rule bg-sheet p-0.5">
@@ -71,6 +76,7 @@ export function AccountView({ address }: { address: Address }) {
       {tab === "journal" && <JournalPanel address={address} range={range} />}
       {tab === "leaks" && <LeaksPanel address={address} range={range} />}
       {tab === "positions" && <PositionsPanel address={address} />}
+      <AlertToasts account={address} />
     </div>
   );
 }

@@ -21,3 +21,5 @@ export function formatTime(unixSeconds: number): string {
     minute: "2-digit",
   });
 }
+
+export const EXPLORER_TX = "https://explorer.testnet.somnia.network/tokyo/tx/";

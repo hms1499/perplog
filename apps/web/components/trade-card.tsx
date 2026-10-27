@@ -1,6 +1,6 @@
 import { type EnrichedTrade, type ExitType, formatAmount, formatUsd, PRICE_DECIMALS } from "@perplog/core";
 import type { Wire } from "@/lib/api";
-import { formatTime, signClass } from "@/lib/format";
+import { EXPLORER_TX, formatTime, signClass } from "@/lib/format";
 
 export const EXIT_LABEL: Record<ExitType, string> = {
   LIQUIDATED: "Liquidated",
@@ -17,8 +17,6 @@ const EXIT_TONE: Record<ExitType, string> = {
   MANUAL: "border border-rule text-muted",
   OPEN: "bg-ink text-paper",
 };
-
-const EXPLORER_TX = "https://explorer.testnet.somnia.network/tokyo/tx/";
 
 function Money({ label, raw, strong = false }: { label: string; raw: bigint; strong?: boolean }) {
   return (

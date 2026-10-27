@@ -1,5 +1,5 @@
 import type { Address } from "@perplog/core";
-import { and, desc, eq, gte, isNull, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNull, sql } from "drizzle-orm";
 import type { Db } from "../client";
 import { type AlertRow, type AlertType, alerts } from "../schema";
 
@@ -41,5 +41,20 @@ export async function listAlerts(db: Db, account: Address, sinceMs: number, limi
     .from(alerts)
     .where(and(eq(alerts.account, account), gte(alerts.createdAt, new Date(sinceMs))))
     .orderBy(desc(alerts.createdAt), sql`${alerts.id}`)
+    .limit(limit);
+}
+
+/** Oldest first from `sinceMs` (inclusive): a poller passes the last `createdAt` it saw and dedupes by id. */
+export async function listAlertsSince(
+  db: Db,
+  account: Address,
+  sinceMs: number,
+  limit = 50,
+): Promise<AlertRow[]> {
+  return db
+    .select()
+    .from(alerts)
+    .where(and(eq(alerts.account, account), gte(alerts.createdAt, new Date(sinceMs))))
+    .orderBy(asc(alerts.createdAt), sql`${alerts.id}`)
     .limit(limit);
 }
