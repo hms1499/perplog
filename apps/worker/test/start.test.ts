@@ -27,6 +27,8 @@ test("with the lock: logs it, migrates, starts the bot-key-minter loop and mints
     expect(order.indexOf("signer lock acquired")).toBeGreaterThanOrEqual(0);
     expect(order.indexOf("migrations applied")).toBeGreaterThan(order.indexOf("signer lock acquired"));
     expect(log.entries.find((e) => e.msg === "loop started")?.obj.name).toBe("bot-key-minter");
+    const loops = log.entries.filter((e) => e.msg === "loop started").map((e) => e.obj.name);
+    expect(loops).toEqual(["bot-key-minter", "link-watcher"]);
     expect(log.has("standby")).toBe(false);
   } finally {
     await w.stop();

@@ -1,12 +1,14 @@
 import type { Db } from "@perplog/db";
 import { mintRequestedKeys } from "./bot-key-minter";
 import type { WorkerEnv } from "./env";
+import { checkLinks } from "./link-watcher";
 import { type LockConn, tryAcquireSignerLock } from "./lock";
 import type { Logger } from "./log";
 import { every } from "./loop";
 import type { ChainPort } from "./ports";
 
 export const MINTER_INTERVAL_MS = 300;
+export const LINK_WATCHER_INTERVAL_MS = 60_000;
 const STANDBY_RETRY_MS = 10_000;
 
 export interface WorkerDeps {
@@ -51,6 +53,7 @@ export async function startWorker(deps: WorkerDeps): Promise<{ stop(): Promise<v
             },
             log,
           ),
+          every(LINK_WATCHER_INTERVAL_MS, "link-watcher", () => checkLinks(db, deps.chain, log), log),
         );
         active = true;
       } else {

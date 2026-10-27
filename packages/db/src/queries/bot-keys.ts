@@ -70,6 +70,14 @@ export async function listLinkedBotKeys(db: Db): Promise<BotKeyRow[]> {
   return db.select().from(botKeys).where(eq(botKeys.status, "linked"));
 }
 
+export async function listBotKeysByStatus(
+  db: Db,
+  statuses: Array<"requested" | "pending" | "linked" | "revoked">,
+): Promise<BotKeyRow[]> {
+  if (statuses.length === 0) return [];
+  return db.select().from(botKeys).where(inArray(botKeys.status, statuses));
+}
+
 export async function getBotKey(db: Db, id: string): Promise<BotKeyRow | null> {
   const [row] = await db.select().from(botKeys).where(eq(botKeys.id, id));
   return row ?? null;

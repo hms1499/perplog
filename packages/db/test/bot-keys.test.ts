@@ -7,6 +7,7 @@ import {
   createSession,
   getBotKey,
   getSession,
+  listBotKeysByStatus,
   listLinkedBotKeys,
   setLinkedPools,
 } from "../src";
@@ -98,4 +99,23 @@ test("bindBotKey and setLinkedPools only change keys in the expected status", as
   expect((await getBotKey(db, k.id))?.status).toBe("revoked");
   expect(await setLinkedPools(db, k.id, [POOL], "linked")).toBe(true);
   expect((await getBotKey(db, k.id))?.status).toBe("linked");
+});
+
+test("listBotKeysByStatus returns only keys in the given statuses", async () => {
+  const db = await createTestDb();
+  const [a, b, c] = [
+    await createBotKeyRequest(db),
+    await createBotKeyRequest(db),
+    await createBotKeyRequest(db),
+  ];
+  await claimRequestedBotKeys(db, 3, fakeFill);
+  await bindBotKey(db, a.id, ACCOUNT, [POOL]);
+  await bindBotKey(db, b.id, ACCOUNT, [POOL]);
+  await setLinkedPools(db, b.id, [], "revoked");
+  const ids = async (s: Parameters<typeof listBotKeysByStatus>[1]) =>
+    (await listBotKeysByStatus(db, s)).map((r) => r.id).sort();
+  expect(await ids(["linked", "revoked"])).toEqual([a.id, b.id].sort());
+  expect(await ids(["revoked"])).toEqual([b.id]);
+  expect(await ids(["pending"])).toEqual([c.id]);
+  expect(await ids([])).toEqual([]);
 });
