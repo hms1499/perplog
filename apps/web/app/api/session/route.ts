@@ -32,11 +32,11 @@ export async function POST(request: Request) {
     if (badOrigin) return badOrigin;
     const db = getDb();
     if (!db) return dbUnavailable();
-    const limited = await limitPost(db, request);
-    if (limited) return limited;
-
     const existingId = sessionId(request);
     const existing = existingId ? await getSession(db, existingId) : null;
+    const limited = await limitPost(db, request, existing?.id ?? null);
+    if (limited) return limited;
+
     if (existing) return json(summary(existing), { status: 201 });
 
     const key = await createBotKeyRequest(db);
@@ -55,10 +55,14 @@ async function tryBind(db: Db, session: SessionView, account: string): Promise<v
   const granted = await chain.grantedPools(owner, key.address, await chain.perpPools());
   if (granted.length === 0) return;
   // False means another request linked this key first; the re-read below reports whatever won.
-  if (await bindBotKey(db, key.id, owner, granted)) {
-    await bindSession(db, session.id, owner);
-    await upsertWatch(db, owner, "session");
-  }
+  // One transaction: a failure after the key flips to linked must not leave it linked and unwatched.
+  await db.transaction(async (tx) => {
+    const txDb = tx as unknown as Db;
+    if (await bindBotKey(txDb, key.id, owner, granted)) {
+      await bindSession(txDb, session.id, owner);
+      await upsertWatch(txDb, owner, "session");
+    }
+  });
 }
 
 export async function GET(request: Request) {

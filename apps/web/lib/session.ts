@@ -38,10 +38,17 @@ export function setSessionCookie(res: Response, id: string): Response {
   return res;
 }
 
-/** 10 POSTs per minute per session (per client IP without one), counted in Postgres. */
-export async function limitPost(db: Db, req: Request): Promise<Response | null> {
-  const id = sessionId(req);
+/**
+ * 10 POSTs per minute, counted in Postgres. `verifiedSessionId` must be an id that exists in the sessions table;
+ * a cookie that merely looks like a UUID is attacker-chosen and would give every request its own bucket.
+ * Without a verified session the client IP is the key.
+ */
+export async function limitPost(
+  db: Db,
+  req: Request,
+  verifiedSessionId: string | null,
+): Promise<Response | null> {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  const allowed = await hitRateLimit(db, id ?? `ip:${ip}`, POSTS_PER_MINUTE, new Date());
+  const allowed = await hitRateLimit(db, verifiedSessionId ?? `ip:${ip}`, POSTS_PER_MINUTE, new Date());
   return allowed ? null : json({ error: "rate_limited" }, { status: 429 });
 }

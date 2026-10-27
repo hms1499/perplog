@@ -1,10 +1,14 @@
 import type { Address } from "@perplog/core";
-import { claimRequestedBotKeys, type Db, listWatchedAccounts } from "@perplog/db";
+import { claimRequestedBotKeys, type Db, getBotKey, listWatchedAccounts, upsertWatch } from "@perplog/db";
 import { createTestDb } from "@perplog/db/testing";
 import { chain } from "@/lib/chain";
 import { GET, POST } from "./route";
 
 let testDb: Db | null;
+vi.mock("@perplog/db", async (orig) => {
+  const actual = await orig<typeof import("@perplog/db")>();
+  return { ...actual, upsertWatch: vi.fn(actual.upsertWatch) };
+});
 vi.mock("@/lib/db", () => ({ getDb: () => testDb }));
 vi.mock("@/lib/chain", () => ({
   chain: {
@@ -150,4 +154,33 @@ test("without a cookie the limit is per client IP", async () => {
     expect((await POST(req("POST", "/api/session", { ip: "1.2.3.4, 9.9.9.9" }))).status).toBe(201);
   expect((await POST(req("POST", "/api/session", { ip: "1.2.3.4" }))).status).toBe(429);
   expect((await POST(req("POST", "/api/session", { ip: "5.6.7.8" }))).status).toBe(201);
+});
+
+test("fresh random-UUID cookies do not escape the per-IP limit", async () => {
+  const fresh = () => `perplog_session=${crypto.randomUUID()}`;
+  for (let i = 0; i < 10; i++) {
+    const res = await POST(req("POST", "/api/session", { cookie: fresh(), ip: "1.2.3.4" }));
+    expect(res.status).toBe(201);
+  }
+  const res = await POST(req("POST", "/api/session", { cookie: fresh(), ip: "1.2.3.4" }));
+  expect(res.status).toBe(429);
+  expect(await (testDb as Db).query.botKeys.findMany()).toHaveLength(10);
+});
+
+test("a failure while binding leaves the key pending and the session unbound", async () => {
+  const cookie = cookieOf(await POST(req("POST", "/api/session")));
+  await mint();
+  vi.mocked(upsertWatch).mockRejectedValueOnce(new Error("db down"));
+  vi.spyOn(console, "error").mockImplementation(() => {});
+  const failed = await GET(get(`/api/session?account=${ACC_GRANT}`, cookie));
+  expect(failed.status).toBe(500);
+  const [key] = await (testDb as Db).query.botKeys.findMany();
+  expect(key).toMatchObject({ status: "pending", account: null });
+  expect(await getBotKey(testDb as Db, key?.id as string)).toMatchObject({ status: "pending" });
+  expect(await (testDb as Db).query.sessions.findMany()).toMatchObject([{ account: null }]);
+
+  // The retry links it normally.
+  const retry = await (await GET(get(`/api/session?account=${ACC_GRANT}`, cookie))).json();
+  expect(retry).toMatchObject({ status: "linked", account: ACC_GRANT });
+  expect(await listWatchedAccounts(testDb as Db)).toEqual([ACC_GRANT]);
 });
