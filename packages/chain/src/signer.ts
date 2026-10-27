@@ -23,6 +23,8 @@ import {
   type Hex,
   http,
   type PublicClient,
+  type TransactionReceipt,
+  TransactionReceiptNotFoundError,
   type WalletClient,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -43,6 +45,25 @@ export class OperatorRevert extends Error {
     super(`placeOrderFor reverted: ${errorName}`);
     this.name = "OperatorRevert";
     this.errorName = errorName;
+  }
+}
+
+/**
+ * A write whose outcome is not known: `writeContract` threw (the node may still have accepted the tx), or the
+ * tx was broadcast and then the receipt wait, or decoding it, failed. The order may yet fill, so the caller must
+ * NOT resend until it has resolved the outcome (receipt found, or no tx pending for the sender).
+ * `txHash` is known once `writeContract` returned, null when `writeContract` itself threw.
+ */
+export class TxOutcomeUnknown extends Error {
+  readonly txHash: Hash | null;
+  constructor(txHash: Hash | null, cause: unknown) {
+    const why =
+      cause instanceof Error
+        ? ((cause as Error & { shortMessage?: string }).shortMessage ?? cause.message)
+        : String(cause);
+    super(`placeOrderFor outcome unknown${txHash ? ` for ${txHash}` : ""}: ${why}`, { cause });
+    this.name = "TxOutcomeUnknown";
+    this.txHash = txHash;
   }
 }
 
@@ -70,7 +91,60 @@ export interface PlaceResult {
   gasUsed: bigint;
 }
 
-/** IOC market `placeOrderFor` for `owner`. Simulates first so a revert arrives as its named error. */
+/** A mined `placeOrderFor` receipt as a result; a reverted receipt is a known outcome with nothing filled. */
+export interface ReceiptResult extends PlaceResult {
+  reverted: boolean;
+}
+
+function decodeReceipt(receipt: TransactionReceipt, txHash: Hash, pool: Address): ReceiptResult {
+  if (receipt.status !== "success") {
+    return { txHash, orderId: null, filledRaw: 0n, avgPrice: null, gasUsed: receipt.gasUsed, reverted: true };
+  }
+  const { orderId, fills } = decodePlaceOrder(receipt, pool);
+  return {
+    txHash,
+    orderId: orderId ?? null,
+    ...summarizeFills(fills),
+    gasUsed: receipt.gasUsed,
+    reverted: false,
+  };
+}
+
+/** The outcome of a sent `placeOrderFor`, or null while it has no receipt (pending, or dropped). */
+export async function receiptOf(
+  client: Pick<PublicClient, "getTransactionReceipt">,
+  txHash: Hash,
+  pool: Address,
+): Promise<ReceiptResult | null> {
+  let receipt: TransactionReceipt;
+  try {
+    receipt = await client.getTransactionReceipt({ hash: txHash });
+  } catch (err) {
+    if (err instanceof TransactionReceiptNotFoundError) return null;
+    throw err;
+  }
+  return decodeReceipt(receipt, txHash, pool);
+}
+
+/** True while `address` has a tx in the mempool that is not mined yet (pending nonce ahead of latest). */
+export async function hasPendingTx(
+  client: Pick<PublicClient, "getTransactionCount">,
+  address: Address,
+): Promise<boolean> {
+  const [pending, latest] = await Promise.all([
+    client.getTransactionCount({ address, blockTag: "pending" }),
+    client.getTransactionCount({ address, blockTag: "latest" }),
+  ]);
+  return pending > latest;
+}
+
+/**
+ * IOC market `placeOrderFor` for `owner`. Simulates first so a revert arrives as its named error.
+ *
+ * Errors before broadcast (simulation) are thrown as is, or as `OperatorRevert`: nothing was sent, a retry is
+ * safe. Anything thrown by or after `writeContract` becomes `TxOutcomeUnknown`. A mined but reverted tx is
+ * `OperatorRevert("reverted_onchain")`: a known outcome, nothing filled.
+ */
 export async function placeMarketFor(
   wallet: BotWallet,
   p: { owner: Address; pool: Address; isBid: boolean; qtyRaw: bigint; priceBound: bigint },
@@ -104,9 +178,20 @@ export async function placeMarketFor(
     }
     throw err;
   }
-  const txHash = await wallet.walletClient.writeContract(request as never);
-  const receipt = await wallet.publicClient.waitForTransactionReceipt({ hash: txHash });
-  if (receipt.status !== "success") throw new OperatorRevert("reverted_onchain");
-  const { orderId, fills } = decodePlaceOrder(receipt, p.pool);
-  return { txHash, orderId: orderId ?? null, ...summarizeFills(fills), gasUsed: receipt.gasUsed };
+  let txHash: Hash;
+  try {
+    txHash = await wallet.walletClient.writeContract(request as never);
+  } catch (err) {
+    throw new TxOutcomeUnknown(null, err);
+  }
+  let result: ReceiptResult;
+  try {
+    const receipt = await wallet.publicClient.waitForTransactionReceipt({ hash: txHash });
+    result = decodeReceipt(receipt, txHash, p.pool);
+  } catch (err) {
+    throw new TxOutcomeUnknown(txHash, err);
+  }
+  if (result.reverted) throw new OperatorRevert("reverted_onchain");
+  const { reverted: _reverted, ...placed } = result;
+  return placed;
 }

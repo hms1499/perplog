@@ -1,5 +1,5 @@
 import type { watchPositionUpdates } from "@perplog/chain";
-import type { PlaceResult } from "@perplog/chain/signer";
+import type { PlaceResult, ReceiptResult } from "@perplog/chain/signer";
 import type { Address, MarketInfo, Side } from "@perplog/core";
 import type { Hash, Hex } from "viem";
 
@@ -14,6 +14,10 @@ export interface ChainPort {
     privateKey: Hex,
     p: { owner: Address; pool: Address; isBid: boolean; qtyRaw: bigint; priceBound: bigint },
   ): Promise<PlaceResult>;
+  /** The mined outcome of a sent order, or null while it has no receipt. */
+  receiptOf(txHash: Hash, pool: Address): Promise<ReceiptResult | null>;
+  /** True while `address` has a sent tx that is not mined yet. */
+  hasPendingTx(address: Address): Promise<boolean>;
   balanceOf(address: Address): Promise<bigint>;
   sendNative(privateKey: Hex, to: Address, amountWei: bigint): Promise<Hash>;
   pendingStopLosses(account: Address, pool: Address, side: Side): Promise<number>;

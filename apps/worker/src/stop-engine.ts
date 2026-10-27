@@ -1,4 +1,9 @@
-import { OperatorRevert, type PlaceResult } from "@perplog/chain/signer";
+import {
+  OperatorRevert,
+  type PlaceResult,
+  type ReceiptResult,
+  TxOutcomeUnknown,
+} from "@perplog/chain/signer";
 import {
   type Address,
   closePriceBound,
@@ -14,6 +19,7 @@ import {
 } from "@perplog/core";
 import {
   type Db,
+  type ExecutionRow,
   getBotKey,
   getStop,
   insertAlert,
@@ -25,7 +31,7 @@ import {
   updateExecution,
 } from "@perplog/db";
 import { decryptPrivateKey } from "@perplog/db/crypto";
-import type { Hex } from "viem";
+import type { Hash, Hex } from "viem";
 import type { Logger } from "./log";
 import type { ChainPort } from "./ports";
 import { KeyedSerial } from "./serial";
@@ -70,7 +76,11 @@ function errorText(err: unknown): string {
  * - executions are serialised per bot key and each stop is in flight at most once in this process; the signer lock
  *   keeps other processes out;
  * - the live position size is read in the same round trip as the mark right before every send, and `planClose`
- *   never sends more than it or on the opening side; a closed position ends DONE, a flipped one CANCELLED.
+ *   never sends more than it or on the opening side; a closed position ends DONE, a flipped one CANCELLED;
+ * - a send whose outcome is unknown (the tx may be in flight) is never followed by another send until it is
+ *   resolved: its receipt is found and recorded, or the bot has no pending tx (dropped). Until then the stop
+ *   waits in `executing` and gives up after 15 s with `outcome_unknown`. The same check runs on resume, so a
+ *   row left `sending`/`sent` by a crash is resolved before anything new is sent.
  */
 export function createStopEngine(deps: StopEngineDeps): StopEngine {
   const { db, chain, kek, log } = deps;
@@ -144,8 +154,9 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
 
     // Decrypted for this execution only; never cached across executions, never logged.
     const key = await getBotKey(db, stop.botKeyId);
-    if (!key?.encPk || !key.encIv || !key.encTag || key.account !== account)
+    if (!key?.address || !key.encPk || !key.encIv || !key.encTag || key.account !== account)
       return defer("bot_key_unavailable");
+    const botAddress = key.address;
     let privateKey: Hex;
     try {
       privateKey = decryptPrivateKey({ encPk: key.encPk, iv: key.encIv, tag: key.encTag }, kek, key.id);
@@ -153,10 +164,88 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
       return defer("bot_key_decrypt_failed");
     }
 
+    /** The stop row is what a resumed execution trusts: false means it left `executing`, so stop acting. */
+    const persist = () =>
+      transitionStop(db, id, ["executing"], "executing", { attempts: attempt, closedRaw: closed, lastError });
+
+    /** Records a mined outcome found after the fact. */
+    const recordOutcome = async (exec: ExecutionRow, r: ReceiptResult): Promise<boolean> => {
+      closed += r.filledRaw;
+      lastError = r.reverted ? "reverted_onchain" : r.filledRaw > 0n ? null : "no_fill";
+      if (!(await persist())) return false;
+      await updateExecution(
+        db,
+        exec.id,
+        r.reverted
+          ? { status: "failed", txHash: r.txHash, gasUsed: r.gasUsed, error: "reverted_onchain" }
+          : {
+              status: "confirmed",
+              txHash: r.txHash,
+              orderId: r.orderId,
+              filledRaw: r.filledRaw,
+              avgPrice: r.avgPrice,
+              gasUsed: r.gasUsed,
+              error: null,
+            },
+      );
+      log.info(
+        { stopId: id, pool, txHash: r.txHash, filledRaw: r.filledRaw.toString(), reverted: r.reverted },
+        "stop_close_resolved",
+      );
+      return true;
+    };
+
+    /**
+     * Pre-send guard: resolve every execution of this stop whose outcome is not recorded (`sending`/`sent`).
+     * "clear": none open. "changed": something was resolved, so every read must be redone. "wait": an outcome
+     * is still unknown (or could not be checked): send nothing. "lost": the stop left `executing`.
+     */
+    const settleOpen = async (): Promise<"clear" | "changed" | "wait" | "lost"> => {
+      const open = (await listStopExecutions(db, id)).filter(
+        (e) => e.status === "sending" || e.status === "sent",
+      );
+      if (open.length === 0) return "clear";
+      try {
+        const unresolved: ExecutionRow[] = [];
+        for (const e of open) {
+          const r = e.txHash ? await chain.receiptOf(e.txHash as Hash, pool) : null;
+          if (!r) unresolved.push(e);
+          else if (!(await recordOutcome(e, r))) return "lost";
+        }
+        if (unresolved.length > 0) {
+          if (await chain.hasPendingTx(botAddress)) return "wait";
+          for (const e of unresolved) {
+            // Nothing pending any more: it was mined just now (receipt visible), or it is gone for good.
+            const r = e.txHash ? await chain.receiptOf(e.txHash as Hash, pool) : null;
+            if (r) {
+              if (!(await recordOutcome(e, r))) return "lost";
+            } else {
+              // Without a hash a mined tx cannot be told from a lost one; the fresh size read covers both.
+              await updateExecution(db, e.id, {
+                status: "failed",
+                error: e.txHash ? "dropped" : "unresolved",
+              });
+              log.warn({ stopId: id, pool, txHash: e.txHash }, "stop_close_dropped");
+            }
+          }
+        }
+      } catch (err) {
+        log.warn({ stopId: id, pool, err }, "stop_outcome_check_failed");
+        return "wait";
+      }
+      return "changed";
+    };
+
     for (;;) {
       if (stopped) return;
-      // Size and mark in one round trip, so the size is as fresh as possible when the order goes out.
-      const [sizeRead, markRead] = await Promise.allSettled([
+      const settled = await settleOpen();
+      if (settled === "lost") return log.warn({ stopId: id }, "stop_progress_lost");
+      if (settled === "wait") return defer("outcome_unknown");
+      if (settled === "changed") continue;
+
+      // Pending check, size and mark in one round trip, so the size is as fresh as possible when the order goes out.
+      const [pendingRead, sizeRead, markRead] = await Promise.allSettled([
+        chain.hasPendingTx(botAddress),
         chain.readPositionSize(account, pool),
         chain.readMark(pool),
       ]);
@@ -178,6 +267,11 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
         return finish("give_up", lastError ?? (attempt >= STOP_MAX_ATTEMPTS ? "max_attempts" : "timeout"));
       }
 
+      // A tx from the bot that this stop has no record of: its effect is not in the size yet, so wait.
+      if (pendingRead.status === "rejected") {
+        return defer(`pending_check_failed: ${errorText(pendingRead.reason)}`);
+      }
+      if (pendingRead.value) return defer("tx_pending");
       if (markRead.status === "rejected") return defer(`mark_read_failed: ${errorText(markRead.reason)}`);
       const mark = markRead.value;
       if (mark.fromIndex) log.warn({ stopId: id, pool, mark: mark.price.toString() }, "stale_mark");
@@ -202,28 +296,36 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
         priceBound,
       });
       let result: PlaceResult | null = null;
+      let unknown: TxOutcomeUnknown | null = null;
       try {
         result = await chain.placeMarketFor(privateKey, order);
         closed += result.filledRaw;
         lastError = result.filledRaw > 0n ? null : "no_fill";
       } catch (err) {
-        // Any error is a failed attempt, even one thrown after the tx went out (receipt timeout): the next
-        // attempt re-reads the size, so an order that did land is never repeated beyond the live position.
-        lastError = errorText(err);
+        // Before broadcast (simulation revert, RPC error) nothing was sent: a plain failed attempt. By or after
+        // broadcast the order may still fill: never resend until the guard at the top of the loop resolves it.
+        if (err instanceof TxOutcomeUnknown) unknown = err;
+        lastError = unknown ? "outcome_unknown" : errorText(err);
       }
       attempt += 1;
 
-      // The stop row first: it is what a resumed execution trusts.
-      if (
-        !(await transitionStop(db, id, ["executing"], "executing", {
-          attempts: attempt,
-          closedRaw: closed,
-          lastError,
-        }))
-      ) {
+      if (unknown) {
+        // The hash first: it is how the outcome gets resolved, by this loop or after a restart.
+        await updateExecution(db, execId, {
+          status: "sent",
+          txHash: unknown.txHash,
+          error: errorText(unknown.cause ?? unknown),
+        });
+        log.warn(
+          { stopId: id, pool, txHash: unknown.txHash, attempt: attempt - 1 },
+          "stop_close_outcome_unknown",
+        );
+      }
+      if (!(await persist())) {
         log.warn({ stopId: id }, "stop_progress_lost");
         return;
       }
+      if (unknown) continue;
       if (result) {
         await updateExecution(db, execId, {
           status: "confirmed",

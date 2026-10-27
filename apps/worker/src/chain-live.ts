@@ -12,7 +12,7 @@ import {
   readPositionSize,
   withOverrides,
 } from "@perplog/chain";
-import { createBotWallet, placeMarketFor } from "@perplog/chain/signer";
+import { createBotWallet, hasPendingTx, placeMarketFor, receiptOf } from "@perplog/chain/signer";
 import type { MarketInfo } from "@perplog/core";
 import { privateKeyToAccount } from "viem/accounts";
 import type { WorkerEnv } from "./env";
@@ -49,6 +49,8 @@ export function liveChain(network: Network): ChainPort {
     grantedPools: (owner, bot, pools) => grantedPools(createHttpClient(network), owner, bot, pools),
     // The wallet is built per call so a decrypted key is never retained.
     placeMarketFor: (privateKey, p) => placeMarketFor(createBotWallet(privateKey, network), p),
+    receiptOf: (txHash, pool) => receiptOf(createHttpClient(network), txHash, pool),
+    hasPendingTx: (address) => hasPendingTx(createHttpClient(network), address),
     balanceOf: (address) => createHttpClient(network).getBalance({ address }),
     sendNative: (privateKey, to, amountWei) =>
       createBotWallet(privateKey, network).walletClient.sendTransaction({

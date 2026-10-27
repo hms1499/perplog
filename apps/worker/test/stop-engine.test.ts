@@ -11,6 +11,7 @@ import {
   listAlerts,
   listStopExecutions,
   type NewStop,
+  recordExecution,
   type StopRow,
   transitionStop,
 } from "@perplog/db";
@@ -81,14 +82,8 @@ const stopOf = async (db: Db, id: string): Promise<StopRow> => {
   return s;
 };
 
-/** No order may ever be larger than the live position or on the opening side. */
-function expectSafeSends(sends: Array<{ isBid: boolean; qtyRaw: bigint; sizeAtSend: bigint }>) {
-  for (const s of sends) {
-    expect(s.qtyRaw).toBeGreaterThan(0n);
-    expect(s.qtyRaw).toBeLessThanOrEqual(s.sizeAtSend < 0n ? -s.sizeAtSend : s.sizeAtSend);
-    expect(s.isBid).toBe(s.sizeAtSend < 0n);
-  }
-}
+// Every send is checked by the fake itself (fakes.ts): never while a tx from the key is pending, never more than
+// the live size, never on the opening side. A violation fails the test.
 
 test("long stop fires when mark ≤ trigger, closes the whole latest size, ends DONE with a stop_done alert", async () => {
   const { db, pk, f, log, run, stops } = await setup();
@@ -113,7 +108,6 @@ test("long stop fires when mark ≤ trigger, closes the whole latest size, ends 
     qtyRaw: 1_230n,
     priceBound: 98_500n,
   });
-  expectSafeSends(f.sends);
   expect(f.sizes.get(POOL_A)).toBe(0n);
 
   const after = await stopOf(db, stop.id);
@@ -161,7 +155,6 @@ test("short stop sends a bid with a ceiled bound", async () => {
   // 100_003 × 1.015 = 101_503.045 → ceil 101_504 → next tick of 10 → 101_510
   expect(f.sends[0]).toMatchObject({ isBid: true, qtyRaw: 500n, priceBound: 101_510n });
   expect(f.sends[0]?.priceBound).toBe(closePriceBound(100_003n, "short", 150, 10n));
-  expectSafeSends(f.sends);
   expect(f.sizes.get(POOL_A)).toBe(0n);
   expect((await stopOf(db, stop.id)).status).toBe("done");
 });
@@ -242,7 +235,6 @@ test("IOC no-fill widens slip 150 → 250 → 350 and then fills", async () => {
   await run();
   expect(f.sends.map((s) => s.priceBound)).toEqual([98_500n, 97_500n, 96_500n]);
   expect(f.sends.map((s) => s.qtyRaw)).toEqual([1_000n, 1_000n, 1_000n]);
-  expectSafeSends(f.sends);
   const after = await stopOf(db, stop.id);
   expect(after.status).toBe("done");
   expect(after.attempts).toBe(3);
@@ -260,7 +252,8 @@ test("five failed attempts → FAILED with stop_failed alert", async () => {
   const stop = stops[0] as StopRow;
   f.sizes.set(POOL_A, 1_000n);
   f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
-  f.script.push(ioc(), new Error("receipt timeout"), ioc(), ioc(), ioc(), "fill");
+  // any error thrown before broadcast (here a failed simulation RPC) is a plain failed attempt: safe to retry
+  f.script.push(ioc(), new Error("simulate: fetch failed"), ioc(), ioc(), ioc(), "fill");
   await run();
   expect(f.sends).toHaveLength(5);
   // slip 150, 250, 350, 450, then capped at the stop's max of 500
@@ -307,7 +300,6 @@ test("partial fill sends the remainder next attempt, never more than the live si
   });
   await run();
   expect(f.sends.map((s) => s.qtyRaw)).toEqual([1_000n, 500n]);
-  expectSafeSends(f.sends);
   expect(f.sizes.get(POOL_A)).toBe(0n);
   const after = await stopOf(db, stop.id);
   expect(after.status).toBe("done");
@@ -516,4 +508,186 @@ test("a fill on the fifth and last attempt ends DONE, not FAILED", async () => {
   expect(after.attempts).toBe(5);
   expect(after.lastError).toBeNull();
   expect((await listAlerts(db, ACCOUNT, 0)).map((a) => a.type)).toEqual(["stop_done"]);
+});
+
+// ---- Outcome unknown: a tx that may have been broadcast is never followed by a blind resend ----
+
+test("an unknown outcome is never resent: once the receipt is visible the stop ends DONE with no flip", async () => {
+  const { db, f, run, stops } = await setup();
+  const stop = stops[0] as StopRow;
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.script.push({ unknown: 1_000n });
+  await run();
+  expect(f.sends).toHaveLength(1);
+  let mid = await stopOf(db, stop.id);
+  expect(mid.status).toBe("executing");
+  expect(mid.lastError).toBe("outcome_unknown");
+  const [sent] = await listStopExecutions(db, stop.id);
+  expect(sent?.status).toBe("sent");
+  expect(sent?.txHash).toMatch(/^0x/);
+
+  // Still pending: further ticks resend nothing (the fake would also flag a send while pending).
+  await run();
+  await run();
+  expect(f.sends).toHaveLength(1);
+  mid = await stopOf(db, stop.id);
+  expect(mid.status).toBe("executing");
+
+  f.mine();
+  await run();
+  expect(f.sends).toHaveLength(1);
+  expect(f.sizes.get(POOL_A)).toBe(0n);
+  const after = await stopOf(db, stop.id);
+  expect(after.status).toBe("done");
+  expect(after.closedRaw).toBe(1_000n);
+  const [exec] = await listStopExecutions(db, stop.id);
+  expect(exec).toMatchObject({ status: "confirmed", filledRaw: 1_000n, txHash: sent?.txHash });
+  const alerts = await listAlerts(db, ACCOUNT, 0);
+  expect(alerts.map((a) => a.type)).toEqual(["stop_done"]);
+  expect(alerts[0]?.payload.txHashes).toEqual([sent?.txHash]);
+});
+
+test("an unknown outcome that partly filled is recorded, then only the fresh remainder is sent", async () => {
+  const { db, f, run, stops } = await setup();
+  const stop = stops[0] as StopRow;
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.script.push({ unknown: 400n });
+  await run();
+  f.mine();
+  await run();
+  expect(f.sends.map((s) => s.qtyRaw)).toEqual([1_000n, 600n]);
+  expect(f.sizes.get(POOL_A)).toBe(0n);
+  const after = await stopOf(db, stop.id);
+  expect(after.status).toBe("done");
+  expect(after.closedRaw).toBe(1_000n);
+  expect((await listStopExecutions(db, stop.id)).map((e) => [e.status, e.filledRaw])).toEqual([
+    ["confirmed", 400n],
+    ["confirmed", 600n],
+  ]);
+});
+
+test("an unknown outcome without a hash waits for the bot's pending nonce, then trusts the fresh size", async () => {
+  const { db, f, run, stops } = await setup();
+  const stop = stops[0] as StopRow;
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.script.push({ unknown: 1_000n, withHash: false });
+  await run();
+  await run();
+  expect(f.sends).toHaveLength(1);
+  expect((await stopOf(db, stop.id)).status).toBe("executing");
+  f.mine();
+  await run();
+  expect(f.sends).toHaveLength(1);
+  expect(f.sizes.get(POOL_A)).toBe(0n);
+  expect((await stopOf(db, stop.id)).status).toBe("done");
+});
+
+test("a dropped tx (hash, no receipt, nothing pending) is marked dropped and the close proceeds", async () => {
+  const { db, f, run, stops } = await setup();
+  const stop = stops[0] as StopRow;
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.script.push({ unknown: 1_000n });
+  await run();
+  f.drop();
+  await run();
+  expect(f.sends.map((s) => s.qtyRaw)).toEqual([1_000n, 1_000n]);
+  expect(f.sizes.get(POOL_A)).toBe(0n);
+  expect((await stopOf(db, stop.id)).status).toBe("done");
+  expect((await listStopExecutions(db, stop.id)).map((e) => [e.status, e.error])).toEqual([
+    ["failed", "dropped"],
+    ["confirmed", null],
+  ]);
+});
+
+test("an outcome that never resolves ends FAILED with outcome_unknown 15s after the trigger", async () => {
+  const { db, f, clock, run, stops } = await setup();
+  const stop = stops[0] as StopRow;
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.script.push({ unknown: 1_000n });
+  await run();
+  clock.t += 5_000;
+  await run();
+  expect((await stopOf(db, stop.id)).status).toBe("executing");
+  clock.t += STOP_GIVE_UP_MS;
+  await run();
+  expect(f.sends).toHaveLength(1);
+  const after = await stopOf(db, stop.id);
+  expect(after.status).toBe("failed");
+  expect(after.lastError).toBe("outcome_unknown");
+  const alerts = await listAlerts(db, ACCOUNT, 0);
+  expect(alerts.map((a) => a.type)).toEqual(["stop_failed"]);
+  expect(alerts[0]?.payload).toMatchObject({ reason: "outcome_unknown" });
+});
+
+test("restart: an execution left 'sending' with a pending nonce sends nothing until it resolves", async () => {
+  const { db, f, clock, run, stops, keyId } = await setup([{ status: "executing", attempts: 1 }]);
+  const stop = stops[0] as StopRow;
+  await transitionStop(db, stop.id, ["executing"], "executing", { triggeredAt: new Date(clock.t - 1_000) });
+  // The previous process crashed between recording the execution and learning its outcome.
+  await recordExecution(db, {
+    kind: "stop_close",
+    status: "sending",
+    account: ACCOUNT,
+    pool: POOL_A,
+    botKeyId: keyId,
+    stopId: stop.id,
+    isBid: false,
+    qtyRaw: 1_000n,
+    priceBound: 97_500n,
+  });
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.state.externalPending = true;
+  await run();
+  await run();
+  expect(f.sends).toHaveLength(0);
+  expect((await stopOf(db, stop.id)).status).toBe("executing");
+
+  // It lands: the nonce is no longer pending and the size reflects the fill.
+  f.state.externalPending = false;
+  f.sizes.set(POOL_A, 0n);
+  await run();
+  expect(f.sends).toHaveLength(0);
+  expect((await stopOf(db, stop.id)).status).toBe("done");
+  expect((await listStopExecutions(db, stop.id))[0]?.status).toBe("failed");
+});
+
+test("restart: an execution left 'sending' that never went out lets the close proceed on the fresh size", async () => {
+  const { db, f, clock, run, stops, keyId } = await setup([{ status: "executing", attempts: 1 }]);
+  const stop = stops[0] as StopRow;
+  await transitionStop(db, stop.id, ["executing"], "executing", { triggeredAt: new Date(clock.t - 1_000) });
+  await recordExecution(db, {
+    kind: "stop_close",
+    status: "sending",
+    account: ACCOUNT,
+    pool: POOL_A,
+    botKeyId: keyId,
+    stopId: stop.id,
+    isBid: false,
+    qtyRaw: 1_000n,
+    priceBound: 97_500n,
+  });
+  f.sizes.set(POOL_A, 800n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  await run();
+  expect(f.sends.map((s) => s.qtyRaw)).toEqual([800n]);
+  expect((await stopOf(db, stop.id)).status).toBe("done");
+});
+
+test("a failed pending-nonce check sends nothing", async () => {
+  const { db, f, run, stops } = await setup();
+  const stop = stops[0] as StopRow;
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.chain.hasPendingTx = vi.fn(async () => Promise.reject(new Error("HTTP 503")));
+  await run();
+  expect(f.sends).toHaveLength(0);
+  const mid = await stopOf(db, stop.id);
+  expect(mid.status).toBe("executing");
+  expect(mid.lastError).toMatch(/pending_check_failed/);
 });
