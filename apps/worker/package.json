@@ -1,0 +1,22 @@
+{
+  "name": "@perplog/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@perplog/chain": "workspace:*",
+    "@perplog/core": "workspace:*",
+    "@perplog/db": "workspace:*",
+    "pino": "^10",
+    "viem": "^2.57",
+    "zod": "^4"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.11",
+    "tsx": "^4.23.15"
+  }
+}

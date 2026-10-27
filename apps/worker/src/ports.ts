@@ -1,0 +1,22 @@
+import type { watchPositionUpdates } from "@perplog/chain";
+import type { PlaceResult } from "@perplog/chain/signer";
+import type { Address, MarketInfo, Side } from "@perplog/core";
+import type { Hash, Hex } from "viem";
+
+/** Everything the worker needs from the outside world; faked in tests. */
+export interface ChainPort {
+  /** Perp markets from the indexer, cached for 10 minutes. */
+  markets(): Promise<MarketInfo[]>;
+  readPositionSize(account: Address, pool: Address): Promise<bigint>;
+  readMark(pool: Address): Promise<{ price: bigint; fromIndex: boolean }>;
+  grantedPools(owner: Address, bot: Address, pools: Address[]): Promise<Address[]>;
+  placeMarketFor(
+    privateKey: Hex,
+    p: { owner: Address; pool: Address; isBid: boolean; qtyRaw: bigint; priceBound: bigint },
+  ): Promise<PlaceResult>;
+  balanceOf(address: Address): Promise<bigint>;
+  sendNative(privateKey: Hex, to: Address, amountWei: bigint): Promise<Hash>;
+  pendingStopLosses(account: Address, pool: Address, side: Side): Promise<number>;
+  openPositions(accounts: Address[]): Promise<{ account: Address; pool: Address; size: bigint }[]>;
+  subscribePositionUpdates: Parameters<typeof watchPositionUpdates>[0]["subscribe"];
+}
