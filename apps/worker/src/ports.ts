@@ -22,6 +22,7 @@ export interface ChainPort {
   /** True while `address` has a sent tx that is not mined yet. */
   hasPendingTx(address: Address): Promise<boolean>;
   balanceOf(address: Address): Promise<bigint>;
+  /** A native transfer; resolves with its hash once mined, throws when it reverted. */
   sendNative(privateKey: Hex, to: Address, amountWei: bigint): Promise<Hash>;
   pendingStopLosses(account: Address, pool: Address, side: Side): Promise<number>;
   openPositions(accounts: Address[]): Promise<{ account: Address; pool: Address; size: bigint }[]>;

@@ -200,3 +200,27 @@ test.each([
     await w.stop();
   }
 });
+
+test("the gas-treasury loop runs only with a treasury key; without one it warns at startup", async () => {
+  const boot = async (treasury: `0x${string}` | null) => {
+    const log = fakeLogger();
+    const w = await startWorker({
+      db: await createTestDb(),
+      lockConn: lockConn([true]),
+      migrate: vi.fn(async () => {}),
+      env: fakeEnv({ TREASURY_PRIVATE_KEY: treasury }),
+      chain: fakeChain({ balanceOf: vi.fn(async () => 10n ** 20n) }),
+      log,
+      onFatal: vi.fn(),
+    });
+    await w.stop();
+    return log;
+  };
+  const without = await boot(null);
+  expect(without.entries.some((e) => e.level === "warn" && e.msg === "gas treasury disabled")).toBe(true);
+  expect(without.entries.some((e) => e.msg === "loop started" && e.obj.name === "gas-treasury")).toBe(false);
+
+  const withKey = await boot(`0x${"11".repeat(32)}`);
+  expect(withKey.entries.some((e) => e.msg === "loop started" && e.obj.name === "gas-treasury")).toBe(true);
+  expect(withKey.has("gas treasury disabled")).toBe(false);
+});

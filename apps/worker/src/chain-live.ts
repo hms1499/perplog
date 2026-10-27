@@ -57,13 +57,18 @@ export function liveChain(network: Network): ChainPort {
     receiptOf: (txHash, pool) => receiptOf(createHttpClient(network), txHash, pool),
     hasPendingTx: (address) => hasPendingTx(createHttpClient(network), address),
     balanceOf: (address) => createHttpClient(network).getBalance({ address }),
-    sendNative: (privateKey, to, amountWei) =>
-      createBotWallet(privateKey, network).walletClient.sendTransaction({
+    // Waits for the receipt so back-to-back top-ups from the treasury never race on its nonce.
+    async sendNative(privateKey, to, amountWei) {
+      const hash = await createBotWallet(privateKey, network).walletClient.sendTransaction({
         account: privateKeyToAccount(privateKey),
         chain: network.chain,
         to,
         value: amountWei,
-      }),
+      });
+      const receipt = await createHttpClient(network).waitForTransactionReceipt({ hash });
+      if (receipt.status !== "success") throw new Error(`transfer ${hash} reverted`);
+      return hash;
+    },
     pendingStopLosses: (account, pool, side) => fetchPendingStopLosses(network.indexer, account, pool, side),
     openPositions: (accounts) => fetchOpenPerpPositions(network.indexer, accounts),
     // Lazy: the SDK client (and its WebSocket) is only touched when a subscription is actually opened.

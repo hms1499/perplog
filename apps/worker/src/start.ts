@@ -3,6 +3,7 @@ import type { Db } from "@perplog/db";
 import { createAlertEngine } from "./alert-engine";
 import { mintRequestedKeys } from "./bot-key-minter";
 import type { WorkerEnv } from "./env";
+import { GAS_TREASURY_INTERVAL_MS, topUpBots } from "./gas-treasury";
 import { checkLinks } from "./link-watcher";
 import { type LockConn, tryAcquireSignerLock } from "./lock";
 import type { Logger } from "./log";
@@ -123,6 +124,19 @@ export async function startWorker(deps: WorkerDeps): Promise<{ stop(): Promise<v
             await Promise.all([watchedRefresh.stop(), listener.stop(), alerts.idle()]);
           },
         });
+        const treasuryKey = env.TREASURY_PRIVATE_KEY;
+        if (treasuryKey) {
+          loops.push(
+            every(
+              GAS_TREASURY_INTERVAL_MS,
+              "gas-treasury",
+              () => topUpBots({ db, chain: deps.chain, treasuryKey, env, log }),
+              log,
+            ),
+          );
+        } else {
+          log.warn({ reason: "TREASURY_PRIVATE_KEY is not set" }, "gas treasury disabled");
+        }
         heartbeat = setTimeout(() => void beat(), heartbeatMs);
         active = true;
       } else {
