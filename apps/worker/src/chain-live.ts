@@ -8,8 +8,8 @@ import {
   HIDEKI,
   type Network,
   reactivitySubscriber,
-  readMark,
-  readPositionSize,
+  readMarkOn,
+  readPositionSizeOn,
   withOverrides,
 } from "@perplog/chain";
 import { createBotWallet, hasPendingTx, placeMarketFor, receiptOf } from "@perplog/chain/signer";
@@ -43,9 +43,14 @@ export function liveChain(network: Network): ChainPort {
       }
       return marketsCache.markets;
     },
-    readPositionSize: (account, pool) =>
-      readPositionSize(createReadClient(network), network.marginBank, account, pool),
-    readMark: (pool) => readMark(createReadClient(network), pool),
+    // Sizes, marks, receipts, nonces and block numbers all go through ONE HTTP client (the endpoint the bot
+    // wallet sends on), so a size read can be fenced on the block of a receipt seen there. The WebSocket SDK
+    // client is kept for Reactivity only.
+    readPositionSize: (account, pool, atBlock) =>
+      readPositionSizeOn(createHttpClient(network), network.marginBank, account, pool, atBlock),
+    readMark: (pool) => readMarkOn(createHttpClient(network), pool),
+    // No caching: viem otherwise reuses a block number for up to the polling interval.
+    blockNumber: () => createHttpClient(network).getBlockNumber({ cacheTime: 0 }),
     grantedPools: (owner, bot, pools) => grantedPools(createHttpClient(network), owner, bot, pools),
     // The wallet is built per call so a decrypted key is never retained.
     placeMarketFor: (privateKey, p) => placeMarketFor(createBotWallet(privateKey, network), p),

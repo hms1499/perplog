@@ -73,7 +73,15 @@ async function setup(stops: Array<Partial<NewStop>> = [{}]) {
     await engine.tick();
     await engine.idle();
   };
-  return { db, pk, keyId: req.id, stops: rows, f, log, clock, engine, run };
+  /** A fresh engine on the same DB and chain, as after a worker restart (no in-memory state). */
+  const restart = () => {
+    const e = createStopEngine({ db, chain: f.chain, kek, log, now: () => clock.t });
+    return async () => {
+      await e.tick();
+      await e.idle();
+    };
+  };
+  return { db, pk, keyId: req.id, stops: rows, f, log, clock, engine, run, restart };
 }
 
 const stopOf = async (db: Db, id: string): Promise<StopRow> => {
@@ -579,6 +587,10 @@ test("an unknown outcome without a hash waits for the bot's pending nonce, then 
   expect(f.sends).toHaveLength(1);
   expect((await stopOf(db, stop.id)).status).toBe("executing");
   f.mine();
+  // Settled with no receipt to fence on: the size is trusted only once a block past the settle is visible.
+  await run();
+  expect((await stopOf(db, stop.id)).lastError).toBe("block_fence");
+  f.advance();
   await run();
   expect(f.sends).toHaveLength(1);
   expect(f.sizes.get(POOL_A)).toBe(0n);
@@ -593,6 +605,9 @@ test("a dropped tx (hash, no receipt, nothing pending) is marked dropped and the
   f.script.push({ unknown: 1_000n });
   await run();
   f.drop();
+  await run();
+  expect(f.sends).toHaveLength(1);
+  f.advance();
   await run();
   expect(f.sends.map((s) => s.qtyRaw)).toEqual([1_000n, 1_000n]);
   expect(f.sizes.get(POOL_A)).toBe(0n);
@@ -652,6 +667,8 @@ test("restart: an execution left 'sending' with a pending nonce sends nothing un
   f.state.externalPending = false;
   f.sizes.set(POOL_A, 0n);
   await run();
+  f.advance();
+  await run();
   expect(f.sends).toHaveLength(0);
   expect((await stopOf(db, stop.id)).status).toBe("done");
   expect((await listStopExecutions(db, stop.id))[0]?.status).toBe("failed");
@@ -675,6 +692,9 @@ test("restart: an execution left 'sending' that never went out lets the close pr
   f.sizes.set(POOL_A, 800n);
   f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
   await run();
+  expect(f.sends).toHaveLength(0);
+  f.advance();
+  await run();
   expect(f.sends.map((s) => s.qtyRaw)).toEqual([800n]);
   expect((await stopOf(db, stop.id)).status).toBe("done");
 });
@@ -690,4 +710,94 @@ test("a failed pending-nonce check sends nothing", async () => {
   const mid = await stopOf(db, stop.id);
   expect(mid.status).toBe("executing");
   expect(mid.lastError).toMatch(/pending_check_failed/);
+});
+
+// ---- Block fence: a size read is trusted only on a node that has seen every known fill ----
+
+test("a receipt seen while the size view lags a block: no resend, DONE once the view catches up", async () => {
+  const { db, f, run, stops } = await setup();
+  const stop = stops[0] as StopRow;
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.script.push({ unknown: 1_000n });
+  await run();
+  f.state.lag = 1n; // the receipt is visible, but the size node is still on the block before the fill
+  f.mine();
+  await run();
+  await run();
+  expect(f.sends).toHaveLength(1);
+  const mid = await stopOf(db, stop.id);
+  expect(mid.status).toBe("executing");
+  expect(mid.closedRaw).toBe(1_000n);
+  expect(mid.lastError).toBe("block_fence");
+  f.state.lag = 0n;
+  await run();
+  expect(f.sends).toHaveLength(1);
+  expect(f.sizes.get(POOL_A)).toBe(0n);
+  expect((await stopOf(db, stop.id)).status).toBe("done");
+});
+
+test("the success path fences too: after a partial fill the remainder waits for the fill's block", async () => {
+  const { db, f, run, stops } = await setup();
+  const stop = stops[0] as StopRow;
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.state.lag = 1n;
+  f.script.push({ fill: 400n });
+  await run();
+  expect(f.sends.map((s) => s.qtyRaw)).toEqual([1_000n]);
+  expect((await stopOf(db, stop.id)).lastError).toBe("block_fence");
+  f.state.lag = 0n;
+  await run();
+  expect(f.sends.map((s) => s.qtyRaw)).toEqual([1_000n, 600n]);
+  expect(f.sizes.get(POOL_A)).toBe(0n);
+  expect((await stopOf(db, stop.id)).status).toBe("done");
+});
+
+test("after a restart the fence is re-derived from the last recorded receipt", async () => {
+  const { db, f, run, restart, stops } = await setup();
+  const stop = stops[0] as StopRow;
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.state.lag = 1n;
+  f.script.push({ fill: 400n });
+  await run();
+  expect(f.sends).toHaveLength(1);
+  // A new process has no in-memory fence; the size node still lags.
+  const runAgain = restart();
+  await runAgain();
+  await runAgain();
+  expect(f.sends).toHaveLength(1);
+  expect((await stopOf(db, stop.id)).status).toBe("executing");
+  f.state.lag = 0n;
+  await runAgain();
+  expect(f.sends.map((s) => s.qtyRaw)).toEqual([1_000n, 600n]);
+  expect((await stopOf(db, stop.id)).status).toBe("done");
+});
+
+test("a failed block-number read sends nothing", async () => {
+  const { db, f, run, stops } = await setup();
+  const stop = stops[0] as StopRow;
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  f.state.blockError = new Error("HTTP 503");
+  await run();
+  expect(f.sends).toHaveLength(0);
+  const mid = await stopOf(db, stop.id);
+  expect(mid.status).toBe("executing");
+  expect(mid.attempts).toBe(0);
+  expect(mid.lastError).toMatch(/block_read_failed/);
+  f.state.blockError = null;
+  await run();
+  expect((await stopOf(db, stop.id)).status).toBe("done");
+});
+
+test("every size read before a send is pinned to a block the node has", async () => {
+  const { f, run } = await setup();
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  await run();
+  const sizeCalls = vi.mocked(f.chain.readPositionSize).mock.calls;
+  expect(sizeCalls.length).toBeGreaterThan(0);
+  for (const call of sizeCalls) expect(typeof call[2]).toBe("bigint");
 });

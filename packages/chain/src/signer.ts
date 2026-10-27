@@ -89,6 +89,8 @@ export interface PlaceResult {
   filledRaw: bigint;
   avgPrice: bigint | null;
   gasUsed: bigint;
+  /** The block the tx was mined in: state read at an earlier block does not include its fills. */
+  blockNumber: bigint;
 }
 
 /** A mined `placeOrderFor` receipt as a result; a reverted receipt is a known outcome with nothing filled. */
@@ -98,7 +100,15 @@ export interface ReceiptResult extends PlaceResult {
 
 function decodeReceipt(receipt: TransactionReceipt, txHash: Hash, pool: Address): ReceiptResult {
   if (receipt.status !== "success") {
-    return { txHash, orderId: null, filledRaw: 0n, avgPrice: null, gasUsed: receipt.gasUsed, reverted: true };
+    return {
+      txHash,
+      orderId: null,
+      filledRaw: 0n,
+      avgPrice: null,
+      gasUsed: receipt.gasUsed,
+      blockNumber: receipt.blockNumber,
+      reverted: true,
+    };
   }
   const { orderId, fills } = decodePlaceOrder(receipt, pool);
   return {
@@ -106,6 +116,7 @@ function decodeReceipt(receipt: TransactionReceipt, txHash: Hash, pool: Address)
     orderId: orderId ?? null,
     ...summarizeFills(fills),
     gasUsed: receipt.gasUsed,
+    blockNumber: receipt.blockNumber,
     reverted: false,
   };
 }

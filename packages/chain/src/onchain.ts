@@ -13,7 +13,7 @@ import {
   stopCoverageBps,
 } from "@perplog/core";
 import { perpMarkForPnl, SomniaMarkets, type SomniaMarketsClient } from "@somnia-chain/markets-sdk";
-import { createPublicClient, http, type PublicClient } from "viem";
+import { createPublicClient, http, type PublicClient, parseAbi } from "viem";
 import { HIDEKI, type Network } from "./networks";
 
 const readClients = new Map<Network, SomniaMarketsClient>();
@@ -61,6 +61,51 @@ export async function readMark(
   pool: Address,
 ): Promise<{ price: bigint; fromIndex: boolean }> {
   const mark = perpMarkForPnl(await client.getPerpState(pool));
+  return { price: mark.price, fromIndex: mark.fromIndex };
+}
+
+// The two reads behind the SDK's `getPerpPosition` / mark half of `getPerpState`, for a plain viem client. The SDK
+// does not export its standalone readers, and its client is bound to the WebSocket endpoint; the worker must read
+// sizes on the same HTTP endpoint it reads receipts and nonces from.
+const MARGIN_BANK_POSITION_ABI = parseAbi([
+  "function getPosition(address account, address perpPool) view returns ((int128 size, uint128 avgEntryPrice, int256 entryFundingIndex, uint64 lastUpdatedTimestampNs))",
+]);
+const PERP_MARK_ABI = parseAbi([
+  "function tryGetMarkPrice() view returns (bool ok, uint256 price)",
+  "function getIndexPrice() view returns (uint256 price, uint256 updatedAt)",
+]);
+
+/**
+ * Signed position size over a plain `PublicClient`. With `blockNumber` the read is pinned to that block, so a node
+ * that has not reached it fails instead of answering with older state.
+ */
+export async function readPositionSizeOn(
+  client: Pick<PublicClient, "readContract">,
+  marginBank: Address,
+  account: Address,
+  pool: Address,
+  blockNumber?: bigint,
+): Promise<bigint> {
+  const position = await client.readContract({
+    address: marginBank,
+    abi: MARGIN_BANK_POSITION_ABI,
+    functionName: "getPosition",
+    args: [account, pool],
+    ...(blockNumber !== undefined && { blockNumber }),
+  });
+  return position.size;
+}
+
+/** `readMark` over a plain `PublicClient`: the same `perpMarkForPnl` rule on the pool's mark and index reads. */
+export async function readMarkOn(
+  client: Pick<PublicClient, "readContract">,
+  pool: Address,
+): Promise<{ price: bigint; fromIndex: boolean }> {
+  const [[markPriceOk, markPrice], [indexPrice]] = await Promise.all([
+    client.readContract({ address: pool, abi: PERP_MARK_ABI, functionName: "tryGetMarkPrice" }),
+    client.readContract({ address: pool, abi: PERP_MARK_ABI, functionName: "getIndexPrice" }),
+  ]);
+  const mark = perpMarkForPnl({ markPriceOk, markPrice, indexPrice });
   return { price: mark.price, fromIndex: mark.fromIndex };
 }
 

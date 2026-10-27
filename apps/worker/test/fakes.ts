@@ -60,6 +60,7 @@ export function fakeChain(overrides: Partial<ChainPort> = {}): ChainPort {
     readMark: unused("readMark"),
     grantedPools: unused("grantedPools"),
     placeMarketFor: unused("placeMarketFor"),
+    blockNumber: unused("blockNumber"),
     receiptOf: unused("receiptOf"),
     hasPendingTx: unused("hasPendingTx"),
     balanceOf: unused("balanceOf"),
@@ -112,8 +113,16 @@ export function fakeTradingChain(markets: MarketInfo[]) {
   const violations: string[] = [];
   const receipts = new Map<Hash, ReceiptResult>();
   const pending: Array<{ hash: Hash; p: PlaceParams; fill: bigint }> = [];
-  /** A pending tx from the bot that the engine has no record of (e.g. sent just before a crash). */
-  const state = { externalPending: false };
+  /**
+   * - `externalPending`: a pending tx from the bot that the engine has no record of (e.g. sent before a crash);
+   * - `chainBlock`: the real head; every mined tx lands in a new block;
+   * - `lag`: how many blocks the node serving `blockNumber`/`readPositionSize` is behind the head. Receipts are
+   *   visible at once (another backend), so a lagging size view answers with the size from before the fill;
+   * - `blockError`: makes `blockNumber()` throw.
+   */
+  const state = { externalPending: false, chainBlock: 100n, lag: 0n, blockError: null as Error | null };
+  /** Size before each mined fill, so a read pinned to an older block sees the older size. */
+  const history: Array<{ block: bigint; pool: Address; before: bigint }> = [];
   let tx = 0;
 
   onTestFinished(() => {
@@ -125,19 +134,29 @@ export function fakeTradingChain(markets: MarketInfo[]) {
     if (v instanceof Error) throw v;
     return v;
   };
+  const viewBlock = () => state.chainBlock - state.lag;
+  const sizeAt = (pool: Address, block: bigint): bigint => {
+    const current = sizeOf(pool);
+    const later = history.find((h) => h.pool === pool && h.block > block);
+    return later ? later.before : current;
+  };
   const nextHash = (): Hash => {
     tx += 1;
     return `0x${tx.toString(16).padStart(64, "0")}`;
   };
   const apply = (p: PlaceParams, filled: bigint, hash: Hash): ReceiptResult => {
     // Applied to the size as it is now: a scripted function or a pending period may have moved it meanwhile.
-    sizes.set(p.pool, sizeOf(p.pool) + (p.isBid ? filled : -filled));
+    const before = sizeOf(p.pool);
+    state.chainBlock += 1n;
+    history.push({ block: state.chainBlock, pool: p.pool, before });
+    sizes.set(p.pool, before + (p.isBid ? filled : -filled));
     const r = {
       txHash: hash,
       orderId: BigInt(tx),
       filledRaw: filled,
       avgPrice: filled > 0n ? 1n : null,
       gasUsed: 21_000n,
+      blockNumber: state.chainBlock,
       reverted: false,
     };
     receipts.set(hash, r);
@@ -146,9 +165,16 @@ export function fakeTradingChain(markets: MarketInfo[]) {
 
   const chain = fakeChain({
     markets: vi.fn(async () => markets),
-    readPositionSize: vi.fn(async (_account: Address, pool: Address) => {
+    readPositionSize: vi.fn(async (_account: Address, pool: Address, atBlock?: bigint) => {
       calls.push(`size:${pool}`);
-      return sizeOf(pool);
+      const block = atBlock ?? viewBlock();
+      if (block > viewBlock()) throw new Error(`header not found: block ${block}`);
+      return sizeAt(pool, block);
+    }),
+    blockNumber: vi.fn(async () => {
+      calls.push("block");
+      if (state.blockError) throw state.blockError;
+      return viewBlock();
     }),
     readMark: vi.fn(async (pool: Address) => {
       calls.push(`mark:${pool}`);
@@ -209,6 +235,10 @@ export function fakeTradingChain(markets: MarketInfo[]) {
     /** Mines every pending tx: its fill lands on the size and its receipt becomes visible. */
     mine() {
       for (const t of pending.splice(0)) apply(t.p, t.fill, t.hash);
+    },
+    /** A new empty block on the head. */
+    advance() {
+      state.chainBlock += 1n;
     },
     /** Drops every pending tx: nothing fills and no receipt ever appears. */
     drop() {

@@ -7,7 +7,10 @@ import type { Hash, Hex } from "viem";
 export interface ChainPort {
   /** Perp markets from the indexer, cached for 10 minutes. */
   markets(): Promise<MarketInfo[]>;
-  readPositionSize(account: Address, pool: Address): Promise<bigint>;
+  /** Signed position size; pinned to `atBlock` when given (a node that has not reached it must throw). */
+  readPositionSize(account: Address, pool: Address, atBlock?: bigint): Promise<bigint>;
+  /** Latest block number on the node that serves sizes, receipts and nonces. */
+  blockNumber(): Promise<bigint>;
   readMark(pool: Address): Promise<{ price: bigint; fromIndex: boolean }>;
   grantedPools(owner: Address, bot: Address, pools: Address[]): Promise<Address[]>;
   placeMarketFor(

@@ -80,13 +80,19 @@ function errorText(err: unknown): string {
  * - a send whose outcome is unknown (the tx may be in flight) is never followed by another send until it is
  *   resolved: its receipt is found and recorded, or the bot has no pending tx (dropped). Until then the stop
  *   waits in `executing` and gives up after 15 s with `outcome_unknown`. The same check runs on resume, so a
- *   row left `sending`/`sent` by a crash is resolved before anything new is sent.
+ *   row left `sending`/`sent` by a crash is resolved before anything new is sent;
+ * - block fence: after a known fill (a successful send or a receipt found later) a size read is trusted only on a
+ *   node whose head has reached that receipt's block, and the read is pinned to that head. After an outcome
+ *   settled without a receipt (dropped, or no hash), the head must have moved one block past the settle.
+ *   The fence lives in memory and is re-derived on resume from the stop's last recorded receipt.
  */
 export function createStopEngine(deps: StopEngineDeps): StopEngine {
   const { db, chain, kek, log } = deps;
   const now = deps.now ?? Date.now;
   const serial = new KeyedSerial();
   const inFlight = new Map<string, Promise<void>>();
+  /** Per stop: the lowest block at which a size read includes every fill this engine knows of. */
+  const fences = new Map<string, bigint>();
   let stopped = false;
 
   const schedule = (stop: StopRow, market: MarketInfo | undefined): void => {
@@ -115,7 +121,12 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
     let closed = stop.closedRaw;
     let lastError = stop.lastError;
 
+    const raiseFence = (block: bigint): void => {
+      if (block > (fences.get(id) ?? 0n)) fences.set(id, block);
+    };
+
     const finish = async (event: StopEvent, reason: string | null = lastError): Promise<void> => {
+      fences.delete(id);
       const to = nextStopStatus("executing", event);
       if (to === null) throw new Error(`no transition from executing on ${event}`);
       const patch = { attempts: attempt, closedRaw: closed, lastError: reason };
@@ -164,12 +175,34 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
       return defer("bot_key_decrypt_failed");
     }
 
+    if (!fences.has(id)) {
+      // Resume (or first run): the last recorded fill's receipt block is the fence. Sends are sequential per
+      // stop, so the latest confirmed execution carries the highest block.
+      const lastFill = (await listStopExecutions(db, id))
+        .filter((e) => e.status === "confirmed" && e.txHash)
+        .at(-1);
+      let block = 0n;
+      if (lastFill?.txHash) {
+        let r: ReceiptResult | null;
+        try {
+          r = await chain.receiptOf(lastFill.txHash as Hash, pool);
+        } catch (err) {
+          return defer(`receipt_read_failed: ${errorText(err)}`);
+        }
+        // A recorded receipt this node cannot see yet means the node is behind it.
+        if (!r) return defer("block_fence");
+        block = r.blockNumber;
+      }
+      fences.set(id, block);
+    }
+
     /** The stop row is what a resumed execution trusts: false means it left `executing`, so stop acting. */
     const persist = () =>
       transitionStop(db, id, ["executing"], "executing", { attempts: attempt, closedRaw: closed, lastError });
 
     /** Records a mined outcome found after the fact. */
     const recordOutcome = async (exec: ExecutionRow, r: ReceiptResult): Promise<boolean> => {
+      raiseFence(r.blockNumber);
       closed += r.filledRaw;
       lastError = r.reverted ? "reverted_onchain" : r.filledRaw > 0n ? null : "no_fill";
       if (!(await persist())) return false;
@@ -214,6 +247,8 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
         }
         if (unresolved.length > 0) {
           if (await chain.hasPendingTx(botAddress)) return "wait";
+          // No receipt to fence on: trust only a size from a block after this point.
+          const observed = await chain.blockNumber();
           for (const e of unresolved) {
             // Nothing pending any more: it was mined just now (receipt visible), or it is gone for good.
             const r = e.txHash ? await chain.receiptOf(e.txHash as Hash, pool) : null;
@@ -221,6 +256,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
               if (!(await recordOutcome(e, r))) return "lost";
             } else {
               // Without a hash a mined tx cannot be told from a lost one; the fresh size read covers both.
+              raiseFence(observed + 1n);
               await updateExecution(db, e.id, {
                 status: "failed",
                 error: e.txHash ? "dropped" : "unresolved",
@@ -239,14 +275,26 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
     for (;;) {
       if (stopped) return;
       const settled = await settleOpen();
-      if (settled === "lost") return log.warn({ stopId: id }, "stop_progress_lost");
+      if (settled === "lost") {
+        fences.delete(id);
+        return log.warn({ stopId: id }, "stop_progress_lost");
+      }
       if (settled === "wait") return defer("outcome_unknown");
       if (settled === "changed") continue;
 
-      // Pending check, size and mark in one round trip, so the size is as fresh as possible when the order goes out.
+      // Block fence: the node must have every known fill before its size is believed.
+      let head: bigint;
+      try {
+        head = await chain.blockNumber();
+      } catch (err) {
+        return defer(`block_read_failed: ${errorText(err)}`);
+      }
+      if (head < (fences.get(id) ?? 0n)) return defer("block_fence");
+
+      // Pending check, size (pinned to that head) and mark in one round trip, as close to the send as possible.
       const [pendingRead, sizeRead, markRead] = await Promise.allSettled([
         chain.hasPendingTx(botAddress),
-        chain.readPositionSize(account, pool),
+        chain.readPositionSize(account, pool, head),
         chain.readMark(pool),
       ]);
       if (sizeRead.status === "rejected") return defer(`size_read_failed: ${errorText(sizeRead.reason)}`);
@@ -299,6 +347,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
       let unknown: TxOutcomeUnknown | null = null;
       try {
         result = await chain.placeMarketFor(privateKey, order);
+        raiseFence(result.blockNumber);
         closed += result.filledRaw;
         lastError = result.filledRaw > 0n ? null : "no_fill";
       } catch (err) {

@@ -14,7 +14,7 @@ const OWNER = `0x${"a1".repeat(20)}` as Address;
 const HASH = `0x${"ab".repeat(32)}` as Hash;
 const ORDER = { owner: OWNER, pool: POOL, isBid: false, qtyRaw: 10n, priceBound: 100n };
 
-const receipt = (status: "success" | "reverted") => ({ status, logs: [], gasUsed: 123n });
+const receipt = (status: "success" | "reverted") => ({ status, logs: [], gasUsed: 123n, blockNumber: 9n });
 
 function fakeWallet(over: {
   simulate?: () => Promise<unknown>;
@@ -76,6 +76,7 @@ describe("signer", () => {
       filledRaw: 0n,
       avgPrice: null,
       gasUsed: 123n,
+      blockNumber: 9n,
     });
   });
 
@@ -101,6 +102,7 @@ describe("signer", () => {
       filledRaw: 0n,
       avgPrice: null,
       gasUsed: 123n,
+      blockNumber: 9n,
       reverted: false,
     });
     expect(
@@ -111,6 +113,7 @@ describe("signer", () => {
       ),
     ).toMatchObject({
       filledRaw: 0n,
+      blockNumber: 9n,
       reverted: true,
     });
     await expect(
