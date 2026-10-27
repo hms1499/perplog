@@ -1,5 +1,5 @@
 import type { Address } from "@perplog/core";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import type { Db } from "../client";
 import { type BotKeyRow, botKeys, type SessionRow, sessions } from "../schema";
 
@@ -36,28 +36,34 @@ export async function claimRequestedBotKeys(
   });
 }
 
+/** Pending -> linked. Returns false (and changes nothing) when the key is not `pending`. */
 export async function bindBotKey(
   db: Db,
   botKeyId: string,
   account: Address,
   pools: Address[],
-): Promise<void> {
-  await db
+): Promise<boolean> {
+  const rows = await db
     .update(botKeys)
     .set({ account, linkedPools: pools, status: "linked", linkedAt: new Date(), checkedAt: new Date() })
-    .where(eq(botKeys.id, botKeyId));
+    .where(and(eq(botKeys.id, botKeyId), eq(botKeys.status, "pending")))
+    .returning({ id: botKeys.id });
+  return rows.length > 0;
 }
 
+/** linked <-> revoked only; requested/pending keys are never touched. Returns whether a row changed. */
 export async function setLinkedPools(
   db: Db,
   botKeyId: string,
   pools: Address[],
   status: "linked" | "revoked",
-): Promise<void> {
-  await db
+): Promise<boolean> {
+  const rows = await db
     .update(botKeys)
     .set({ linkedPools: pools, status, checkedAt: new Date() })
-    .where(eq(botKeys.id, botKeyId));
+    .where(and(eq(botKeys.id, botKeyId), inArray(botKeys.status, ["linked", "revoked"])))
+    .returning({ id: botKeys.id });
+  return rows.length > 0;
 }
 
 export async function listLinkedBotKeys(db: Db): Promise<BotKeyRow[]> {

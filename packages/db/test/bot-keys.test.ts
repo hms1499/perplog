@@ -76,3 +76,26 @@ test("sessions carry their bot key and can be bound to an account", async () => 
   expect((await getSession(db, s.id))?.account).toBe(ACCOUNT);
   expect(await getSession(db, "00000000-0000-0000-0000-000000000000")).toBeNull();
 });
+
+test("bindBotKey and setLinkedPools only change keys in the expected status", async () => {
+  const db = await createTestDb();
+  const k = await createBotKeyRequest(db);
+  // requested: neither may touch it
+  expect(await bindBotKey(db, k.id, ACCOUNT, [POOL])).toBe(false);
+  expect(await setLinkedPools(db, k.id, [POOL], "linked")).toBe(false);
+  expect((await getBotKey(db, k.id))?.status).toBe("requested");
+  await claimRequestedBotKeys(db, 1, fakeFill);
+  // pending: setLinkedPools may not touch it, bindBotKey may
+  expect(await setLinkedPools(db, k.id, [POOL], "linked")).toBe(false);
+  expect((await getBotKey(db, k.id))?.status).toBe("pending");
+  expect(await bindBotKey(db, k.id, ACCOUNT, [POOL])).toBe(true);
+  expect((await getBotKey(db, k.id))?.status).toBe("linked");
+  // linked: bindBotKey is a no-op, setLinkedPools moves linked <-> revoked
+  expect(await bindBotKey(db, k.id, ACCOUNT, [POOL2])).toBe(false);
+  expect((await getBotKey(db, k.id))?.linkedPools).toEqual([POOL]);
+  expect(await setLinkedPools(db, k.id, [], "revoked")).toBe(true);
+  expect(await bindBotKey(db, k.id, ACCOUNT, [POOL])).toBe(false);
+  expect((await getBotKey(db, k.id))?.status).toBe("revoked");
+  expect(await setLinkedPools(db, k.id, [POOL], "linked")).toBe(true);
+  expect((await getBotKey(db, k.id))?.status).toBe("linked");
+});
