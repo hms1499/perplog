@@ -12,6 +12,7 @@
   "dependencies": {
     "@perplog/chain": "workspace:*",
     "@perplog/core": "workspace:*",
+    "@perplog/db": "workspace:*",
     "@tanstack/react-query": "^5.104.5",
     "lru-cache": "^11",
     "next": "16.4.3",
