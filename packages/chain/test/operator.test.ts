@@ -7,7 +7,7 @@ function fill(q: bigint, p: bigint): OrderFill {
 }
 
 describe("operator", () => {
-  test("grantedPools keeps pools whose placeOrderFor grant is true and treats failures as not granted", async () => {
+  test("grantedPools keeps pools whose placeOrderFor grant is true", async () => {
     const calls: { contracts: Record<string, unknown>[]; allowFailure?: boolean }[] = [];
     const client = {
       multicall: async (a: { contracts: Record<string, unknown>[]; allowFailure?: boolean }) => {
@@ -15,11 +15,11 @@ describe("operator", () => {
         return [
           { status: "success", result: true },
           { status: "success", result: false },
-          { status: "failure", error: new Error("x") },
+          { status: "success", result: true },
         ];
       },
     };
-    expect(await grantedPools(client as never, "0xa", "0xb", ["0x1", "0x2", "0x3"])).toEqual(["0x1"]);
+    expect(await grantedPools(client as never, "0xa", "0xb", ["0x1", "0x2", "0x3"])).toEqual(["0x1", "0x3"]);
     expect(calls).toHaveLength(1);
     expect(calls[0]?.allowFailure).toBe(true);
     expect(calls[0]?.contracts.map((c) => c.address)).toEqual(["0x1", "0x2", "0x3"]);
@@ -27,6 +27,19 @@ describe("operator", () => {
       expect(c.functionName).toBe("isOperatorAuthorized");
       expect(c.args).toEqual(["0xa", "0xb", "0x80054449"]);
     }
+  });
+
+  test("grantedPools rejects when any sub-call fails, so a partial read never looks like a revoke", async () => {
+    const client = {
+      multicall: async () => [
+        { status: "success", result: true },
+        { status: "failure", error: new Error("x") },
+        { status: "failure", error: new Error("y") },
+      ],
+    };
+    await expect(grantedPools(client as never, "0xa", "0xb", ["0x1", "0x2", "0x3"])).rejects.toThrow(
+      /2 of 3/,
+    );
   });
 
   test("grantedPools with no pools makes no call", async () => {

@@ -19,6 +19,7 @@ const ACCOUNT = `0x${"a1".repeat(20)}` as Address;
 const BOT = `0x${"c1".repeat(20)}` as Address;
 const POOL_A = `0x${"b1".repeat(20)}` as Address;
 const POOL_B = `0x${"b2".repeat(20)}` as Address;
+const POOL_C = `0x${"b3".repeat(20)}` as Address; // never in the cached markets list
 
 const market = (pool: Address): MarketInfo => ({
   pool,
@@ -146,4 +147,45 @@ test("a lost pool with no stops revokes the pool without alerting", async () => 
   expect((await getBotKey(db, keyId))?.linkedPools).toEqual([POOL_A]);
   expect(await statusOf(db, stopA.id)).toBe("armed");
   expect(await listAlerts(db, ACCOUNT, 0)).toHaveLength(0);
+});
+
+async function stopOnUnlistedPool(db: Db, keyId: string): Promise<StopRow> {
+  return insertStop(db, {
+    account: ACCOUNT,
+    pool: POOL_C,
+    botKeyId: keyId,
+    positionSide: "long",
+    triggerPrice: 100n,
+    triggerOp: "lte",
+    qtyMode: "entire",
+    status: "armed",
+  });
+}
+
+test("a stop on a pool missing from the markets list is judged by its real grant, not by the list", async () => {
+  const { db, keyId, stopA } = await setup();
+  const stopC = await stopOnUnlistedPool(db, keyId);
+  // still granted: stays armed, no alert, and the pool is kept in linked_pools
+  const chain = chainGranting([POOL_A, POOL_B, POOL_C]);
+  await checkLinks(db, chain, fakeLogger());
+  expect(chain.grantedPools).toHaveBeenCalledWith(ACCOUNT, BOT, [POOL_A, POOL_B, POOL_C]);
+  expect(await statusOf(db, stopC.id)).toBe("armed");
+  expect(await listAlerts(db, ACCOUNT, 0)).toHaveLength(0);
+  expect((await getBotKey(db, keyId))?.linkedPools).toEqual([POOL_A, POOL_B, POOL_C]);
+  // queried and not granted: now it IS paused, alongside an alert naming only that pool
+  await checkLinks(db, chainGranting([POOL_A, POOL_B]), fakeLogger());
+  expect(await statusOf(db, stopC.id)).toBe("paused");
+  expect(await statusOf(db, stopA.id)).toBe("armed");
+  const alerts = await listAlerts(db, ACCOUNT, 0);
+  expect(alerts).toHaveLength(1);
+  expect(alerts[0]?.payload).toEqual({ pools: [POOL_C] });
+});
+
+test("a paused stop on an unlisted but granted pool is re-armed", async () => {
+  const { db, keyId } = await setup();
+  const stopC = await stopOnUnlistedPool(db, keyId);
+  await checkLinks(db, chainGranting([POOL_A, POOL_B]), fakeLogger());
+  expect(await statusOf(db, stopC.id)).toBe("paused");
+  await checkLinks(db, chainGranting([POOL_A, POOL_B, POOL_C]), fakeLogger());
+  expect(await statusOf(db, stopC.id)).toBe("armed");
 });

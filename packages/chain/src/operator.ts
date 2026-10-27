@@ -41,7 +41,7 @@ export const OPERATOR_ABI = [
 /** Gas limit for every order write. Somnia bills gas used, not the limit. */
 export const ORDER_GAS = 20_000_000n;
 
-/** Pools (from `pools`) on which `bot` holds the `placeOrderFor` grant for `owner`. Failed reads count as not granted. */
+/** Pools (from `pools`) on which `bot` holds the `placeOrderFor` grant for `owner`. Throws when any read fails: a partial failure must not look like a revoke. */
 export async function grantedPools(
   client: Pick<PublicClient, "multicall">,
   owner: Address,
@@ -58,6 +58,10 @@ export async function grantedPools(
       args: [owner, bot, OPERATOR_SELECTOR.placeOrderFor] as const,
     })),
   });
+  const failed = results.filter((r) => r.status === "failure").length;
+  if (failed > 0) {
+    throw new Error(`grantedPools: ${failed} of ${pools.length} isOperatorAuthorized reads failed`);
+  }
   return pools.filter((_, i) => {
     const r = results[i];
     return r?.status === "success" && r.result === true;

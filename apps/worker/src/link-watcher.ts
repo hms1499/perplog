@@ -43,23 +43,29 @@ async function checkKey(
   db: Db,
   chain: ChainPort,
   key: BotKeyRow,
-  pools: Address[],
+  marketPools: Address[],
   log: Logger,
 ): Promise<void> {
   const account = key.account as Address;
-  const granted = (await chain.grantedPools(account, key.address as Address, pools)).map(
+  // Stops belong to the key that will sign for them, so only this key's grants decide their fate.
+  // Listed before the grant read so every stop we judge has its pool in the queried set.
+  const stops = (await listAccountStops(db, account, ["armed", "paused"])).filter(
+    (s) => s.botKeyId === key.id,
+  );
+  // The cached market list can lag (a market listed after the cache fill) or be partial, so a stop's pool is
+  // always queried too: absence from the list must never read as a lost grant.
+  const queried = [...new Set<Address>([...marketPools, ...stops.map((s) => s.pool)])];
+  const granted = (await chain.grantedPools(account, key.address as Address, queried)).map(
     (p) => p.toLowerCase() as Address,
   );
   const grantedSet = new Set(granted);
 
   await setLinkedPools(db, key.id, granted, granted.length > 0 ? "linked" : "revoked");
 
-  // Stops belong to the key that will sign for them, so only this key's grants decide their fate.
-  const armed = (await listAccountStops(db, account, ["armed"])).filter((s) => s.botKeyId === key.id);
   const lost = new Set<Address>();
-  for (const s of armed) {
+  for (const s of stops) {
     if (grantedSet.has(s.pool)) continue;
-    if (await transitionStop(db, s.id, ["armed"], "paused")) lost.add(s.pool);
+    if (s.status === "armed" && (await transitionStop(db, s.id, ["armed"], "paused"))) lost.add(s.pool);
   }
   if (lost.size > 0) {
     const lostPools = [...lost];
@@ -72,9 +78,8 @@ async function checkKey(
     });
   }
 
-  const paused = (await listAccountStops(db, account, ["paused"])).filter((s) => s.botKeyId === key.id);
-  for (const s of paused) {
-    if (!grantedSet.has(s.pool)) continue;
+  for (const s of stops) {
+    if (s.status !== "paused" || !grantedSet.has(s.pool)) continue;
     if (await transitionStop(db, s.id, ["paused"], "armed")) {
       log.info({ botKeyId: key.id, account, pool: s.pool }, "grant restored, stop re-armed");
     }
