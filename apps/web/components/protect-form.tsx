@@ -90,8 +90,8 @@ export function ProtectForm({ position, onArmed }: { position: Position; onArmed
   const message = inputError ?? (mutation.isError ? errorText(mutation.error, position.side) : null);
 
   return (
-    <form onSubmit={submit} className="rounded-md border border-rule bg-sheet p-5">
-      <h2 className="font-extrabold text-lg">Protect {position.symbol}</h2>
+    <form onSubmit={submit} className="rounded-md border border-line bg-panel p-5">
+      <h2 className="font-semibold text-head text-lg">Protect {position.symbol}</h2>
       <p className="mt-1 text-muted">
         When the mark crosses the trigger, PerpLog's bot closes this {position.side} at market.
       </p>
@@ -104,7 +104,7 @@ export function ProtectForm({ position, onArmed }: { position: Position; onArmed
             autoComplete="off"
             value={trigger}
             onChange={(e) => setTrigger(e.target.value)}
-            className="w-40 rounded-md border border-rule bg-paper px-3 py-1.5"
+            className="w-40 rounded-md border border-line bg-field px-3 py-1.5"
           />
         </label>
         <fieldset className="flex flex-col gap-1">
@@ -139,14 +139,14 @@ export function ProtectForm({ position, onArmed }: { position: Position; onArmed
               autoComplete="off"
               value={size}
               onChange={(e) => setSize(e.target.value)}
-              className="w-32 rounded-md border border-rule bg-paper px-3 py-1.5"
+              className="w-32 rounded-md border border-line bg-field px-3 py-1.5"
             />
           </label>
         )}
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="rounded-md bg-ink px-4 py-2 font-semibold text-paper disabled:opacity-50"
+          className="rounded-md bg-action px-4 py-2 font-semibold text-white disabled:opacity-50"
         >
           Arm stop
         </button>

@@ -69,8 +69,8 @@ export function LinkWizard({ account, onLinked }: { account: string; onLinked: (
   const missingPools = poll.data?.missingPools ?? [];
 
   return (
-    <section data-testid="link-wizard" className="rounded-md border border-rule bg-sheet p-5">
-      <h2 className="font-extrabold text-lg">Protect this account</h2>
+    <section data-testid="link-wizard" className="rounded-md border border-line bg-panel p-5">
+      <h2 className="font-semibold text-head text-lg">Protect this account</h2>
       <p className="mt-1 text-muted">
         PerpLog gets its own bot key, which can only close your positions. Link it to your account in three
         steps.
@@ -84,7 +84,7 @@ export function LinkWizard({ account, onLinked }: { account: string; onLinked: (
               type="button"
               onClick={() => start.mutate()}
               disabled={start.isPending}
-              className="mt-2 rounded-md border border-ink px-4 py-2 font-semibold disabled:opacity-50"
+              className="mt-2 rounded-md border border-line-strong bg-panel px-4 py-2 font-semibold disabled:opacity-50"
             >
               Enable protection
             </button>
@@ -102,13 +102,13 @@ export function LinkWizard({ account, onLinked }: { account: string; onLinked: (
             <p className="font-semibold">2. Link the bot in dreamDEX</p>
             {botAddress ? (
               <div className="mt-2 flex flex-wrap items-center gap-3">
-                <code data-testid="bot-address" className="break-all rounded-sm bg-rule/40 px-2 py-1">
+                <code data-testid="bot-address" className="break-all rounded-sm bg-field px-2 py-1">
                   {botAddress}
                 </code>
                 <button
                   type="button"
                   onClick={copy}
-                  className="rounded-md border border-ink px-3 py-1 font-semibold"
+                  className="rounded-md border border-line-strong bg-panel px-3 py-1 font-semibold"
                 >
                   {copied ? "Copied" : "Copy"}
                 </button>
@@ -147,7 +147,7 @@ export function LinkWizard({ account, onLinked }: { account: string; onLinked: (
                   ))}
                 </ul>
                 {missingPools.length > 0 && (
-                  <p role="status" className="mt-3 rounded-sm bg-marker/35 px-3 py-2">
+                  <p role="status" className="mt-3 rounded-lg border border-brand/30 bg-brand/10 px-3 py-2">
                     Some markets are not linked yet. Add the same bot address again in the app to cover them.
                   </p>
                 )}

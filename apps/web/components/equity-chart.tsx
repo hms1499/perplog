@@ -9,7 +9,6 @@ const toNumber = (raw: bigint) => Number(formatAmount(raw, 18, 6).replace(/,/g, 
 export function EquityChart({ points: equity }: { points: Wire<EquityPoint>[] }) {
   if (equity.length < 2) return null;
   const points = equity.map((p) => ({ at: p.at * 1000, net: toNumber(BigInt(p.netRaw)) }));
-  const last = points.at(-1)?.net ?? 0;
   return (
     <figure data-testid="equity-chart" className="lg:col-span-2">
       <figcaption className="mb-2 font-semibold text-muted">Cumulative net PnL, trade by trade</figcaption>
@@ -27,7 +26,7 @@ export function EquityChart({ points: equity }: { points: Wire<EquityPoint>[] })
               fontSize={12}
             />
             <YAxis stroke="var(--muted)" fontSize={12} width={56} />
-            <ReferenceLine y={0} stroke="var(--rule)" />
+            <ReferenceLine y={0} stroke="var(--line-strong)" />
             <Tooltip
               formatter={(v) => [`${Number(v).toFixed(2)} USDso`, "Net PnL"]}
               labelFormatter={(v) => new Date(Number(v)).toLocaleString()}
@@ -35,7 +34,7 @@ export function EquityChart({ points: equity }: { points: Wire<EquityPoint>[] })
             <Line
               type="stepAfter"
               dataKey="net"
-              stroke={last >= 0 ? "var(--gain)" : "var(--loss)"}
+              stroke="var(--brand-line)"
               strokeWidth={2}
               dot={false}
               isAnimationActive={false}

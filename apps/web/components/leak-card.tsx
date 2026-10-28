@@ -21,7 +21,7 @@ function Evidence({ address, range, leak }: { address: string; range: Range; lea
   if (pages.isPending) return <p className="mt-4 text-muted text-sm">Loading trades…</p>;
   if (pages.error) return <ErrorState error={pages.error} onRetry={() => pages.refetch()} />;
   return (
-    <div className="mt-4 border-rule border-l-2 pl-4">
+    <div className="mt-4 border-line border-l-2 pl-4">
       {pages.data.pages
         .flatMap((p) => p.trades)
         .map((t) => (
@@ -32,7 +32,7 @@ function Evidence({ address, range, leak }: { address: string; range: Range; lea
           type="button"
           onClick={() => pages.fetchNextPage()}
           disabled={pages.isFetchingNextPage}
-          className="mt-4 rounded-md border border-ink px-3 py-1.5 font-semibold text-sm"
+          className="mt-4 rounded-md border border-line-strong bg-panel px-3 py-1.5 font-semibold text-sm"
         >
           {pages.isFetchingNextPage ? "Loading…" : "Load more"}
         </button>
@@ -47,10 +47,10 @@ export function LeakCard({ leak, address, range }: { leak: Wire<Leak>; address: 
   const positionsHref = `/a/${address}?tab=positions${leak.fix === "SHOW_FUNDING" ? "" : "&note=protect"}`;
 
   return (
-    <article data-testid="leak-card" className="border-rule border-b py-6">
+    <article data-testid="leak-card" className="border-line border-b py-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
         <h3 className="font-bold text-xl">{leak.title}</h3>
-        <p className="font-extrabold text-2xl text-loss">{formatUsd(BigInt(leak.amountRaw))}</p>
+        <p className="font-semibold text-head text-2xl text-loss">{formatUsd(BigInt(leak.amountRaw))}</p>
       </div>
       <p className="mt-1 text-muted">
         {WHY[leak.id]} {Math.round(leak.shareOfLossBps / 100)}% of your losses in this period.
@@ -60,7 +60,7 @@ export function LeakCard({ leak, address, range }: { leak: Wire<Leak>; address: 
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          className="rounded-md border border-rule bg-sheet px-3 py-1.5 font-semibold text-sm"
+          className="rounded-md border border-line bg-panel px-3 py-1.5 font-semibold text-sm"
         >
           {open ? "Hide trades" : "Show trades"}
         </button>
@@ -68,14 +68,14 @@ export function LeakCard({ leak, address, range }: { leak: Wire<Leak>; address: 
           <button
             type="button"
             onClick={() => setNote(true)}
-            className="rounded-md bg-ink px-3 py-1.5 font-semibold text-paper text-sm"
+            className="rounded-md bg-action px-3 py-1.5 font-semibold text-white text-sm"
           >
             Fix
           </button>
         ) : (
           <Link
             href={positionsHref}
-            className="rounded-md bg-ink px-3 py-1.5 font-semibold text-paper text-sm"
+            className="rounded-md bg-action px-3 py-1.5 font-semibold text-white text-sm"
           >
             Fix
           </Link>

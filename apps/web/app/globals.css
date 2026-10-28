@@ -1,51 +1,91 @@
 @import "tailwindcss";
 
+/*
+ * PerpLog design tokens (docs/specs/2026-10-28-perplog-design-system.md §4): dreamDEX's trading-app palette,
+ * brightened for a light ground, with PerpLog's own cyan as the brand color. Components use only these tokens.
+ */
 :root {
-  --paper: #f3f5f8;
-  --sheet: #ffffff;
-  --ink: #13203b;
-  --muted: #5b6577;
-  --rule: #cdd3dd;
-  --gain: #17734a;
-  --loss: #b3261e;
-  --marker: #f5d547;
-  --marker-ink: #13203b;
-  --focus: #2f5bd3;
+  --page: #eef1f5;
+  --panel: #ffffff;
+  --field: #f2f5f8;
+  --line: #d0d7e6;
+  --line-strong: #b1b7bf;
+  --head: #0e1217;
+  --text: #1e242b;
+  --muted: #404852;
+  --gain: #1c634d;
+  --loss: #af0c3d;
+  --loss-fill: #dc0b4a;
+  --warn: #a34e00;
+  --brand: #137a99;
+  --brand-line: #1aa3cc;
+  --action: #514cae;
+  --action-hover: #5e59b2;
+  --focus: #137a99;
+  --testnet: #990080;
+  --testnet-bg: #ffe6fb;
+  --testnet-line: #ff99ef;
+  --x: #0e1217;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #0f1626;
-    --sheet: #162036;
-    --ink: #e7ecf5;
-    --muted: #93a0b5;
-    --rule: #2a3550;
-    --gain: #4cc38a;
-    --loss: #f0706a;
-    --marker: #e9c93a;
-    --marker-ink: #13203b;
-    --focus: #8aa8ff;
+    --page: #0e1217;
+    --panel: #1c222a;
+    --field: #14191f;
+    --line: #2d323a;
+    --line-strong: #3a414b;
+    --head: #ffffff;
+    --text: #c9d1d9;
+    --muted: #8d98a3;
+    --gain: #00fa89;
+    --loss: #ec658d;
+    --loss-fill: #dc0b4a;
+    --warn: #ff9533;
+    --brand: #20ccff;
+    --brand-line: #20ccff;
+    --action: #5b55c8;
+    --action-hover: #6b65d1;
+    --focus: #20ccff;
+    --testnet: #ff66e6;
+    --testnet-bg: #660057;
+    --testnet-line: #990080;
+    --x: #000000;
   }
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-sheet: var(--sheet);
-  --color-ink: var(--ink);
+  --color-page: var(--page);
+  --color-panel: var(--panel);
+  --color-field: var(--field);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-head: var(--head);
+  --color-text: var(--text);
   --color-muted: var(--muted);
-  --color-rule: var(--rule);
   --color-gain: var(--gain);
   --color-loss: var(--loss);
-  --color-marker: var(--marker);
-  --color-marker-ink: var(--marker-ink);
+  --color-loss-fill: var(--loss-fill);
+  --color-warn: var(--warn);
+  --color-brand: var(--brand);
+  --color-brand-line: var(--brand-line);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
   --color-focus: var(--focus);
-  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+  --color-testnet: var(--testnet);
+  --color-testnet-bg: var(--testnet-bg);
+  --color-testnet-line: var(--testnet-line);
+  --color-x: var(--x);
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 body {
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--page);
+  color: var(--text);
   font-family: var(--font-sans);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
 }
 
 :focus-visible {

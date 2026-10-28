@@ -13,7 +13,7 @@ import { ReconcileBadge } from "./reconcile-badge";
 function StatementRow({ label, raw, strong = false }: { label: string; raw: bigint; strong?: boolean }) {
   return (
     <div
-      className={`flex items-baseline justify-between gap-6 py-1.5 ${strong ? "text-2xl font-extrabold sm:text-3xl" : "text-lg"}`}
+      className={`flex items-baseline justify-between gap-6 py-1.5 ${strong ? "text-2xl font-semibold text-head sm:text-3xl" : "text-lg"}`}
     >
       <span className={strong ? "" : "text-muted"}>{label}</span>
       <span className={`${signClass(raw)}`}>
@@ -46,12 +46,12 @@ export function HealthPanel({ address, range }: { address: string; range: Range 
         <h2 id="statement-title" className="mb-4 font-semibold text-muted">
           Your PnL statement, {data.tradeCount} closed {data.tradeCount === 1 ? "trade" : "trades"}
         </h2>
-        <div className="max-w-xl rounded-md border border-rule bg-sheet px-5 py-4">
+        <div className="max-w-xl rounded-md border border-line bg-panel px-5 py-4">
           <StatementRow label="Realized PnL" raw={realized} />
           <StatementRow label="Funding" raw={-funding} />
           <StatementRow label="Liquidation and trading fees" raw={-fees} />
-          <div className="my-2 border-ink border-t-2" />
-          <div className="-mx-2 rounded-sm bg-marker/35 px-2">
+          <div className="my-2 border-line border-t" />
+          <div className="-mx-2 rounded-sm bg-brand/10 px-2">
             <StatementRow label="Net PnL" raw={net} strong />
           </div>
         </div>

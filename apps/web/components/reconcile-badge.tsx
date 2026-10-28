@@ -19,7 +19,7 @@ export function ReconcileBadge({
   if (reconcile.ok) {
     return (
       <span
-        className="inline-block rounded-sm bg-marker px-2 py-0.5 font-semibold text-marker-ink text-sm"
+        className="inline-block rounded-md border border-gain/40 bg-gain/10 px-2 py-0.5 font-semibold text-gain text-sm"
         title="The sum of every indexed event equals your collateral on-chain right now."
       >
         ✓ Reconciled with chain

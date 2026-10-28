@@ -26,9 +26,9 @@ function Distance({ bps }: { bps: number | null }) {
   const width = Math.min(100, bps / 30);
   return (
     <span className="flex items-center gap-2">
-      <span className="h-1.5 w-16 rounded-full bg-rule" aria-hidden>
+      <span className="h-1.5 w-16 rounded-full bg-line" aria-hidden>
         <span
-          className={`block h-1.5 rounded-full ${danger ? "bg-loss" : "bg-ink"}`}
+          className={`block h-1.5 rounded-full ${danger ? "bg-loss-fill" : "bg-brand"}`}
           style={{ width: `${width}%` }}
         />
       </span>
@@ -52,7 +52,10 @@ function PerplogStopBadge({ position, onCancelled }: { position: Position; onCan
   const cancellable = stop.status === "armed" || stop.status === "paused";
   return (
     <span className="flex items-center gap-2">
-      <span data-testid="perplog-stop" className="rounded-sm border border-ink px-2 py-0.5 text-xs">
+      <span
+        data-testid="perplog-stop"
+        className="rounded-sm border border-line-strong bg-panel px-2 py-0.5 text-xs"
+      >
         PerpLog stop @ {price} · {stop.status}
       </span>
       {cancellable && (
@@ -101,7 +104,7 @@ export function PositionsPanel({ address }: { address: string }) {
   return (
     <section className="py-6">
       {params.get("note") === "protect" && (
-        <p role="status" className="mb-4 rounded-sm bg-marker/35 px-3 py-2">
+        <p role="status" className="mb-4 rounded-lg border border-brand/30 bg-brand/10 px-3 py-2">
           {available
             ? "Press Protect on an open position to arm a PerpLog stop-loss."
             : "Set a stop-loss on each open position in the dreamDEX app."}
@@ -117,7 +120,7 @@ export function PositionsPanel({ address }: { address: string }) {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[56rem] text-left text-sm [&_td]:whitespace-nowrap [&_td]:pr-4 [&_th]:pr-4">
             <thead className="text-muted">
-              <tr className="border-rule border-b">
+              <tr className="border-line border-b">
                 <th className="py-2 font-normal">Market</th>
                 <th className="py-2 font-normal">Side</th>
                 <th className="py-2 text-right font-normal">Size</th>
@@ -138,7 +141,7 @@ export function PositionsPanel({ address }: { address: string }) {
                 const price = (raw: string | null) =>
                   raw === null ? "—" : formatAmount(BigInt(raw), PRICE_DECIMALS, p.priceDecimals);
                 return (
-                  <tr key={p.pool} data-testid="position-row" className="border-rule border-b">
+                  <tr key={p.pool} data-testid="position-row" className="border-line border-b">
                     <td className="py-3 font-bold">{p.symbol}</td>
                     <td className={`py-3 ${p.side === "long" ? "text-gain" : "text-loss"}`}>
                       {p.side === "long" ? "Long" : "Short"}
@@ -169,7 +172,7 @@ export function PositionsPanel({ address }: { address: string }) {
                           <button
                             type="button"
                             onClick={() => setProtectPool(p.pool.toLowerCase())}
-                            className="rounded-md border border-ink px-3 py-1 font-semibold"
+                            className="rounded-md border border-line-strong bg-panel px-3 py-1 font-semibold"
                           >
                             Protect
                           </button>
@@ -197,7 +200,7 @@ export function PositionsPanel({ address }: { address: string }) {
               }}
             />
           ) : linkedAccount !== null ? (
-            <p role="status" className="rounded-sm bg-marker/35 px-3 py-2">
+            <p role="status" className="rounded-lg border border-brand/30 bg-brand/10 px-3 py-2">
               This browser's PerpLog bot is linked to {shortAddress(linkedAccount as `0x${string}`)}. Open
               that account to protect its positions.
             </p>

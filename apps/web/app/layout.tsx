@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Schibsted_Grotesk } from "next/font/google";
-import Link from "next/link";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Footer, NavBar } from "@/components/ui";
 import { Providers } from "./providers";
 import "./globals.css";
 
-const schibsted = Schibsted_Grotesk({ variable: "--font-schibsted", subsets: ["latin"] });
+const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "PerpLog",
@@ -13,17 +14,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${schibsted.variable} h-full antialiased`}>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <header className="border-rule border-b">
-          <div className="mx-auto flex max-w-5xl items-baseline justify-between px-4 py-4 sm:px-6">
-            <Link href="/" className="font-extrabold text-lg tracking-tight">
-              PerpLog
-            </Link>
-            <span className="text-muted text-sm">For dreamDEX perps on Somnia Tokyo testnet</span>
-          </div>
-        </header>
-        <Providers>{children}</Providers>
+        <NavBar />
+        <div className="flex-1">
+          <Providers>{children}</Providers>
+        </div>
+        <Footer />
       </body>
     </html>
   );

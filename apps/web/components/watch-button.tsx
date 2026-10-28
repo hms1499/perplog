@@ -26,7 +26,7 @@ export function WatchButton({ account }: { account: string }) {
     return (
       <span
         role="status"
-        className="rounded-md border border-rule px-3 py-1 font-semibold text-muted text-sm"
+        className="rounded-md border border-line px-3 py-1 font-semibold text-muted text-sm"
       >
         Watching
       </span>
@@ -38,7 +38,7 @@ export function WatchButton({ account }: { account: string }) {
         type="button"
         onClick={() => mutation.mutate()}
         disabled={mutation.isPending}
-        className="rounded-md border border-ink px-3 py-1 font-semibold text-sm disabled:opacity-50"
+        className="rounded-md border border-line-strong bg-panel px-3 py-1 font-semibold text-sm disabled:opacity-50"
       >
         Watch this account
       </button>

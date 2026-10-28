@@ -8,7 +8,7 @@ import { EmptyState } from "./empty-state";
 import { ErrorState } from "./error-state";
 import { EXIT_LABEL, TradeCard } from "./trade-card";
 
-const selectClass = "rounded-md border border-rule bg-sheet px-2 py-1.5 text-sm";
+const selectClass = "rounded-md border border-line bg-panel px-2 py-1.5 text-sm";
 
 export function JournalPanel({ address, range }: { address: string; range: Range }) {
   const id = useId();
@@ -96,7 +96,7 @@ export function JournalPanel({ address, range }: { address: string; range: Range
                 <Link
                   href={`/a/${address}?tab=journal&range=all`}
                   scroll={false}
-                  className="text-ink underline underline-offset-2"
+                  className="text-head underline underline-offset-2"
                 >
                   See all trades
                 </Link>
@@ -116,7 +116,7 @@ export function JournalPanel({ address, range }: { address: string; range: Range
               type="button"
               onClick={() => pages.fetchNextPage()}
               disabled={pages.isFetchingNextPage}
-              className="mt-6 rounded-md border border-ink px-4 py-2 font-semibold"
+              className="mt-6 rounded-md border border-line-strong bg-panel px-4 py-2 font-semibold"
             >
               {pages.isFetchingNextPage ? "Loading…" : "Load more"}
             </button>

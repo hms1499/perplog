@@ -11,11 +11,11 @@ export const EXIT_LABEL: Record<ExitType, string> = {
 };
 
 const EXIT_TONE: Record<ExitType, string> = {
-  LIQUIDATED: "bg-loss text-paper",
-  NATIVE_STOP: "border border-ink",
-  PERPLOG_STOP: "border border-ink",
-  MANUAL: "border border-rule text-muted",
-  OPEN: "bg-ink text-paper",
+  LIQUIDATED: "bg-loss-fill text-white",
+  NATIVE_STOP: "border border-line-strong bg-panel",
+  PERPLOG_STOP: "border border-line-strong bg-panel",
+  MANUAL: "border border-line text-muted",
+  OPEN: "border border-brand/40 bg-brand/10 text-brand",
 };
 
 function Money({ label, raw, strong = false }: { label: string; raw: bigint; strong?: boolean }) {
@@ -37,7 +37,7 @@ export function TradeCard({ trade }: { trade: Wire<EnrichedTrade> }) {
   return (
     <article
       data-testid="trade-card"
-      className="grid gap-4 border-rule border-b py-4 sm:grid-cols-[minmax(0,1fr)_auto]"
+      className="grid gap-4 border-line border-b py-4 sm:grid-cols-[minmax(0,1fr)_auto]"
     >
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
@@ -51,13 +51,13 @@ export function TradeCard({ trade }: { trade: Wire<EnrichedTrade> }) {
             {EXIT_LABEL[trade.exitType]}
           </span>
           {!trade.hadStop && trade.exitType !== "OPEN" && (
-            <span className="rounded-sm bg-marker/40 px-1.5 py-0.5 font-semibold text-marker-ink text-xs">
+            <span className="rounded-full border border-brand/40 bg-brand/10 px-1.5 py-0.5 font-semibold text-brand text-xs">
               No stop-loss
             </span>
           )}
           {trade.partialHistory && (
             <span
-              className="rounded-sm border border-rule px-1.5 py-0.5 text-muted text-xs"
+              className="rounded-sm border border-line px-1.5 py-0.5 text-muted text-xs"
               title="The indexed history starts after this position was opened."
             >
               History starts mid-trade

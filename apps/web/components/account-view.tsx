@@ -37,20 +37,20 @@ export function AccountView({ address }: { address: Address }) {
         <div>
           <p className="text-muted text-sm">Trading account</p>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-extrabold text-3xl tracking-tight" title={address}>
+            <h1 className="font-semibold text-head text-3xl tracking-tight" title={address}>
               {shortAddress(address)}
             </h1>
             <WatchButton account={address} />
           </div>
         </div>
         {tab !== "positions" && (
-          <nav aria-label="Time range" className="flex rounded-md border border-rule bg-sheet p-0.5">
+          <nav aria-label="Time range" className="flex rounded-md border border-line bg-panel p-0.5">
             {RANGES.map((r) => (
               <Link
                 key={r.value}
                 href={href({ range: r.value })}
                 aria-current={r.value === range ? "true" : undefined}
-                className="rounded px-3 py-1 font-semibold text-sm aria-[current=true]:bg-ink aria-[current=true]:text-paper"
+                className="rounded px-3 py-1 font-semibold text-sm aria-[current=true]:bg-panel aria-[current=true]:text-head aria-[current=true]:shadow-sm"
                 scroll={false}
               >
                 {r.label}
@@ -59,13 +59,13 @@ export function AccountView({ address }: { address: Address }) {
           </nav>
         )}
       </div>
-      <nav aria-label="Account sections" className="mt-6 flex gap-6 border-rule border-b">
+      <nav aria-label="Account sections" className="mt-6 flex gap-6 border-line border-b">
         {TABS.map((t) => (
           <Link
             key={t.value}
             href={href({ tab: t.value })}
             aria-current={t.value === tab ? "page" : undefined}
-            className="-mb-px border-transparent border-b-2 pb-2 font-semibold text-muted aria-[current=page]:border-ink aria-[current=page]:text-ink"
+            className="-mb-px border-transparent border-b-2 pb-2 font-semibold text-muted aria-[current=page]:border-brand aria-[current=page]:text-head"
             scroll={false}
           >
             {t.label}

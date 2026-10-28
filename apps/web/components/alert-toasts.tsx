@@ -106,7 +106,7 @@ export function AlertToasts({ account }: { account: string }) {
         <div
           key={id}
           data-testid="alert-toast"
-          className="rounded-md border border-ink bg-sheet p-3 shadow-lg"
+          className="rounded-md border border-line bg-panel p-3 shadow-lg"
         >
           <p>{copy.text}</p>
           <div className="mt-2 flex items-center gap-4 text-sm">
