@@ -11,45 +11,14 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ApiError, getJson, type Wire } from "@/lib/api";
+import { useBook } from "@/lib/use-book";
 import { useProtectionAvailable, useSessionState } from "@/lib/use-protection";
 import { ErrorState } from "./error-state";
-import { LinkWizard } from "./link-wizard";
-import { BreakdownRow, Button, Field, Label, Num, Panel, Segmented, StepTracker, WarnBox } from "./ui";
-
-type Side = "long" | "short";
-
-interface QuoteView {
-  qtyRaw: string;
-  refPrice: string;
-  stopPrice: string;
-  priceBound: string;
-  notionalRaw: string;
-  effectiveRiskRaw: string;
-  capped: boolean;
-  liqPriceEst: string | null;
-  leverageEstBps: string | null;
-  warnings: string[];
-}
-
-interface PlanView {
-  id: string;
-  status: "pending_entry" | "entered" | "partially_entered" | "entry_failed";
-  stopId: string | null;
-  txHash: string | null;
-}
-
-const QUOTE_ERRORS: Record<string, (side: Side) => string> = {
-  no_liquidity: (side) => `No resting ${side === "long" ? "asks" : "bids"} on the book right now.`,
-  stop_wrong_side: (side) =>
-    side === "long"
-      ? "Your stop must be below the entry price for a long."
-      : "Your stop must be above the entry price for a short.",
-  risk_too_small: () => "That risk is too small for one lot on this market.",
-  stop_beyond_liquidation: () => "Stop is beyond your liquidation price; you would be liquidated first",
-  not_priceable: () => "The market's mark price is stale right now; try again in a moment.",
-  unknown_pool: () => "Unknown market.",
-  invalid_input: () => "Enter a positive risk and stop price.",
-};
+import { PlanSummary } from "./plan/plan-summary";
+import { ProtectionStrip } from "./plan/protection-strip";
+import { type PlanView, type QuoteView, quoteErrorText, type Side } from "./plan/shared";
+import { Ticket } from "./plan/ticket";
+import { Button, Panel, StepTracker, WarnBox } from "./ui";
 
 const PLACE_ERRORS: Record<string, string> = {
   plan_pending: "A plan on this market is already being entered.",
@@ -103,6 +72,7 @@ export function PlanPanel({ address }: { address: Address }) {
   const [planId, setPlanId] = useState<string | null>(null);
 
   const market = markets.data?.find((m) => m.pool === pool) ?? markets.data?.[0] ?? null;
+  const book = useBook(market?.pool ?? null);
   const riskRaw = parseAmount(risk, 18);
   const stopRaw = parseAmount(stop, PRICE_DECIMALS);
   const input =
@@ -152,177 +122,87 @@ export function PlanPanel({ address }: { address: Address }) {
 
   const sizeDp = stepDecimals(BigInt(market.lotSize), market.baseDecimals);
   const priceDp = stepDecimals(BigInt(market.tickSize), PRICE_DECIMALS);
-  const price = (raw: string) => formatAmount(BigInt(raw), PRICE_DECIMALS, priceDp);
   const base = market.symbol.replace(/-PERP$/i, "");
   const linkedAccount =
     session.data?.status === "linked" ? (session.data.account?.toLowerCase() ?? null) : null;
   const q = quote.data;
   const quoteError = quote.error instanceof PlanError ? quote.error.code : quote.error ? "unknown" : null;
+  const fmtPrice = (raw: string) => formatAmount(BigInt(raw), PRICE_DECIMALS, priceDp);
+
+  const placeBlock =
+    available && !session.isPending && linkedAccount === address.toLowerCase() ? (
+      <PlaceBlock
+        canPlace={
+          Boolean(q) &&
+          !quoteError &&
+          !quote.isFetching &&
+          // The preview must be of what is typed now.
+          (input ? JSON.stringify(input) : null) === debouncedKey &&
+          !place.isPending &&
+          !(plan.data?.status === "pending_entry")
+        }
+        summary={
+          q
+            ? `${side} ${formatAmount(BigInt(q.qtyRaw), market.baseDecimals, sizeDp)} ${base} · stop ${fmtPrice(q.stopPrice)}`
+            : null
+        }
+        onPlace={() => place.mutate()}
+        placing={place.isPending}
+        placeError={
+          place.error instanceof PlanError
+            ? (place.error.detail ??
+              PLACE_ERRORS[place.error.code] ??
+              "Could not place the order. Try again.")
+            : null
+        }
+        plan={
+          planId ? (plan.data ?? { id: planId, status: "pending_entry", stopId: null, txHash: null }) : null
+        }
+      />
+    ) : null;
 
   return (
-    <section className="grid items-start gap-3 py-6 lg:grid-cols-[380px_1fr]">
-      <Panel className="grid gap-3.5">
-        <div>
-          <label htmlFor="plan-market" className="text-[13px] text-muted">
-            Market
-          </label>
-          <select
-            id="plan-market"
-            value={market.pool}
-            onChange={(e) => setPool(e.target.value)}
-            className="mt-1.5 h-[42px] w-full rounded-lg border border-line bg-field px-3 font-semibold text-head"
-          >
-            {markets.data?.map((m) => (
-              <option key={m.pool} value={m.pool}>
-                {m.symbol}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <Label>Side</Label>
-          <div className="mt-1.5">
-            <Segmented
-              label="Side"
-              tone="side"
-              value={side}
-              onChange={setSide}
-              options={[
-                { value: "long", label: "Long" },
-                { value: "short", label: "Short" },
-              ]}
-            />
-          </div>
-        </div>
-        <Field
-          id="plan-risk"
-          label="Max loss if the stop hits"
-          unit="USDso"
-          inputMode="decimal"
-          placeholder="25"
-          value={risk}
-          onChange={(e) => setRisk(e.target.value)}
-          invalid={risk !== "" && !riskRaw}
+    <section className="grid gap-4">
+      <ProtectionStrip
+        available={available}
+        checking={session.isPending}
+        linkedAccount={linkedAccount}
+        botAddress={session.data?.botAddress ?? null}
+        address={address}
+        onLinked={() => session.refetch()}
+      />
+      <div className="grid items-start gap-4 lg:grid-cols-[380px_minmax(0,1fr)]">
+        <Ticket
+          markets={markets.data ?? []}
+          market={market}
+          onMarket={setPool}
+          book={book}
+          priceDp={priceDp}
+          side={side}
+          onSide={setSide}
+          risk={risk}
+          onRisk={setRisk}
+          riskInvalid={risk !== "" && !riskRaw}
+          stop={stop}
+          onStop={setStop}
+          stopInvalid={stop !== "" && !stopRaw}
+          place={placeBlock}
         />
-        <Field
-          id="plan-stop"
-          label="Stop price"
-          unit="USDso"
-          inputMode="decimal"
-          placeholder={side === "long" ? "below the ask" : "above the bid"}
-          value={stop}
-          onChange={(e) => setStop(e.target.value)}
-          invalid={stop !== "" && !stopRaw}
-          hint={side === "long" ? "Below the current ask." : "Above the current bid."}
-        />
-      </Panel>
-
-      <Panel className="flex min-h-[360px] flex-col">
-        <div data-testid="plan-quote">
-          <Label>PerpLog sizes it for you</Label>
-          {!input ? (
-            <p className="mt-3 text-muted">
-              Enter how much you are willing to lose and where your stop goes.
-            </p>
-          ) : quoteError ? (
-            <div className="mt-3">
-              <WarnBox tone="loss">
-                {(QUOTE_ERRORS[quoteError] ?? (() => "Could not read the market. Try again."))(side)}
-              </WarnBox>
-            </div>
-          ) : !q ? (
-            <p className="mt-3 text-muted">Reading the book…</p>
-          ) : (
-            <>
-              <div className="mt-1.5 flex items-baseline gap-2.5">
-                <Num
-                  text={formatAmount(BigInt(q.qtyRaw), market.baseDecimals, sizeDp)}
-                  className="font-semibold text-[44px] text-head tracking-[-1px]"
-                />
-                <span className="text-muted">
-                  {base} · {side}
-                </span>
-              </div>
-              <div className="mt-2.5">
-                <BreakdownRow
-                  label="Notional"
-                  value={<Num text={`${formatAmount(BigInt(q.notionalRaw), 18, 2)} USDso`} />}
-                />
-                <BreakdownRow label="Entry (IOC, worst price)" value={<Num text={price(q.priceBound)} />} />
-                <BreakdownRow
-                  label="Est. liquidation price"
-                  value={<Num text={q.liqPriceEst ? price(q.liqPriceEst) : "—"} />}
-                />
-                <BreakdownRow
-                  label="Est. leverage"
-                  value={
-                    <Num
-                      text={q.leverageEstBps ? `${(Number(q.leverageEstBps) / 10_000).toFixed(1)}×` : "—"}
-                    />
-                  }
-                />
-                <BreakdownRow
-                  label="Risk if the stop hits"
-                  value={
-                    <Num tone="loss" text={`−${formatAmount(BigInt(q.effectiveRiskRaw), 18, 2)} USDso`} />
-                  }
-                />
-              </div>
-              {q.warnings.map((w) => (
-                <div key={w} className="mt-2.5">
-                  <WarnBox>{w}</WarnBox>
-                </div>
-              ))}
-            </>
-          )}
+        <div data-testid="plan-quote" className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
+          <Panel className="min-h-[360px]">
+            {!input ? (
+              <p className="text-muted">Enter how much you are willing to lose and where your stop goes.</p>
+            ) : quoteError ? (
+              <WarnBox tone="loss">{quoteErrorText(quoteError, side)}</WarnBox>
+            ) : !q ? (
+              <p className="text-muted">Reading the book…</p>
+            ) : null}
+          </Panel>
+          <Panel>
+            <PlanSummary quote={quoteError ? null : (q ?? null)} market={market} side={side} />
+          </Panel>
         </div>
-        <div className="flex-1" />
-
-        {available && (
-          <div className="mt-3.5">
-            {session.isPending ? (
-              <p className="text-muted">Checking PerpLog's link…</p>
-            ) : linkedAccount === address.toLowerCase() ? (
-              <PlaceBlock
-                canPlace={
-                  Boolean(q) &&
-                  !quoteError &&
-                  !quote.isFetching &&
-                  // The preview must be of what is typed now.
-                  (input ? JSON.stringify(input) : null) === debouncedKey &&
-                  !place.isPending &&
-                  !(plan.data?.status === "pending_entry")
-                }
-                summary={
-                  q
-                    ? `${side} ${formatAmount(BigInt(q.qtyRaw), market.baseDecimals, sizeDp)} ${base} · stop ${price(q.stopPrice)}`
-                    : null
-                }
-                onPlace={() => place.mutate()}
-                placing={place.isPending}
-                placeError={
-                  place.error instanceof PlanError
-                    ? (place.error.detail ??
-                      PLACE_ERRORS[place.error.code] ??
-                      "Could not place the order. Try again.")
-                    : null
-                }
-                plan={
-                  planId
-                    ? (plan.data ?? { id: planId, status: "pending_entry", stopId: null, txHash: null })
-                    : null
-                }
-              />
-            ) : linkedAccount !== null ? (
-              <WarnBox>
-                This browser's PerpLog bot is linked to another account. Open that account to place a plan.
-              </WarnBox>
-            ) : (
-              <LinkWizard account={address} onLinked={() => session.refetch()} />
-            )}
-          </div>
-        )}
-      </Panel>
+      </div>
     </section>
   );
 }

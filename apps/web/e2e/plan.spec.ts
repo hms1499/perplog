@@ -19,8 +19,11 @@ const quoteBody = (qtyRaw: string) => ({
   warnings: [],
 });
 
-/** Markets and quotes are always mocked; `linked` adds a linked session, `plans` the place-and-poll flow. */
-async function mockPlan(page: Page, opts: { linked?: boolean; plans?: boolean } = {}) {
+/**
+ * Markets, the book and quotes are always mocked (`book: "fail"` answers 500); `linked` adds a linked session,
+ * `plans` the place-and-poll flow.
+ */
+async function mockPlan(page: Page, opts: { linked?: boolean; plans?: boolean; book?: "ok" | "fail" } = {}) {
   await page.route("**/api/markets", (route) =>
     route.fulfill({
       json: [
@@ -35,6 +38,11 @@ async function mockPlan(page: Page, opts: { linked?: boolean; plans?: boolean } 
         },
       ],
     }),
+  );
+  await page.route("**/api/markets/*/book", (route) =>
+    opts.book === "fail"
+      ? route.fulfill({ status: 500, json: { error: "internal" } })
+      : route.fulfill({ json: { bestBid: (64_200n * E18).toString(), bestAsk: (64_250n * E18).toString() } }),
   );
   await page.route("**/api/plans/quote", async (route) => {
     const body = route.request().postDataJSON() as { riskRaw: string; stopPrice: string };
@@ -88,6 +96,26 @@ async function mockPlan(page: Page, opts: { linked?: boolean; plans?: boolean } 
 }
 
 const open = (page: Page) => page.goto(`/a/${ACCOUNT}?tab=plan`);
+
+test("ticket shows the live bid and ask and a stop shortcut fills the stop", async ({ page }) => {
+  await mockPlan(page);
+  await open(page);
+  await expect(page.getByTestId("book-line")).toContainText("64,200");
+  await expect(page.getByTestId("book-line")).toContainText("64,250");
+  await page.getByRole("button", { name: "−2%" }).click();
+  // 64,250 × 0.98 = 62,965 at tick 0.1: written without separators, at tick decimals, so it stays editable.
+  await expect(page.getByLabel("Stop price")).toHaveValue("62965.0");
+});
+
+test("book failure does not block quoting", async ({ page }) => {
+  await mockPlan(page, { book: "fail" });
+  await open(page);
+  await expect(page.getByTestId("book-line")).toContainText("—");
+  await expect(page.getByRole("button", { name: "−2%" })).toHaveCount(0);
+  await page.getByLabel("Max loss if the stop hits").fill("25");
+  await page.getByLabel("Stop price").fill("63900");
+  await expect(page.getByTestId("plan-quote")).toContainText("0.0718");
+});
 
 test("quote updates as risk and stop change", async ({ page }) => {
   await mockPlan(page);
