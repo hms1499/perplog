@@ -39,6 +39,8 @@ function copyOf(a: Alert, account: string): ToastCopy {
     }
     case "stop_failed":
       return { text: `PerpLog stop on ${symbol} failed: ${str(a.payload.reason) ?? "unknown error"}.` };
+    case "entry_failed":
+      return { text: "Entry not filled: no position was opened and no stop was armed." };
     case "bot_low_gas":
       return { text: "PerpLog's bot is low on gas; stops may not fire." };
     case "link_revoked": {

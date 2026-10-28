@@ -8,6 +8,7 @@ import { AlertToasts } from "./alert-toasts";
 import { HealthPanel } from "./health-panel";
 import { JournalPanel } from "./journal-panel";
 import { LeaksPanel } from "./leaks-panel";
+import { PlanPanel } from "./plan-panel";
 import { PositionsPanel } from "./positions-panel";
 import { WatchButton } from "./watch-button";
 
@@ -16,6 +17,7 @@ const TABS = [
   { value: "journal", label: "Journal" },
   { value: "leaks", label: "Leaks" },
   { value: "positions", label: "Positions" },
+  { value: "plan", label: "Plan" },
 ] as const;
 
 type Tab = (typeof TABS)[number]["value"];
@@ -43,7 +45,7 @@ export function AccountView({ address }: { address: Address }) {
             <WatchButton account={address} />
           </div>
         </div>
-        {tab !== "positions" && (
+        {tab !== "positions" && tab !== "plan" && (
           <nav aria-label="Time range" className="flex rounded-md border border-line bg-panel p-0.5">
             {RANGES.map((r) => (
               <Link
@@ -76,6 +78,7 @@ export function AccountView({ address }: { address: Address }) {
       {tab === "journal" && <JournalPanel address={address} range={range} />}
       {tab === "leaks" && <LeaksPanel address={address} range={range} />}
       {tab === "positions" && <PositionsPanel address={address} />}
+      {tab === "plan" && <PlanPanel address={address} />}
       <AlertToasts account={address} />
     </div>
   );

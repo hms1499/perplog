@@ -86,6 +86,8 @@ export function Field({
           id={id}
           className="min-w-0 flex-1 bg-transparent font-mono text-base text-head outline-none placeholder:text-muted/60"
           aria-invalid={invalid || undefined}
+          // The wrapper draws the focus ring (focus-within); a second outline on the bare input would double it.
+          style={{ outline: "none" }}
           {...input}
         />
         {unit && <span className="text-muted text-xs">{unit}</span>}

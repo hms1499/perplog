@@ -43,7 +43,6 @@ function Evidence({ address, range, leak }: { address: string; range: Range; lea
 
 export function LeakCard({ leak, address, range }: { leak: Wire<Leak>; address: string; range: Range }) {
   const [open, setOpen] = useState(false);
-  const [note, setNote] = useState(false);
   const positionsHref = `/a/${address}?tab=positions${leak.fix === "SHOW_FUNDING" ? "" : "&note=protect"}`;
 
   return (
@@ -64,31 +63,16 @@ export function LeakCard({ leak, address, range }: { leak: Wire<Leak>; address: 
         >
           {open ? "Hide trades" : "Show trades"}
         </button>
-        {leak.fix === "FIXED_RISK" ? (
-          <button
-            type="button"
-            onClick={() => setNote(true)}
-            className="rounded-md bg-action px-3 py-1.5 font-semibold text-white text-sm"
-          >
-            Fix
-          </button>
-        ) : (
-          <Link
-            href={positionsHref}
-            className="rounded-md bg-action px-3 py-1.5 font-semibold text-white text-sm"
-          >
-            Fix
-          </Link>
-        )}
+        <Link
+          href={leak.fix === "FIXED_RISK" ? `/a/${address}?tab=plan` : positionsHref}
+          className="rounded-md bg-action px-3 py-1.5 font-semibold text-white text-sm"
+        >
+          Fix
+        </Link>
         <span className="self-center text-muted text-sm">
           {leak.evidenceTradeIds.length} {leak.evidenceTradeIds.length === 1 ? "trade" : "trades"}
         </span>
       </div>
-      {note && (
-        <p role="status" className="mt-3 text-sm">
-          Risk-sized entries (Plan & Place) are coming in the next release.
-        </p>
-      )}
       {open && <Evidence address={address} range={range} leak={leak.id} />}
     </article>
   );

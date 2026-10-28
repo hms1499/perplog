@@ -284,3 +284,22 @@ describe("POST /api/plans and GET /api/plans/:id", () => {
     expect((await read("not-a-uuid", cookie)).status).toBe(404);
   });
 });
+
+describe("GET /api/markets", () => {
+  test("lists the markets with raw sizes as decimal strings", async () => {
+    const { GET: MARKETS } = await import("../markets/route");
+    const res = await MARKETS();
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual([
+      {
+        pool: P1,
+        symbol: "X-PERP",
+        baseDecimals: 18,
+        tickSize: (10n ** 14n).toString(),
+        lotSize: (10n ** 15n).toString(),
+        minQuantity: (10n ** 15n).toString(),
+        stopRegistry: null,
+      },
+    ]);
+  });
+});

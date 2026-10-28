@@ -19,7 +19,7 @@ const signed = (raw: bigint): string =>
   `${raw > 0n ? "+" : raw < 0n ? "−" : ""}${formatAmount(raw < 0n ? -raw : raw, 18, 2)}`;
 
 function fixOf(leak: Wire<Leak>, address: string): { href: string; label: string } {
-  if (leak.id === "SIZE_UP_AFTER_LOSS" || leak.id === "FUNDING_DRAG") {
+  if (leak.id === "SIZE_UP_AFTER_LOSS") {
     return { href: `/a/${address}?tab=plan`, label: "Plan a risk-sized trade" };
   }
   return { href: `/a/${address}?tab=positions&note=protect`, label: "Protect open positions" };
