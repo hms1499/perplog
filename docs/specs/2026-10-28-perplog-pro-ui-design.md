@@ -130,14 +130,15 @@ quote changes. Existing hover/focus transitions stay. Everything respects `prefe
 │ Evidence      │                                                             │
 │ How it works  │                                                             │
 │               │                                                             │
-│ Independent … │                                                             │
+│               │ Independent tool for dreamDEX traders · not affiliated …   │
 └───────────────┴─────────────────────────────────────────────────────────────┘
 ```
 
 - **Sidebar** (232px, `--panel`, right hairline, sticky full height): wordmark (`perplog`, still a link to `/`
   with that exact accessible name) and Testnet badge; the six account sections as links with a 16px inline SVG
   icon each (current item: `--field` background, 2px `--brand` left bar, `aria-current="page"`); a hairline;
-  Evidence and How it works; the disclaimer text at the bottom in 11px `--muted`.
+  Evidence and How it works. The disclaimer is a footer at the bottom of the content column at every width
+  (11px `--muted`), so it is rendered once.
 - **Top bar** (56px, `--page`, bottom hairline, sticky): full address shortened in mono with a copy button
   (copies the full lowercase address, shows "Copied" for 1.5s), the existing Watch button, then right-aligned the
   7D/30D/All range control (shown on the same tabs as today) and the **bot status chip**.
@@ -150,8 +151,7 @@ quote changes. Existing hover/focus transitions stay. Everything respects `prefe
 
 The sidebar collapses. A top bar holds the wordmark, Testnet badge and a menu button that opens Evidence / How it
 works; under it, the account row (address, Watch, bot chip) and a horizontally scrollable tab row (icons +
-labels), as today. The range control wraps under the tabs. The disclaimer moves to a page footer, since the
-sidebar that holds it is gone. No horizontal page scroll at 390px.
+labels), as today. The range control wraps under the tabs. No horizontal page scroll at 390px.
 
 ### 5.3 Slim top bar (non-account pages)
 
