@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { SiteChrome } from "@/components/site-chrome";
 
 type Params = Promise<{ address: string; week: string }>;
 
@@ -53,10 +54,12 @@ async function SharedReport({ params }: { params: Params }) {
 
 export default function SharedReportPage({ params }: { params: Params }) {
   return (
-    <main className="mx-auto grid w-full max-w-3xl gap-4 px-4 py-8 sm:px-6">
-      <Suspense fallback={<p className="text-muted">Loading report…</p>}>
-        <SharedReport params={params} />
-      </Suspense>
-    </main>
+    <SiteChrome>
+      <main className="mx-auto grid w-full max-w-3xl gap-4 py-8">
+        <Suspense fallback={<p className="text-muted">Loading report…</p>}>
+          <SharedReport params={params} />
+        </Suspense>
+      </main>
+    </SiteChrome>
   );
 }

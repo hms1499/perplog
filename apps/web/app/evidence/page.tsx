@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { EvidenceTable } from "@/components/evidence-table";
+import { SiteChrome } from "@/components/site-chrome";
 
 export const metadata: Metadata = {
   title: "Evidence · PerpLog",
@@ -8,8 +9,10 @@ export const metadata: Metadata = {
 
 export default function EvidencePage() {
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 pb-16 sm:px-6">
-      <EvidenceTable />
-    </main>
+    <SiteChrome>
+      <main className="pb-16">
+        <EvidenceTable />
+      </main>
+    </SiteChrome>
   );
 }

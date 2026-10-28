@@ -1,17 +1,17 @@
 "use client";
 
-import { type Address, shortAddress } from "@perplog/core";
+import type { Address } from "@perplog/core";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { parseRange, RANGES } from "@/lib/use-account";
 import { AlertToasts } from "./alert-toasts";
+import { AppShell } from "./app-shell";
 import { HealthPanel } from "./health-panel";
 import { JournalPanel } from "./journal-panel";
 import { LeaksPanel } from "./leaks-panel";
 import { PlanPanel } from "./plan-panel";
 import { PositionsPanel } from "./positions-panel";
 import { ReportPanel } from "./report-panel";
-import { WatchButton } from "./watch-button";
 
 const TABS = [
   { value: "health", label: "Health" },
@@ -35,50 +35,25 @@ export function AccountView({ address }: { address: Address }) {
     return `/a/${address}?${q.toString()}`;
   };
 
-  return (
-    <div>
-      <div className="flex flex-wrap items-end justify-between gap-4 pt-8">
-        <div>
-          <p className="text-muted text-sm">Trading account</p>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-semibold text-head text-3xl tracking-tight" title={address}>
-              {shortAddress(address)}
-            </h1>
-            <WatchButton account={address} />
-          </div>
-        </div>
-        {tab !== "positions" && tab !== "plan" && tab !== "report" && (
-          <nav aria-label="Time range" className="flex rounded-md border border-line bg-panel p-0.5">
-            {RANGES.map((r) => (
-              <Link
-                key={r.value}
-                href={href({ range: r.value })}
-                aria-current={r.value === range ? "true" : undefined}
-                className="rounded px-3 py-1 font-semibold text-sm aria-[current=true]:bg-panel aria-[current=true]:text-head aria-[current=true]:shadow-sm"
-                scroll={false}
-              >
-                {r.label}
-              </Link>
-            ))}
-          </nav>
-        )}
-      </div>
-      <nav
-        aria-label="Account sections"
-        className="mt-6 flex gap-6 overflow-x-auto whitespace-nowrap border-line border-b"
-      >
-        {TABS.map((t) => (
+  const rangeControl =
+    tab !== "positions" && tab !== "plan" && tab !== "report" ? (
+      <nav aria-label="Time range" className="flex rounded-lg border border-line bg-field p-0.5">
+        {RANGES.map((r) => (
           <Link
-            key={t.value}
-            href={href({ tab: t.value })}
-            aria-current={t.value === tab ? "page" : undefined}
-            className="-mb-px border-transparent border-b-2 pb-2 font-semibold text-muted aria-[current=page]:border-brand aria-[current=page]:text-head"
+            key={r.value}
+            href={href({ range: r.value })}
+            aria-current={r.value === range ? "true" : undefined}
+            className="rounded-md px-3 py-1 font-medium text-muted text-sm hover:text-head aria-[current=true]:bg-panel aria-[current=true]:text-head"
             scroll={false}
           >
-            {t.label}
+            {r.label}
           </Link>
         ))}
       </nav>
+    ) : null;
+
+  return (
+    <AppShell address={address} tab={tab} tabs={TABS} href={href} rangeControl={rangeControl}>
       {tab === "health" && <HealthPanel address={address} range={range} />}
       {tab === "journal" && <JournalPanel address={address} range={range} />}
       {tab === "leaks" && <LeaksPanel address={address} range={range} />}
@@ -86,6 +61,6 @@ export function AccountView({ address }: { address: Address }) {
       {tab === "plan" && <PlanPanel address={address} />}
       {tab === "report" && <ReportPanel address={address} />}
       <AlertToasts account={address} />
-    </div>
+    </AppShell>
   );
 }

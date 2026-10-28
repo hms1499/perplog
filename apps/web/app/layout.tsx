@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
-import { Footer, NavBar } from "@/components/ui";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -27,12 +26,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${plexSans.variable} ${plexMono.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
-        <NavBar />
-        <div className="flex-1">
-          <Providers>{children}</Providers>
-        </div>
-        <Footer />
+      <body className="min-h-full">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

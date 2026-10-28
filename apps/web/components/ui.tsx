@@ -1,4 +1,4 @@
-import { type Address, formatUsd, shortAddress } from "@perplog/core";
+import { formatUsd } from "@perplog/core";
 import Link from "next/link";
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
 
@@ -254,36 +254,6 @@ export function Wordmark() {
     <Link href="/" className="font-mono font-semibold text-[17px] text-head tracking-[-0.3px]">
       perp<span className="text-brand">log</span>
     </Link>
-  );
-}
-
-export function NavBar({ address }: { address?: Address }) {
-  return (
-    <header className="mx-auto w-full max-w-5xl px-4 pt-3 sm:px-6">
-      <nav className="flex items-center gap-4 rounded-xl border border-line bg-panel px-4 py-2.5">
-        <Wordmark />
-        <Badge tone="testnet">Testnet</Badge>
-        <div className="ml-2 hidden gap-[18px] text-[13px] text-muted sm:flex">
-          {address && (
-            <Link href={`/a/${address}`} className="hover:text-head">
-              Account
-            </Link>
-          )}
-          <Link href="/evidence" className="hover:text-head">
-            Evidence
-          </Link>
-          <Link href="/how-it-works" className="hover:text-head">
-            How it works
-          </Link>
-        </div>
-        <div className="flex-1" />
-        {address && (
-          <span className="rounded-lg border border-line bg-field px-2.5 py-1.5 font-mono text-xs">
-            {shortAddress(address)}
-          </span>
-        )}
-      </nav>
-    </header>
   );
 }
 
