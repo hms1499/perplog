@@ -13,10 +13,15 @@ testnet. Paste a dreamDEX trading account address and PerpLog:
 - ranks the leaks that cost the most money: liquidations, losing trades without a stop-loss, funding paid, and
   sizing up right after a loss;
 - shows open positions with their liquidation distance and how much of each position a stop-loss covers;
-- protects open positions with **bot-held stop-losses** and alerts you when a position has none.
+- protects open positions with **bot-held stop-losses** and alerts you when a position has none;
+- **Plan & Place:** you say how much you are willing to lose and where your stop goes; PerpLog sizes the trade,
+  places the market entry and arms its stop the moment it fills;
+- a **weekly report card** you can share on X;
+- an **[evidence page](#judges-start-here)** listing every order PerpLog's bots sent, with explorer links.
 
-Nothing is custodied. The journal only reads public chain data; protection uses a bot key that can only close
-your positions (see [Protection](#protection-bot-held-stops)).
+Nothing is custodied. The journal only reads public chain data. Orders go through a bot key you link from the
+dreamDEX app; it can close positions for your stops and open only the one entry you confirm in Plan & Place,
+and it can never move funds (see [Protection](#protection-bot-held-stops)).
 
 ## Who it is for
 
@@ -38,11 +43,13 @@ Somnia RPC + Reactivity         ──┘          │                          
   classification, leak rules, health summary. Pure functions, all money as `bigint`.
 - `packages/chain`: indexer client with keyset pagination, on-chain reads through `@somnia-chain/markets-sdk`
   0.32.1 (margin account, perp state, positions, liquidation price).
-- `apps/web`: Next.js 16 app with the Health, Journal, Leaks and Positions views, plus the session, stops,
-  watch and alerts routes. It never signs: it only writes rows the worker acts on.
+- `apps/web`: Next.js 16 app with the Health, Journal, Leaks, Positions, Plan and Report views, `/evidence` and
+  `/how-it-works`, plus the session, stops, plans, watch, alerts and executions routes and the weekly report
+  image (`next/og`). It never signs: it only writes rows the worker acts on.
 - `packages/db`: Drizzle schema and migrations, AES-256-GCM bot-key encryption, typed queries.
 - `apps/worker`: a long-running Node process holding a Postgres advisory lock, so exactly one instance signs.
-  It mints bot keys, watches grants, executes stops, raises alerts and tops up bot gas.
+  It mints bot keys, watches grants, executes stops and plan entries (one send queue per bot key), raises
+  alerts and tops up bot gas.
 
 The design spec, with the verified protocol constraints, is in
 [`docs/specs/2026-10-25-perplog-design.md`](docs/specs/2026-10-25-perplog-design.md).
@@ -94,6 +101,23 @@ Stop lifecycle:
 
 A close is a market (IOC) order bounded at the mark ± 1.5% slippage, widening by 1% per attempt up to the
 stop's cap (5% by default).
+
+## Plan & Place
+
+1. Open the **Plan** tab, pick a market and a side, and enter your **max loss if the stop hits** (in USDso) and
+   your **stop price**.
+2. PerpLog sizes the position from the live book: `size = risk / |entry − stop|`, floored to the market's lot.
+   It caps the size at what your margin allows, shows the estimated liquidation price and leverage, and blocks
+   a stop that sits beyond your liquidation price.
+3. **Place order** queues one market (IOC) entry, bounded at 0.5% slippage. The worker re-checks that you are
+   still flat, sends it once, and arms an `entire` stop at your price as soon as it fills. If it does not fill,
+   nothing is opened and no stop is armed.
+
+## Weekly report
+
+The **Report** tab draws a 1200×630 card for any week: true net PnL against the realized PnL the app shows,
+the biggest leak, trades, win rate, funding and the share of trades without a stop. **Share on X** posts a
+link to `/r/<account>/<week>`, whose preview is the card; **Download PNG** saves it.
 
 ## Alerts
 
@@ -211,16 +235,26 @@ pnpm tsx scripts/platform-stats.ts
 
 ## Judges start here
 
-- Live app: _coming with the deployment_
+- Live app: _set on deploy_ (`NEXT_PUBLIC_SITE_URL`)
 - Sample accounts:
   - `0x395225eab84c1b9304d42cb647238dcc90003951`: liquidated twice; net PnL is −1,700.23 against a realized
     −1,431.15;
   - `0xf1a114c1604a272ec6a1da07803fc68a786480e7`: 5 open positions, one with no stop-loss.
-- On-chain evidence page for PerpLog orders: _coming with the protection release_
+- **`/evidence`** on the live app: every order PerpLog's bots sent (stop closes and plan entries), newest
+  first, with Somnia explorer links and the median trigger-to-fill latency of stops.
+- **`/how-it-works`**: why stops are bot-held and exactly what the bot may send.
 
 ## X posts
 
-_Coming with the submission._
+Drafts are in [`docs/submission/x-posts.md`](docs/submission/x-posts.md); links go here once posted.
+
+## Limits
+
+- Stops are held by PerpLog's worker, not by the exchange: a linked bot cannot arm an exchange-native stop
+  (`InvalidOrderOwner()`). If the worker is down, stops do not fire; on restart it re-checks every armed stop.
+- Closes and entries are market (IOC) orders: on a thin book they can fill partly or not at all.
+- Plan & Place opens new positions only (you must be flat on that market) and only at market.
+- Somnia Tokyo testnet only; mainnet needs only a network config change.
 
 ## Data sources & methodology
 
