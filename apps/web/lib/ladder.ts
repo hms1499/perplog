@@ -77,17 +77,27 @@ export function ladderScale(
   const bottom = lo - span * pad;
   const y = (price: bigint) => ((top - toNum(price)) / (top - bottom)) * height;
 
-  // Step of 1, 2 or 5 × 10ⁿ giving about six ticks, as an integer count of 1e-8 price units.
-  const raw = (top - bottom) / 6;
-  const exp = Math.floor(Math.log10(raw));
-  const mantissa = [1, 2, 5, 10].find((m) => m * 10 ** exp >= raw) ?? 10;
-  const stepP8 = exp + 8 >= 0 ? BigInt(mantissa) * 10n ** BigInt(exp + 8) : 1n;
-  const first = BigInt(Math.ceil((bottom * 1e8) / Number(stepP8)));
-  const ticks: bigint[] = [];
-  for (let k = first; Number(k * stepP8) / 1e8 <= top && ticks.length < 12; k++) {
-    ticks.push(k * stepP8 * P8);
+  // The coarsest 1, 2 or 5 × 10ⁿ step that still gives at least four ticks, counted in 1e-8 price units.
+  // Ticks never go below zero: a price scale has nothing to label there.
+  const exp = Math.floor(Math.log10((top - bottom) / 4));
+  const candidates = [exp, exp - 1].flatMap((e) => [5, 2, 1].map((m) => m * 10 ** e));
+  let ticks: bigint[] = [];
+  for (const step of candidates) {
+    const stepP8 = BigInt(Math.max(1, Math.round(step * 1e8)));
+    const first = BigInt(Math.max(0, Math.ceil((bottom * 1e8) / Number(stepP8))));
+    const next: bigint[] = [];
+    for (let k = first; Number(k * stepP8) / 1e8 <= top && next.length < 12; k++) next.push(k * stepP8 * P8);
+    ticks = next;
+    if (ticks.length >= 4) break;
   }
   return { y, ticks };
+}
+
+/** |a − b| as a percent of `ref`, e.g. the buffer between the stop and liquidation against the entry. */
+export function gapPct(a: bigint, b: bigint, ref: bigint): number {
+  if (ref === 0n) return 0;
+  const d = a > b ? a - b : b - a;
+  return Number((d * 1_000_000n) / ref) / 10_000;
 }
 
 /** |a − b| as a percent of `a`, e.g. the stop's distance from the entry. */

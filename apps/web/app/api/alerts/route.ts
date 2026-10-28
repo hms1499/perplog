@@ -10,9 +10,10 @@ const MAX_ALERTS = 50;
 /** GET /api/alerts?account=0x…&since=<ms>: up to 50 alerts from `since`, oldest first. */
 export async function GET(request: Request) {
   return handleRoute(async () => {
+    // Read the request first: it marks the route dynamic before the build would open a database connection.
+    const params = new URL(request.url).searchParams;
     const db = getDb();
     if (!db) return json({ error: "db_unavailable" }, { status: 503 });
-    const params = new URL(request.url).searchParams;
     const account = normalizeAddress(params.get("account") ?? "");
     const sinceParam = params.get("since") ?? "0";
     const since = /^[0-9]{1,15}$/.test(sinceParam) ? Number(sinceParam) : null;

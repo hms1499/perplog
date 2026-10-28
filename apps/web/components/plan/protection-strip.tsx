@@ -22,15 +22,17 @@ export function ProtectionStrip(props: {
     return (
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[10px] border border-brand/30 bg-brand/5 px-4 py-3">
         <span className="font-medium text-brand">● Protected</span>
-        <span className="text-text">
-          PerpLog's bot{" "}
-          {props.botAddress && (
+        {props.botAddress ? (
+          <span className="text-text">
+            PerpLog's bot{" "}
             <span className="font-mono text-head" title={props.botAddress}>
               {shortAddress(props.botAddress as Address)}
-            </span>
-          )}{" "}
-          can only close your positions.
-        </span>
+            </span>{" "}
+            can only close your positions.
+          </span>
+        ) : (
+          <span className="text-text">PerpLog's bot can only close your positions.</span>
+        )}
       </div>
     );
   }

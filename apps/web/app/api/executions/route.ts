@@ -8,9 +8,10 @@ import { handleRoute, json } from "@/lib/json";
 /** Every PerpLog order with a tx hash, newest first (for /evidence). Public: no keys, no session. */
 export async function GET(request: Request) {
   return handleRoute(async () => {
+    // Read the request first: it marks the route dynamic before the build would open a database connection.
+    const raw = new URL(request.url).searchParams.get("account");
     const db = getDb();
     if (!db) return json({ error: "db_unavailable" }, { status: 503 });
-    const raw = new URL(request.url).searchParams.get("account");
     const account = raw === null ? undefined : normalizeAddress(raw);
     if (account === null) return json({ error: "invalid_address" }, { status: 400 });
 

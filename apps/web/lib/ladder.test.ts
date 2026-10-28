@@ -1,4 +1,4 @@
-import { ladderBrackets, ladderMarks, ladderScale, pctOf, stopShortcut } from "./ladder";
+import { gapPct, ladderBrackets, ladderMarks, ladderScale, pctOf, stopShortcut } from "./ladder";
 
 const E15 = 10n ** 15n;
 const E18 = 10n ** 18n;
@@ -98,5 +98,25 @@ describe("pctOf", () => {
   it("is the distance as a percent of the first price", () => {
     expect(pctOf(p(1206), p(1171))).toBeCloseTo(2.9, 1);
     expect(pctOf(p(1171), p(1206))).toBeCloseTo(2.99, 1);
+  });
+});
+
+describe("ladderScale ticks", () => {
+  it("an empty ladder around a tight book still has at least 4 ticks", () => {
+    const s = ladderScale([64_200n * E18, 64_250n * E18], 380);
+    expect(s.ticks.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it("never puts a tick below zero", () => {
+    for (const t of ladderScale([0n], 300).ticks) expect(t >= 0n).toBe(true);
+    for (const t of ladderScale([p(1), p(2)], 300).ticks) expect(t >= 0n).toBe(true);
+  });
+});
+
+describe("gapPct", () => {
+  it("is the distance between two prices as an exact percent of a reference", () => {
+    // Buffer between a 63,901 stop and a 58,410 liquidation, against a 64,569 entry.
+    expect(gapPct(63_901n * E18, 58_410n * E18, 64_569n * E18)).toBeCloseTo(8.504, 3);
+    expect(gapPct(1n, 1n, 0n)).toBe(0);
   });
 });

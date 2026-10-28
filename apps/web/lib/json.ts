@@ -1,4 +1,5 @@
 import { IndexerError } from "@perplog/chain";
+import { unstable_rethrow } from "next/navigation";
 import { ChainUnavailableError } from "./account-service";
 
 const replacer = (_key: string, value: unknown) => (typeof value === "bigint" ? value.toString() : value);
@@ -14,6 +15,8 @@ export async function handleRoute(fn: () => Promise<Response>): Promise<Response
   try {
     return await fn();
   } catch (error) {
+    // Next signals "this route is dynamic" during the build by throwing; that is control flow, not a failure.
+    unstable_rethrow(error);
     if (error instanceof IndexerError) return json({ error: "indexer_unavailable" }, { status: 503 });
     if (error instanceof ChainUnavailableError) {
       console.error(error);

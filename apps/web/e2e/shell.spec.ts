@@ -39,11 +39,33 @@ test("home explains the three steps and links to how it works", async ({ page })
   await page.goto("/");
   const steps = page.getByRole("list", { name: "How PerpLog works" });
   await expect(steps.getByRole("listitem")).toHaveCount(3);
-  await expect(steps.getByRole("link").first()).toHaveAttribute("href", "/how-it-works");
+  await expect(page.getByRole("link", { name: "How it works", exact: true })).toHaveCount(1);
+  await expect(page.getByRole("link", { name: "Read how PerpLog works" })).toHaveAttribute(
+    "href",
+    "/how-it-works",
+  );
 });
 
 test("an unknown page keeps the site top bar and footer", async ({ page }) => {
   await page.goto("/no-such-page");
   await expect(page.getByRole("link", { name: "perplog", exact: true })).toHaveAttribute("href", "/");
   await expect(page.getByText(NOT_AFFILIATED)).toBeVisible();
+});
+
+test("account pages have the short address as the page heading", async ({ page }) => {
+  await page.goto(ACCOUNT);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/0x3952.+3951/);
+});
+
+test("the report tab hydrates without a mismatch", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (msg) => {
+    if (msg.type() === "error") errors.push(msg.text());
+  });
+  await page.goto(`${ACCOUNT}&tab=report`);
+  await expect(page.getByRole("link", { name: "Share on X" })).toHaveAttribute(
+    "href",
+    /localhost%3A3200%2Fr%2F/,
+  );
+  expect(errors.filter((e) => /hydrat/i.test(e))).toEqual([]);
 });

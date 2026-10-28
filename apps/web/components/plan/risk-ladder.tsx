@@ -2,7 +2,7 @@
 
 import { formatAmount, PRICE_DECIMALS } from "@perplog/core";
 import { useEffect, useRef, useState } from "react";
-import { type Book, type LadderQuote, ladderBrackets, ladderMarks, ladderScale, pctOf } from "@/lib/ladder";
+import { type Book, gapPct, type LadderQuote, ladderBrackets, ladderMarks, ladderScale } from "@/lib/ladder";
 import { WarnBox } from "../ui";
 import type { QuoteView, Side } from "./shared";
 
@@ -147,7 +147,7 @@ export function RiskLadder({
             const y2 = scale.y(b.to);
             const x = right + 12;
             const mid = (y1 + y2) / 2;
-            const pct = pctOf(q.priceBound, b.to) - (b.kind === "buffer" ? pctOf(q.priceBound, b.from) : 0);
+            const pct = gapPct(b.from, b.to, q.priceBound);
             return (
               // Every piece is placed by a CSS transform or height, so the bracket glides with the rules.
               <g key={b.kind}>
@@ -170,7 +170,7 @@ export function RiskLadder({
                 <g style={{ ...GLIDE, transform: `translateY(${mid}px)` }}>
                   <text x={x + 8} fontSize={12} fill="var(--brand)" fontWeight={500}>
                     <tspan x={x + 8} dy="-0.2em">
-                      {b.kind === "loss" ? `−${maxLoss} USDso` : "Buffer"}
+                      {b.kind === "loss" ? `−${maxLoss}${narrow ? "" : " USDso"}` : "Buffer"}
                     </tspan>
                     <tspan x={x + 8} dy="1.3em" fill="var(--muted)">
                       {pct.toFixed(1)}%

@@ -1,6 +1,8 @@
 // Wire shapes and copy shared by the Plan tab's pieces.
 
-export type Side = "long" | "short";
+import type { Side } from "@/lib/ladder";
+
+export type { Side };
 
 export interface QuoteView {
   qtyRaw: string;

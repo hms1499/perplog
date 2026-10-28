@@ -2,7 +2,7 @@
 
 import { type Address, formatAmount, isoWeekStart } from "@perplog/core";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { WeeklyResponse } from "@/lib/account-service";
 import { getJson, type Wire } from "@/lib/api";
 import { Button, Label, Panel } from "./ui";
@@ -24,7 +24,9 @@ export function ReportPanel({ address }: { address: Address }) {
     net === null
       ? "my"
       : `${net < 0n ? "−" : net > 0n ? "+" : ""}${formatAmount(net < 0n ? -net : net, 18, 2)} USDso`;
-  const origin = typeof window === "undefined" ? "" : window.location.origin;
+  // Read after hydration: the server has no window, and a differing first render would mismatch.
+  const [origin, setOrigin] = useState("");
+  useEffect(() => setOrigin(window.location.origin), []);
   const text = `My dreamDEX perps week: ${netText} net after funding & fees. Where I leak money → via PerpLog @DreamDEXSomnia`;
   const share = `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(`${origin}/r/${address}/${week}`)}`;
 

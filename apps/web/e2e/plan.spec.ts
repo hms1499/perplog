@@ -231,3 +231,37 @@ test("a quoted plan at 390px wide has no horizontal scroll", async ({ page }) =>
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test("a five-digit max loss fits inside the ladder at 390px", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockPlan(page);
+  await page.route("**/api/plans/quote", (route) =>
+    route.fulfill({
+      json: { ...quoteBody("7180000"), effectiveRiskRaw: (1_234_567n * 10n ** 16n).toString() },
+    }),
+  );
+  await open(page);
+  await page.getByLabel("Max loss if the stop hits").fill("12345.67");
+  await page.getByLabel("Stop price").fill("63900");
+  await expect(page.getByTestId("plan-quote")).toContainText("12,345.67");
+  const overflow = await page.getByRole("img", { name: /Entry/ }).evaluate((svg) => {
+    const width = (svg as SVGSVGElement).viewBox.baseVal.width;
+    return Math.max(
+      ...Array.from(svg.querySelectorAll("text")).map((t) => t.getBBox().x + t.getBBox().width - width),
+    );
+  });
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
+test("the protection strip reads cleanly without a bot address", async ({ page }) => {
+  await mockPlan(page);
+  await page.route("**/api/session**", (route) =>
+    route.fulfill({
+      json: { status: "linked", botAddress: null, account: ACCOUNT, linkedPools: [POOL], missingPools: [] },
+    }),
+  );
+  await open(page);
+  const strip = page.getByText("can only close your positions.");
+  await expect(strip).toBeVisible();
+  expect(await strip.textContent()).toBe("PerpLog's bot can only close your positions.");
+});

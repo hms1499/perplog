@@ -23,9 +23,9 @@ export function CopyAddress({ address }: { address: Address }) {
 
   return (
     <div className="flex items-center gap-1.5">
-      <span className="font-mono font-medium text-[15px] text-head" title={address}>
+      <h1 className="font-medium font-mono text-[15px] text-head" title={address}>
         {shortAddress(address)}
-      </span>
+      </h1>
       <button
         type="button"
         onClick={copy}

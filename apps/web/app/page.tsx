@@ -107,12 +107,12 @@ export default function Home() {
                 <span className="text-brand text-sm tabular-nums">Step {i + 1}</span>
                 <h3 className="mt-2 font-semibold text-[17px] text-head">{step.title}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed">{step.body}</p>
-                <Link href="/how-it-works" className="mt-3 inline-block text-brand text-sm hover:underline">
-                  How it works
-                </Link>
               </li>
             ))}
           </ol>
+          <Link href="/how-it-works" className="mt-8 inline-block text-brand hover:underline">
+            Read how PerpLog works
+          </Link>
         </section>
       </main>
     </SiteChrome>
