@@ -95,7 +95,7 @@ test("keys without active stops are ignored", async () => {
 test("daily cap → bot_low_gas alert once, no send", async () => {
   const db = await createTestDb();
   const k = await bot(db, 1, true);
-  for (let i = 0; i < 4; i++) await recordTopUp(db, k.id, STT / 2n, `0x${i}`);
+  for (let i = 0; i < 4; i++) await recordTopUp(db, k.id, STT / 2n, `0x${i}`, NOW);
   const chain = chainWith(
     new Map([
       [k.address, 0n],

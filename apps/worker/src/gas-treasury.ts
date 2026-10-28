@@ -44,7 +44,7 @@ export async function topUpBots(deps: {
       });
       if (plan.action === "send") {
         const txHash = await chain.sendNative(treasuryKey, address, plan.amountWei);
-        await recordTopUp(db, id, plan.amountWei, txHash);
+        await recordTopUp(db, id, plan.amountWei, txHash, now());
         log.info({ botKeyId: id, address, amountWei: plan.amountWei.toString(), txHash }, "gas_topped_up");
       } else if (plan.action === "capped") {
         const inserted = await insertAlert(db, {

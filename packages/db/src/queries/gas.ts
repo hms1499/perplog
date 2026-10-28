@@ -24,6 +24,8 @@ export async function recordTopUp(
   botKeyId: string,
   amountWei: bigint,
   txHash: string,
+  /** Dated by the caller's clock, the one `gasSentTodayWei` is asked about. */
+  at: Date = new Date(),
 ): Promise<void> {
-  await db.insert(gasTopups).values({ botKeyId, amountWei, txHash });
+  await db.insert(gasTopups).values({ botKeyId, amountWei, txHash, createdAt: at });
 }
