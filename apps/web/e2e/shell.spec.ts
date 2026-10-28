@@ -34,3 +34,10 @@ test("non-account pages have the site top bar and footer", async ({ page }) => {
     await expect(page.getByText(NOT_AFFILIATED)).toBeVisible();
   }
 });
+
+test("home explains the three steps and links to how it works", async ({ page }) => {
+  await page.goto("/");
+  const steps = page.getByRole("list", { name: "How PerpLog works" });
+  await expect(steps.getByRole("listitem")).toHaveCount(3);
+  await expect(steps.getByRole("link").first()).toHaveAttribute("href", "/how-it-works");
+});
