@@ -42,6 +42,8 @@ export interface StopEngineDeps {
   kek: Buffer;
   log: Logger;
   now?: () => number;
+  /** Per-bot-key send queue; pass the one the EntryEngine uses so a key never has two orders in flight. */
+  serial?: KeyedSerial;
 }
 
 export interface StopEngine {
@@ -58,7 +60,7 @@ const IN_PROGRESS: StopStatus[] = ["triggered", "executing"];
 const lower = (a: string): Address => a.toLowerCase() as Address;
 
 /** A short, key-free description of an error for `last_error` and logs. */
-function errorText(err: unknown): string {
+export function errorText(err: unknown): string {
   if (err instanceof OperatorRevert) return err.errorName;
   const text =
     err instanceof Error
@@ -89,7 +91,7 @@ function errorText(err: unknown): string {
 export function createStopEngine(deps: StopEngineDeps): StopEngine {
   const { db, chain, kek, log } = deps;
   const now = deps.now ?? Date.now;
-  const serial = new KeyedSerial();
+  const serial = deps.serial ?? new KeyedSerial();
   const inFlight = new Map<string, Promise<void>>();
   /** Per stop: the lowest block at which a size read includes every fill this engine knows of. */
   const fences = new Map<string, bigint>();

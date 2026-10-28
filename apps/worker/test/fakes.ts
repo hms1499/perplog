@@ -118,9 +118,16 @@ export function fakeTradingChain(markets: MarketInfo[]) {
    * - `chainBlock`: the real head; every mined tx lands in a new block;
    * - `lag`: how many blocks the node serving `blockNumber`/`readPositionSize` is behind the head. Receipts are
    *   visible at once (another backend), so a lagging size view answers with the size from before the fill;
-   * - `blockError`: makes `blockNumber()` throw.
+   * - `blockError`: makes `blockNumber()` throw;
+   * - `entriesAllowed`: a send on a FLAT position is accepted as a plan entry (the only order allowed to open).
    */
-  const state = { externalPending: false, chainBlock: 100n, lag: 0n, blockError: null as Error | null };
+  const state = {
+    externalPending: false,
+    chainBlock: 100n,
+    lag: 0n,
+    blockError: null as Error | null,
+    entriesAllowed: false,
+  };
   /** Size before each mined fill, so a read pinned to an older block sees the older size. */
   const history: Array<{ block: bigint; pool: Address; before: bigint }> = [];
   let tx = 0;
@@ -196,10 +203,11 @@ export function fakeTradingChain(markets: MarketInfo[]) {
       const size = sizeOf(p.pool);
       sends.push({ ...p, privateKey, sizeAtSend: size });
       const abs = size < 0n ? -size : size;
+      const entry = state.entriesAllowed && size === 0n;
       const problems = [
         pending.length > 0 || state.externalPending ? "another tx from this key is still pending" : null,
         p.qtyRaw <= 0n ? `qty ${p.qtyRaw} is not positive` : null,
-        p.qtyRaw > abs ? `qty ${p.qtyRaw} exceeds the live size ${size}` : null,
+        !entry && p.qtyRaw > abs ? `qty ${p.qtyRaw} exceeds the live size ${size}` : null,
         size !== 0n && p.isBid !== size < 0n ? `isBid=${p.isBid} opens on a size of ${size}` : null,
       ].filter((x): x is string => x !== null);
       if (problems.length > 0) {

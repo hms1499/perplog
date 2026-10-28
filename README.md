@@ -73,9 +73,11 @@ Link the bot once per account:
 What the bot can and cannot do:
 - it can only place, cancel or reduce orders (`placeOrderFor`, `cancelOrderFor`, `reduceOrderFor`); it cannot
   withdraw or move funds;
-- it only sends orders that close a position for a stop you armed;
-- it re-reads the live position before every order and never sends more than the live size, so it cannot open
-  or flip a position.
+- it sends orders that close a position for a stop you armed: it re-reads the live position before every
+  close and never sends more than the live size, so a close cannot flip a position;
+- the only order that opens a position is the entry of a **Plan & Place** you confirmed: it is sent at most once
+  (never retried, even after a restart), only while you are flat on that market, within 30 s of your click, at the
+  size PerpLog quoted; its stop is armed as soon as it fills.
 
 Stop lifecycle:
 

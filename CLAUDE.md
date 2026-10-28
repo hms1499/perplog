@@ -23,9 +23,12 @@ implementation plans live in `docs/superpowers/plans/`.
 - **Only `apps/worker` signs.** `apps/web` must never import `@perplog/db/crypto`, `@perplog/chain/signer` or a viem
   wallet client, and never reads `KEY_ENCRYPTION_KEY` or `TREASURY_PRIVATE_KEY`. Signer code stays out of the
   `@perplog/chain` barrel.
-- **The worker never increases exposure.** It only sends orders that close a position for an armed stop; it re-reads
-  the live size before every send, never sends more than `|size|`, and never resends while a previous tx outcome is
-  unknown. dreamDEX has no reduce-only flag.
+- **The worker increases exposure only for a plan entry:** the IOC order of a plan the account's linked session
+  confirmed through `POST /api/plans`, sent **at most once** (never retried or resent, including after a restart),
+  only while the account is flat on that pool and the plan is younger than `ENTRY_MAX_AGE_MS` (30 s), never larger
+  than the quoted `qtyRaw`. Every other order closes a position for an armed stop: it re-reads the live size before
+  every send, never sends more than `|size|`, and never resends while a previous tx outcome is unknown. Entries and
+  closes share one per-bot-key send queue. dreamDEX has no reduce-only flag.
 - Stop status changes are compare-and-set (`transitionStop(db, id, fromStatuses, to)`); never update status blindly.
 - Money and on-chain values are raw `bigint` (`numeric(78,0)` in Postgres, decimal strings over JSON). Addresses are
   lowercase. Never hardcode pools, decimals, tick or lot sizes: read them from the market list.

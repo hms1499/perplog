@@ -2,6 +2,7 @@ import { MARK_POLL_MS } from "@perplog/core";
 import type { Db } from "@perplog/db";
 import { createAlertEngine } from "./alert-engine";
 import { mintRequestedKeys } from "./bot-key-minter";
+import { createEntryEngine } from "./entry-engine";
 import type { WorkerEnv } from "./env";
 import { GAS_TREASURY_INTERVAL_MS, topUpBots } from "./gas-treasury";
 import { checkLinks } from "./link-watcher";
@@ -10,9 +11,11 @@ import type { Logger } from "./log";
 import { every } from "./loop";
 import type { ChainPort } from "./ports";
 import { startReactivityListener } from "./reactivity-listener";
+import { KeyedSerial } from "./serial";
 import { createStopEngine } from "./stop-engine";
 
 export const MINTER_INTERVAL_MS = 300;
+export const ENTRY_POLL_MS = 300;
 export const LINK_WATCHER_INTERVAL_MS = 60_000;
 export const WATCHED_REFRESH_MS = 10_000;
 const STANDBY_RETRY_MS = 10_000;
@@ -106,10 +109,21 @@ export async function startWorker(deps: WorkerDeps): Promise<{ stop(): Promise<v
           ),
           every(LINK_WATCHER_INTERVAL_MS, "link-watcher", () => checkLinks(db, deps.chain, log), log),
         );
-        const engine = createStopEngine({ db, chain: deps.chain, kek: env.KEY_ENCRYPTION_KEY, log });
+        // One send queue per bot key, shared by both engines: a key never has a stop close and an entry in flight.
+        const serial = new KeyedSerial();
+        const engine = createStopEngine({ db, chain: deps.chain, kek: env.KEY_ENCRYPTION_KEY, log, serial });
         const poll = every(MARK_POLL_MS, "stop-engine", () => engine.tick(), log);
         // Stopping the poll alone would leave scheduled executions running: stop the engine too.
         loops.push({ stop: () => Promise.all([poll.stop(), engine.stop()]).then(() => undefined) });
+        const entries = createEntryEngine({
+          db,
+          chain: deps.chain,
+          kek: env.KEY_ENCRYPTION_KEY,
+          log,
+          serial,
+        });
+        const entryPoll = every(ENTRY_POLL_MS, "entry-engine", () => entries.tick(), log);
+        loops.push({ stop: () => Promise.all([entryPoll.stop(), entries.stop()]).then(() => undefined) });
         const alerts = createAlertEngine({ db, chain: deps.chain, log });
         const watchedRefresh = every(
           WATCHED_REFRESH_MS,
