@@ -98,6 +98,15 @@ export function PlanPanel({ address }: { address: Address }) {
     staleTime: 5_000,
   });
 
+  // The last quote received, so the ladder keeps showing (dimmed) while the next one loads instead of blanking.
+  // Display only: Place reads `quote.data`, which is always the quote of the previewed input.
+  const [lastQuote, setLastQuote] = useState<{ quote: QuoteView; pool: string; side: Side } | null>(null);
+  useEffect(() => {
+    if (!quote.data || !debouncedKey) return;
+    const previewed = JSON.parse(debouncedKey) as { pool: string; side: Side };
+    setLastQuote({ quote: quote.data, pool: previewed.pool, side: previewed.side });
+  }, [quote.data, debouncedKey]);
+
   const place = useMutation({
     // The previewed input, never the one still being typed: what is placed is what was shown.
     mutationFn: () => postJson<{ plan: PlanView }>("/api/plans", { ...debounced, confirm: true }),
@@ -127,6 +136,12 @@ export function PlanPanel({ address }: { address: Address }) {
   const linkedAccount =
     session.data?.status === "linked" ? (session.data.account?.toLowerCase() ?? null) : null;
   const q = quote.data;
+  const shown =
+    q ??
+    (input && lastQuote && lastQuote.pool === market.pool && lastQuote.side === side
+      ? lastQuote.quote
+      : null);
+  const stale = shown !== null && (!q || quote.isFetching || JSON.stringify(input) !== debouncedKey);
   const quoteError = quote.error instanceof PlanError ? quote.error.code : quote.error ? "unknown" : null;
   const fmtPrice = (raw: string) => formatAmount(BigInt(raw), PRICE_DECIMALS, priceDp);
 
@@ -192,11 +207,11 @@ export function PlanPanel({ address }: { address: Address }) {
         <div data-testid="plan-quote" className="grid items-start gap-4 2xl:grid-cols-[minmax(0,1fr)_300px]">
           <Panel>
             <RiskLadder
-              quote={quoteError ? null : (q ?? null)}
+              quote={quoteError ? null : shown}
               book={book}
               priceDp={priceDp}
               side={side}
-              updating={Boolean(q) && quote.isFetching}
+              updating={stale}
               error={input && quoteError ? quoteErrorText(quoteError, side) : null}
               emptyText={input ? "Reading the book…" : "Set your max loss and stop to see the plan."}
             />

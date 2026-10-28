@@ -9,7 +9,7 @@ import type { QuoteView, Side } from "./shared";
 const HEIGHT = 380;
 /** Below this width the gutters shrink and the rule labels drop their explanation. */
 const NARROW = 480;
-const GLIDE = { transition: "transform 200ms ease-out, d 200ms ease-out" } as const;
+const GLIDE = { transition: "transform 200ms ease-out" } as const;
 
 const toLadder = (q: QuoteView): LadderQuote => ({
   refPrice: BigInt(q.refPrice),
@@ -149,22 +149,34 @@ export function RiskLadder({
             const mid = (y1 + y2) / 2;
             const pct = pctOf(q.priceBound, b.to) - (b.kind === "buffer" ? pctOf(q.priceBound, b.from) : 0);
             return (
+              // Every piece is placed by a CSS transform or height, so the bracket glides with the rules.
               <g key={b.kind}>
-                <path
-                  d={`M ${x - 6} ${y1} H ${x} V ${y2} H ${x - 6}`}
-                  fill="none"
-                  stroke="var(--brand)"
-                  strokeWidth={1.5}
-                  style={GLIDE}
+                <g style={{ ...GLIDE, transform: `translateY(${y1}px)` }}>
+                  <line x1={x - 6} x2={x} stroke="var(--brand)" strokeWidth={1.5} />
+                </g>
+                <g style={{ ...GLIDE, transform: `translateY(${y2}px)` }}>
+                  <line x1={x - 6} x2={x} stroke="var(--brand)" strokeWidth={1.5} />
+                </g>
+                <rect
+                  x={x - 0.75}
+                  width={1.5}
+                  fill="var(--brand)"
+                  style={{
+                    transition: "transform 200ms ease-out, height 200ms ease-out",
+                    transform: `translateY(${Math.min(y1, y2)}px)`,
+                    height: Math.abs(y2 - y1),
+                  }}
                 />
-                <text x={x + 8} y={mid} fontSize={12} fill="var(--brand)" fontWeight={500}>
-                  <tspan x={x + 8} dy="-0.2em">
-                    {b.kind === "loss" ? `−${maxLoss} USDso` : "Buffer"}
-                  </tspan>
-                  <tspan x={x + 8} dy="1.3em" fill="var(--muted)">
-                    {pct.toFixed(1)}%
-                  </tspan>
-                </text>
+                <g style={{ ...GLIDE, transform: `translateY(${mid}px)` }}>
+                  <text x={x + 8} fontSize={12} fill="var(--brand)" fontWeight={500}>
+                    <tspan x={x + 8} dy="-0.2em">
+                      {b.kind === "loss" ? `−${maxLoss} USDso` : "Buffer"}
+                    </tspan>
+                    <tspan x={x + 8} dy="1.3em" fill="var(--muted)">
+                      {pct.toFixed(1)}%
+                    </tspan>
+                  </text>
+                </g>
               </g>
             );
           })}

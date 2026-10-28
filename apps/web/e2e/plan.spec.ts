@@ -204,3 +204,30 @@ test("Place order waits for the quote of what is typed and posts that input", as
   await place.click();
   await expect.poll(() => posted?.riskRaw).toBe((50n * E18).toString());
 });
+
+test("retyping the stop dims the ladder until the new quote arrives", async ({ page }) => {
+  await mockPlan(page);
+  await page.route("**/api/plans/quote", async (route) => {
+    const body = route.request().postDataJSON() as { stopPrice: string };
+    if (body.stopPrice === (63_800n * E18).toString()) await new Promise((r) => setTimeout(r, 2_000));
+    return route.fulfill({ json: quoteBody("7180000") });
+  });
+  await open(page);
+  await page.getByLabel("Max loss if the stop hits").fill("25");
+  await page.getByLabel("Stop price").fill("63900");
+  await expect(page.getByTestId("plan-quote")).toContainText("Stop · held by PerpLog");
+  await page.getByLabel("Stop price").fill("63800");
+  await expect(page.getByText("Updating…")).toBeVisible();
+  await expect(page.getByTestId("plan-quote")).toContainText("Stop · held by PerpLog");
+});
+
+test("a quoted plan at 390px wide has no horizontal scroll", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockPlan(page);
+  await open(page);
+  await page.getByLabel("Max loss if the stop hits").fill("25");
+  await page.getByLabel("Stop price").fill("63900");
+  await expect(page.getByTestId("plan-quote")).toContainText("0.0718");
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

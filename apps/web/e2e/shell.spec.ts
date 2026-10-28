@@ -41,3 +41,9 @@ test("home explains the three steps and links to how it works", async ({ page })
   await expect(steps.getByRole("listitem")).toHaveCount(3);
   await expect(steps.getByRole("link").first()).toHaveAttribute("href", "/how-it-works");
 });
+
+test("an unknown page keeps the site top bar and footer", async ({ page }) => {
+  await page.goto("/no-such-page");
+  await expect(page.getByRole("link", { name: "perplog", exact: true })).toHaveAttribute("href", "/");
+  await expect(page.getByText(NOT_AFFILIATED)).toBeVisible();
+});
