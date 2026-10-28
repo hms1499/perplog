@@ -19,3 +19,4 @@ export * from "./summary";
 export * from "./trades";
 export type * from "./types";
 export * from "./units";
+export * from "./weekly";

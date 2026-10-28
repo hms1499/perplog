@@ -3,6 +3,7 @@ import {
   type Address,
   attributeCosts,
   buildHealthSummary,
+  buildWeeklyReport,
   type CostAttribution,
   computeLeaks,
   type EnrichedTrade,
@@ -22,6 +23,7 @@ import {
   reconstructTrades,
   type Side,
   type StopStatus,
+  type WeeklyReport,
 } from "@perplog/core";
 import { LRUCache } from "lru-cache";
 
@@ -75,6 +77,9 @@ export interface AccountServiceDeps {
    */
   now(account?: Address): number;
 }
+
+/** `reconciled`: the account's whole history matched its on-chain collateral, so the card may say so. */
+export type WeeklyResponse = WeeklyReport & { empty: boolean; reconciled: boolean };
 
 export type HealthResponse = HealthSummary & {
   empty: boolean;
@@ -298,7 +303,20 @@ export function createAccountService(
     return positions.map((position) => withPerplogStop(position, stops));
   }
 
-  return { getAccountData, getHealth, getTrades, getLeaks, getPositions };
+  async function getWeekly(account: Address, weekStart: string): Promise<WeeklyResponse> {
+    const data = await getAccountData(account);
+    return {
+      ...buildWeeklyReport({
+        trades: data.trades,
+        unattributedFunding: data.attribution.unattributedFunding,
+        weekStart,
+      }),
+      empty: data.empty,
+      reconciled: data.reconcile?.ok === true,
+    };
+  }
+
+  return { getAccountData, getHealth, getTrades, getLeaks, getPositions, getWeekly };
 }
 
 export type AccountService = ReturnType<typeof createAccountService>;

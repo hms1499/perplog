@@ -7,7 +7,15 @@ import "./globals.css";
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
+/** Absolute base for OG/Twitter image URLs: NEXT_PUBLIC_SITE_URL, else Vercel's production host, else local. */
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3200");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "PerpLog",
   description: "Your true perps PnL on dreamDEX, after funding and liquidation fees.",
 };

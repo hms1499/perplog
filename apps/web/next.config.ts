@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   reactCompiler: true,
+  // The weekly report card reads its fonts from disk; ship them with that route.
+  outputFileTracingIncludes: { "/api/og/report/[address]/[week]": ["./assets/fonts/**"] },
   turbopack: {
     rules: {
       "*.css": {

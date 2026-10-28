@@ -1,4 +1,5 @@
 import type { AccountHistory, Address, MarketInfo, OpenPosition, PositionChange } from "@perplog/core";
+import { isoWeekStart } from "@perplog/core";
 import {
   type AccountServiceDeps,
   ChainUnavailableError,
@@ -359,4 +360,27 @@ test("a failing stop-tx read degrades the classification instead of failing the 
   const { trades } = await createAccountService(d).getTrades(ACCOUNT, { range: "all" });
   spy.mockRestore();
   expect(trades.map((t) => t.exitType)).toEqual(["MANUAL"]);
+});
+
+test("getWeekly reports the trades closed in that ISO week and flags an empty history", async () => {
+  const service = createAccountService(
+    deps(emptyHistory({ changes: [...roundTrip(1, 5n * E18), ...roundTrip(2, -2n * E18)] })),
+  );
+  const week = isoWeekStart(NOW - 10_000);
+  const r = await service.getWeekly(ACCOUNT, week);
+  expect(r).toMatchObject({ weekStart: week, tradeCount: 2, realizedPnlRaw: 3n * E18, empty: false });
+  const other = await service.getWeekly(ACCOUNT, "2020-01-06");
+  expect(other).toMatchObject({ tradeCount: 0, netPnlRaw: 0n });
+  const none = await createAccountService(deps(emptyHistory())).getWeekly(ACCOUNT, week);
+  expect(none.empty).toBe(true);
+  expect(r.reconciled).toBe(false);
+  // Reconciled only when the whole history matched the on-chain collateral.
+  const ok = deps(
+    emptyHistory({
+      changes: roundTrip(1, 5n * E18),
+      marginEvents: [{ id: "m", kind: "Credited", amount: 1000n * E18, timestamp: 1 }],
+    }),
+  );
+  ok.fetchCollateral = async () => ({ collateralRaw: 1005n * E18, activePools: [] });
+  expect((await createAccountService(ok).getWeekly(ACCOUNT, week)).reconciled).toBe(true);
 });
