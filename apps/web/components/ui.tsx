@@ -134,7 +134,7 @@ export function Segmented<T extends string>({
             onClick={() => onChange(o.value)}
             className={cx(
               "rounded-md px-3 py-1.5 font-semibold text-xs",
-              filled || (on ? "bg-panel text-head shadow-sm" : "text-muted"),
+              filled || (on ? "bg-panel text-head" : "text-muted"),
             )}
           >
             {o.label}

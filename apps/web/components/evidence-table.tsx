@@ -92,7 +92,7 @@ export function EvidenceTable() {
                       (h) => (
                         <th
                           key={h}
-                          className={`px-2.5 py-2 font-medium text-muted text-xs uppercase tracking-[0.3px] ${
+                          className={`px-2.5 py-2 font-medium text-muted text-xs ${
                             h === "Filled" || h === "Avg price" ? "text-right" : ""
                           }`}
                         >
