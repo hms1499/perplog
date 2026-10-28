@@ -106,6 +106,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
 
   async function execute(id: string, market: MarketInfo | undefined): Promise<void> {
     if (stopped) return;
+    const startedAt = now();
     // Claim the stop. Fails when it was finished or changed since the tick listed it: nothing is sent.
     if (!(await transitionStop(db, id, IN_PROGRESS, "executing"))) {
       log.info({ stopId: id }, "stop_not_executable");
@@ -117,6 +118,16 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
     const { account, pool } = stop;
     const triggeredAt = stop.triggeredAt?.getTime() ?? now();
     const timedOut = () => now() - triggeredAt > STOP_GIVE_UP_MS;
+    /** Per-step durations for `stop_close_sent`, to see where trigger-to-close time goes. A retried step keeps
+     * its latest duration; a step redone in the same pass (settle) adds up. */
+    const steps: Record<string, number> = { queue: startedAt - triggeredAt };
+    let lapFrom = startedAt;
+    const lap = (step: string): void => {
+      const t = now();
+      steps[step] = t - lapFrom;
+      lapFrom = t;
+    };
+    lap("claim");
     let attempt = stop.attempts;
     let closed = stop.closedRaw;
     let lastError = stop.lastError;
@@ -174,6 +185,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
     } catch {
       return defer("bot_key_decrypt_failed");
     }
+    lap("key");
 
     if (!fences.has(id)) {
       // Resume (or first run): the last recorded fill's receipt block is the fence. Sends are sequential per
@@ -195,6 +207,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
       }
       fences.set(id, block);
     }
+    lap("fence");
 
     /** The stop row is what a resumed execution trusts: false means it left `executing`, so stop acting. */
     const persist = () =>
@@ -281,6 +294,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
       }
       if (settled === "wait") return defer("outcome_unknown");
       if (settled === "changed") continue;
+      lap("settle");
 
       // Block fence: the node must have every known fill before its size is believed.
       let head: bigint;
@@ -290,6 +304,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
         return defer(`block_read_failed: ${errorText(err)}`);
       }
       if (head < (fences.get(id) ?? 0n)) return defer("block_fence");
+      lap("head");
 
       // Pending check, size (pinned to that head) and mark in one round trip, as close to the send as possible.
       const [pendingRead, sizeRead, markRead] = await Promise.allSettled([
@@ -297,6 +312,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
         chain.readPositionSize(account, pool, head),
         chain.readMark(pool),
       ]);
+      lap("reads");
       if (sizeRead.status === "rejected") return defer(`size_read_failed: ${errorText(sizeRead.reason)}`);
 
       const plan = planClose({
@@ -343,6 +359,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
         qtyRaw: order.qtyRaw,
         priceBound,
       });
+      lap("record");
       let result: PlaceResult | null = null;
       let unknown: TxOutcomeUnknown | null = null;
       try {
@@ -356,6 +373,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
         if (err instanceof TxOutcomeUnknown) unknown = err;
         lastError = unknown ? "outcome_unknown" : errorText(err);
       }
+      lap("place");
       attempt += 1;
 
       if (unknown) {
@@ -384,6 +402,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
           avgPrice: result.avgPrice,
           gasUsed: result.gasUsed,
         });
+        lap("persist");
         log.info(
           {
             stopId: id,
@@ -394,6 +413,7 @@ export function createStopEngine(deps: StopEngineDeps): StopEngine {
             priceBound: priceBound.toString(),
             attempt: attempt - 1,
             ms_since_trigger: now() - triggeredAt,
+            steps_ms: { ...steps, place_steps: result.stepsMs },
           },
           "stop_close_sent",
         );

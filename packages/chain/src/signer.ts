@@ -91,6 +91,8 @@ export interface PlaceResult {
   gasUsed: bigint;
   /** The block the tx was mined in: state read at an earlier block does not include its fills. */
   blockNumber: bigint;
+  /** Set by `placeMarketFor` only: how long each RPC step of the send took. */
+  stepsMs?: { simulate: number; broadcast: number; receipt: number };
 }
 
 /** A mined `placeOrderFor` receipt as a result; a reverted receipt is a known outcome with nothing filled. */
@@ -159,7 +161,9 @@ export async function hasPendingTx(
 export async function placeMarketFor(
   wallet: BotWallet,
   p: { owner: Address; pool: Address; isBid: boolean; qtyRaw: bigint; priceBound: bigint },
+  now: () => number = Date.now,
 ): Promise<PlaceResult> {
+  const t0 = now();
   let request: unknown;
   try {
     ({ request } = await wallet.publicClient.simulateContract({
@@ -189,12 +193,14 @@ export async function placeMarketFor(
     }
     throw err;
   }
+  const t1 = now();
   let txHash: Hash;
   try {
     txHash = await wallet.walletClient.writeContract(request as never);
   } catch (err) {
     throw new TxOutcomeUnknown(null, err);
   }
+  const t2 = now();
   let result: ReceiptResult;
   try {
     const receipt = await wallet.publicClient.waitForTransactionReceipt({ hash: txHash });
@@ -204,5 +210,5 @@ export async function placeMarketFor(
   }
   if (result.reverted) throw new OperatorRevert("reverted_onchain");
   const { reverted: _reverted, ...placed } = result;
-  return placed;
+  return { ...placed, stepsMs: { simulate: t1 - t0, broadcast: t2 - t1, receipt: now() - t2 } };
 }

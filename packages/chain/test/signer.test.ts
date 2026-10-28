@@ -68,15 +68,30 @@ describe("signer", () => {
     expect((err as OperatorRevert).errorName).toBe("reverted_onchain");
   });
 
-  test("a mined receipt is decoded into the result", async () => {
-    const w = fakeWallet({});
-    expect(await placeMarketFor(w.wallet, ORDER)).toEqual({
+  test("a mined receipt is decoded into the result, with the time each step took", async () => {
+    const clock = { t: 0 };
+    const w = fakeWallet({
+      simulate: async () => {
+        clock.t += 40;
+        return { request: {} };
+      },
+      write: async () => {
+        clock.t += 60;
+        return HASH;
+      },
+      wait: async () => {
+        clock.t += 500;
+        return receipt("success");
+      },
+    });
+    expect(await placeMarketFor(w.wallet, ORDER, () => clock.t)).toEqual({
       txHash: HASH,
       orderId: null,
       filledRaw: 0n,
       avgPrice: null,
       gasUsed: 123n,
       blockNumber: 9n,
+      stepsMs: { simulate: 40, broadcast: 60, receipt: 500 },
     });
   });
 

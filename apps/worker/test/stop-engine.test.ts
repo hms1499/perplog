@@ -149,6 +149,45 @@ test("long stop fires when mark ≤ trigger, closes the whole latest size, ends 
   );
 });
 
+test("stop_close_sent breaks ms_since_trigger down by step", async () => {
+  const { f, log, run, clock } = await setup();
+  f.sizes.set(POOL_A, 1_000n);
+  f.marks.set(POOL_A, { price: TRIGGER, fromIndex: false });
+  // Time passes only on the chain calls of the execution: the head read and the send.
+  const blockNumber = vi.mocked(f.chain.blockNumber);
+  const placeMarketFor = vi.mocked(f.chain.placeMarketFor);
+  const block = blockNumber.getMockImplementation();
+  const place = placeMarketFor.getMockImplementation();
+  if (!block || !place) throw new Error("fake chain without implementations");
+  blockNumber.mockImplementation(async () => {
+    clock.t += 30;
+    return block();
+  });
+  placeMarketFor.mockImplementation(async (...args) => {
+    clock.t += 700;
+    return { ...(await place(...args)), stepsMs: { simulate: 100, broadcast: 100, receipt: 500 } };
+  });
+  await run();
+
+  const sent = log.entries.find((e) => e.msg === "stop_close_sent");
+  expect(sent?.obj).toMatchObject({
+    ms_since_trigger: 730,
+    steps_ms: {
+      queue: 0,
+      claim: 0,
+      key: 0,
+      fence: 0,
+      settle: 0,
+      head: 30,
+      reads: 0,
+      record: 0,
+      place: 700,
+      persist: 0,
+      place_steps: { simulate: 100, broadcast: 100, receipt: 500 },
+    },
+  });
+});
+
 test("short stop sends a bid with a ceiled bound", async () => {
   const { db, f, run, stops } = await setup([{ positionSide: "short", triggerOp: "gte" }]);
   const stop = stops[0] as StopRow;
