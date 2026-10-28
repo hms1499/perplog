@@ -5,10 +5,7 @@ import { chain } from "@/lib/chain";
 import { getDb } from "@/lib/db";
 import { handleRoute, json } from "@/lib/json";
 import { checkOrigin, limitPost, sessionId } from "@/lib/session";
-import { linkedOf, toStopView } from "@/lib/stops";
-
-const POOL_NOT_LINKED_MESSAGE =
-  "PerpLog's bot is not linked for this market. In the dreamDEX app, open your wallet → Link a bot → tick Perps and paste the same bot address again.";
+import { linkedOf, POOL_NOT_LINKED_MESSAGE, toStopView } from "@/lib/stops";
 
 /** Raw decimal integers only (no sign, fraction or exponent); 78 digits is the column's width. */
 const rawAmount = z.string().regex(/^[0-9]{1,78}$/);

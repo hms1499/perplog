@@ -2,6 +2,9 @@ import { type Address, normalizeAddress } from "@perplog/core";
 import type { StopRow } from "@perplog/db";
 import type { StopView } from "./account-service";
 
+export const POOL_NOT_LINKED_MESSAGE =
+  "PerpLog's bot is not linked for this market. In the dreamDEX app, open your wallet → Link a bot → tick Perps and paste the same bot address again.";
+
 export function toStopView(row: StopRow): StopView {
   return {
     id: row.id,

@@ -220,3 +220,8 @@ export async function listEvidence(
     .orderBy(desc(executions.createdAt))
     .limit(opts.limit ?? 200);
 }
+
+export async function getExecution(db: Db, id: string): Promise<ExecutionRow | null> {
+  const [row] = await db.select().from(executions).where(eq(executions.id, id)).limit(1);
+  return row ?? null;
+}
