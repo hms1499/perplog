@@ -9,12 +9,12 @@ const cx = (...parts: Array<string | false | null | undefined>) => parts.filter(
 
 export function Panel({ className, children }: { className?: string; children: ReactNode }) {
   return (
-    <section className={cx("rounded-xl border border-line bg-panel p-[18px]", className)}>{children}</section>
+    <section className={cx("rounded-[10px] border border-line bg-panel p-5", className)}>{children}</section>
   );
 }
 
 export function Label({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cx("text-muted text-xs uppercase tracking-[0.3px]", className)}>{children}</div>;
+  return <div className={cx("text-[13px] text-muted", className)}>{children}</div>;
 }
 
 const TONE = { gain: "text-gain", loss: "text-loss", warn: "text-warn", head: "text-head" } as const;
@@ -22,14 +22,14 @@ export type Tone = keyof typeof TONE;
 
 export function StatTile({ label, value, tone = "head" }: { label: string; value: ReactNode; tone?: Tone }) {
   return (
-    <div className="rounded-xl border border-line bg-panel p-3.5">
+    <div className="rounded-[10px] border border-line bg-panel p-3.5">
       <Label>{label}</Label>
-      <div className={cx("mt-1 font-mono text-[22px]", TONE[tone])}>{value}</div>
+      <div className={cx("mt-1 text-[22px] tabular-nums", TONE[tone])}>{value}</div>
     </div>
   );
 }
 
-/** A number in Geist Mono; `tone="auto"` colors it by the sign of `raw`. */
+/** A number in tabular figures; `tone="auto"` colors it by the sign of `raw`. */
 export function Num({
   raw,
   text,
@@ -54,7 +54,7 @@ export function Num({
           ? "text-loss"
           : "";
   const shown = text ?? (raw !== undefined ? formatUsd(raw) : "");
-  return <span className={cx("font-mono tabular-nums", color, className)}>{shown}</span>;
+  return <span className={cx("tabular-nums", color, className)}>{shown}</span>;
 }
 
 export function Field({
@@ -73,7 +73,7 @@ export function Field({
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "id">) {
   return (
     <div>
-      <label htmlFor={id} className="text-muted text-xs uppercase tracking-[0.3px]">
+      <label htmlFor={id} className="text-[13px] text-muted">
         {label}
       </label>
       <div
@@ -84,7 +84,7 @@ export function Field({
       >
         <input
           id={id}
-          className="min-w-0 flex-1 bg-transparent font-mono text-base text-head outline-none placeholder:text-muted/60"
+          className="min-w-0 flex-1 bg-transparent text-base text-head tabular-nums outline-none placeholder:text-muted/60"
           aria-invalid={invalid || undefined}
           // The wrapper draws the focus ring (focus-within); a second outline on the bare input would double it.
           style={{ outline: "none" }}
@@ -123,11 +123,7 @@ export function Segmented<T extends string>({
       {options.map((o) => {
         const on = o.value === value;
         const filled =
-          tone === "side" && on
-            ? o.value === "short"
-              ? "bg-loss-fill text-white"
-              : "bg-gain text-white"
-            : "";
+          tone === "side" && on ? (o.value === "short" ? "bg-loss-fill text-page" : "bg-gain text-page") : "";
         return (
           // biome-ignore lint/a11y/useSemanticElements: a styled radio group of buttons, like the dreamDEX ticket
           <button
@@ -150,9 +146,9 @@ export function Segmented<T extends string>({
 }
 
 const BUTTON = {
-  action: "bg-action text-white hover:bg-action-hover",
+  action: "bg-action text-action-ink hover:bg-action-hover",
   ghost: "border border-line-strong bg-panel text-text hover:bg-field",
-  x: "bg-x text-white hover:opacity-90",
+  x: "bg-x text-head hover:opacity-90",
 } as const;
 
 export function Button({

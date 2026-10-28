@@ -163,7 +163,7 @@ export function PlanPanel({ address }: { address: Address }) {
     <section className="grid items-start gap-3 py-6 lg:grid-cols-[380px_1fr]">
       <Panel className="grid gap-3.5">
         <div>
-          <label htmlFor="plan-market" className="text-muted text-xs uppercase tracking-[0.3px]">
+          <label htmlFor="plan-market" className="text-[13px] text-muted">
             Market
           </label>
           <select

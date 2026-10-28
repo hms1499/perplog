@@ -1,57 +1,34 @@
 @import "tailwindcss";
 
 /*
- * PerpLog design tokens (docs/specs/2026-10-28-perplog-design-system.md §4): dreamDEX's trading-app palette,
- * brightened for a light ground, with PerpLog's own cyan as the brand color. Components use only these tokens.
+ * PerpLog design tokens (docs/specs/2026-10-28-perplog-pro-ui-design.md §4): a dark trading desk in layered
+ * slate, with PerpLog's cyan as the brand. Dark only. Components use only these tokens.
  */
 :root {
-  --page: #eef1f5;
-  --panel: #ffffff;
-  --field: #f2f5f8;
-  --line: #d0d7e6;
-  --line-strong: #b1b7bf;
-  --head: #0e1217;
-  --text: #1e242b;
-  --muted: #404852;
-  --gain: #1c634d;
-  --loss: #af0c3d;
-  --loss-fill: #dc0b4a;
-  --warn: #a34e00;
-  --brand: #137a99;
-  --brand-line: #1aa3cc;
-  --action: #514cae;
-  --action-hover: #5e59b2;
-  --focus: #137a99;
-  --testnet: #990080;
-  --testnet-bg: #ffe6fb;
-  --testnet-line: #ff99ef;
-  --x: #0e1217;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --page: #0e1217;
-    --panel: #1c222a;
-    --field: #14191f;
-    --line: #2d323a;
-    --line-strong: #3a414b;
-    --head: #ffffff;
-    --text: #c9d1d9;
-    --muted: #8d98a3;
-    --gain: #00fa89;
-    --loss: #ec658d;
-    --loss-fill: #dc0b4a;
-    --warn: #ff9533;
-    --brand: #20ccff;
-    --brand-line: #20ccff;
-    --action: #5b55c8;
-    --action-hover: #6b65d1;
-    --focus: #20ccff;
-    --testnet: #ff66e6;
-    --testnet-bg: #660057;
-    --testnet-line: #990080;
-    --x: #000000;
-  }
+  color-scheme: dark;
+  --page: #10151c;
+  --panel: #161c25;
+  --field: #1d2530;
+  --line: #27303d;
+  --line-strong: #364152;
+  --head: #f1f5f9;
+  --text: #c3ccd6;
+  --muted: #8392a3;
+  --gain: #3ddc97;
+  --loss: #ff6b81;
+  --loss-fill: #e5485f;
+  --warn: #f5b84a;
+  --brand: #20ccff;
+  --brand-line: #20ccff;
+  --brand-ink: #04222c;
+  --action: #20ccff;
+  --action-hover: #5cdbff;
+  --action-ink: #04222c;
+  --focus: #20ccff;
+  --testnet: #ff66e6;
+  --testnet-bg: #3d0a35;
+  --testnet-line: #7a1f6c;
+  --x: #000000;
 }
 
 @theme inline {
@@ -69,15 +46,17 @@
   --color-warn: var(--warn);
   --color-brand: var(--brand);
   --color-brand-line: var(--brand-line);
+  --color-brand-ink: var(--brand-ink);
   --color-action: var(--action);
   --color-action-hover: var(--action-hover);
+  --color-action-ink: var(--action-ink);
   --color-focus: var(--focus);
   --color-testnet: var(--testnet);
   --color-testnet-bg: var(--testnet-bg);
   --color-testnet-line: var(--testnet-line);
   --color-x: var(--x);
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 body {

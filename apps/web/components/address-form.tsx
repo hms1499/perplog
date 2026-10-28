@@ -38,7 +38,7 @@ export function AddressForm({ initial = "" }: { initial?: string }) {
           aria-describedby={error ? `${inputId}-error` : undefined}
           className="min-w-0 flex-1 rounded-md border border-line bg-panel px-3 py-2.5 text-base"
         />
-        <button type="submit" className="rounded-md bg-action px-5 py-2.5 font-semibold text-white">
+        <button type="submit" className="rounded-md bg-action px-5 py-2.5 font-semibold text-action-ink">
           Analyze
         </button>
       </div>

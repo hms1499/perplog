@@ -10,11 +10,10 @@ test("footer says not affiliated on the landing and account pages", async ({ pag
   await expect(page.getByText(NOT_AFFILIATED)).toBeVisible();
 });
 
-test("the light page background is rgb(238, 241, 245)", async ({ page }) => {
-  await page.emulateMedia({ colorScheme: "light" });
+test("the page background is rgb(16, 21, 28)", async ({ page }) => {
   await page.goto("/");
   const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  expect(bg).toBe("rgb(238, 241, 245)");
+  expect(bg).toBe("rgb(16, 21, 28)");
 });
 
 test("no horizontal scroll at 390px wide on /, Health, Journal, Leaks and Positions", async ({ page }) => {

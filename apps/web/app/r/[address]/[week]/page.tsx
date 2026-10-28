@@ -43,7 +43,7 @@ async function SharedReport({ params }: { params: Params }) {
       />
       <Link
         href={`/a/${p.address}`}
-        className="justify-self-start rounded-lg bg-action px-3 py-2 font-semibold text-[13px] text-white hover:bg-action-hover"
+        className="justify-self-start rounded-lg bg-action px-3 py-2 font-semibold text-[13px] text-action-ink hover:bg-action-hover"
       >
         See the full journal on PerpLog
       </Link>

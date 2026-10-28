@@ -65,7 +65,7 @@ export function LeakCard({ leak, address, range }: { leak: Wire<Leak>; address: 
         </button>
         <Link
           href={leak.fix === "FIXED_RISK" ? `/a/${address}?tab=plan` : positionsHref}
-          className="rounded-md bg-action px-3 py-1.5 font-semibold text-white text-sm"
+          className="rounded-md bg-action px-3 py-1.5 font-semibold text-action-ink text-sm"
         >
           Fix
         </Link>

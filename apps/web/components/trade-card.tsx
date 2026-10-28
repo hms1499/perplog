@@ -11,7 +11,7 @@ export const EXIT_LABEL: Record<ExitType, string> = {
 };
 
 const EXIT_TONE: Record<ExitType, string> = {
-  LIQUIDATED: "bg-loss-fill text-white",
+  LIQUIDATED: "bg-loss-fill text-page",
   NATIVE_STOP: "border border-line-strong bg-panel",
   PERPLOG_STOP: "border border-line-strong bg-panel",
   MANUAL: "border border-line text-muted",

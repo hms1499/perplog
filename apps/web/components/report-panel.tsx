@@ -68,7 +68,7 @@ export function ReportPanel({ address }: { address: Address }) {
             href={share}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg bg-x px-3 py-2 font-semibold text-[13px] text-white hover:opacity-90"
+            className="rounded-lg bg-x px-3 py-2 font-semibold text-[13px] text-head hover:opacity-90"
           >
             Share on X
           </a>

@@ -109,10 +109,7 @@ export function HealthPanel({ address, range }: { address: string; range: Range 
 
       <div className="grid content-start gap-3">
         {leak && (
-          <section
-            data-testid="top-leak"
-            className="rounded-xl border border-loss/40 bg-gradient-to-b from-loss/10 to-panel p-[18px]"
-          >
+          <section data-testid="top-leak" className="rounded-[10px] border border-loss/40 bg-panel p-5">
             <Label className="text-loss">Top leak</Label>
             <p className="mt-1.5 font-semibold text-[17px] text-head">
               {leak.title}:{" "}
@@ -128,7 +125,7 @@ export function HealthPanel({ address, range }: { address: string; range: Range 
             <div className="mt-3 flex flex-wrap gap-2">
               <Link
                 href={fixOf(leak, address).href}
-                className="rounded-lg bg-action px-3 py-2 font-semibold text-[13px] text-white hover:bg-action-hover"
+                className="rounded-lg bg-action px-3 py-2 font-semibold text-[13px] text-action-ink hover:bg-action-hover"
               >
                 {fixOf(leak, address).label}
               </Link>
