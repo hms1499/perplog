@@ -14,6 +14,8 @@ export default defineConfig({
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
-    env: { PERPLOG_FIXTURE_DIR: "../../packages/core/test/fixtures" },
+    // Empty DATABASE_URL: Next never overrides a set variable from .env.local, so e2e stays DB-less (and off
+    // the real database) on machines that have one configured.
+    env: { PERPLOG_FIXTURE_DIR: "../../packages/core/test/fixtures", DATABASE_URL: "" },
   },
 });
