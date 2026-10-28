@@ -13,6 +13,7 @@ export * from "./gas";
 export * from "./leaks";
 export * from "./platform";
 export * from "./reconcile";
+export * from "./sizing";
 export * from "./stop-machine";
 export * from "./summary";
 export * from "./trades";

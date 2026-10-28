@@ -30,3 +30,7 @@ export const UNPROTECTED_POLL_SEC = 30;
 export const MARK_POLL_MS = 1_000;
 /** Postgres advisory lock id: only one worker signs at a time. */
 export const SIGNER_LOCK_ID = 7331;
+/** Plan & Place entry: IOC price bound around the reference price. */
+export const ENTRY_SLIP_BPS = 50;
+/** A queued plan entry older than this is failed `expired`, never sent. */
+export const ENTRY_MAX_AGE_MS = 30_000;
