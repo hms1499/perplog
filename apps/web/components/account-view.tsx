@@ -63,7 +63,10 @@ export function AccountView({ address }: { address: Address }) {
           </nav>
         )}
       </div>
-      <nav aria-label="Account sections" className="mt-6 flex gap-6 border-line border-b">
+      <nav
+        aria-label="Account sections"
+        className="mt-6 flex gap-6 overflow-x-auto whitespace-nowrap border-line border-b"
+      >
         {TABS.map((t) => (
           <Link
             key={t.value}
