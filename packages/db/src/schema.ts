@@ -1,6 +1,7 @@
 import type { Address, QtyMode, Side, StopStatus } from "@perplog/core";
 import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   boolean,
   index,
   integer,
@@ -11,6 +12,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -47,6 +49,13 @@ export const alertType = pgEnum("alert_type", [
   "stop_failed",
   "bot_low_gas",
   "link_revoked",
+  "entry_failed",
+]);
+export const planStatus = pgEnum("plan_status", [
+  "pending_entry",
+  "entered",
+  "partially_entered",
+  "entry_failed",
 ]);
 
 // The enums must hold exactly the values of the core types.
@@ -113,6 +122,32 @@ export const stops = pgTable(
   (t) => [index("stops_status_idx").on(t.status), index("stops_account_pool_idx").on(t.account, t.pool)],
 );
 
+export const plans = pgTable(
+  "plans",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    account: text("account").$type<Address>().notNull(),
+    pool: text("pool").$type<Address>().notNull(),
+    side: sideEnum("side").notNull(),
+    riskRaw: raw("risk_raw").notNull(),
+    refPrice: raw("ref_price").notNull(),
+    stopPrice: raw("stop_price").notNull(),
+    qtyRaw: raw("qty_raw").notNull(),
+    priceBound: raw("price_bound").notNull(),
+    leverageEstBps: raw("leverage_est_bps"),
+    liqPriceEst: raw("liq_price_est"),
+    status: planStatus("status").notNull(),
+    entryExecutionId: uuid("entry_execution_id").references((): AnyPgColumn => executions.id),
+    stopId: uuid("stop_id").references(() => stops.id),
+    createdAt: tstz("created_at").notNull().defaultNow(),
+    updatedAt: tstz("updated_at").notNull().defaultNow(),
+  },
+  (t) => [
+    // At most one plan waiting for its entry per (account, pool): a double-clicked Place cannot open twice.
+    uniqueIndex("plans_one_pending_idx").on(t.account, t.pool).where(sql`${t.status} = 'pending_entry'`),
+  ],
+);
+
 export const executions = pgTable("executions", {
   id: uuid("id").primaryKey().defaultRandom(),
   kind: executionKind("kind").notNull(),
@@ -122,7 +157,7 @@ export const executions = pgTable("executions", {
   botKeyId: uuid("bot_key_id")
     .notNull()
     .references(() => botKeys.id),
-  planId: uuid("plan_id"), // FK added in Plan 3
+  planId: uuid("plan_id").references((): AnyPgColumn => plans.id),
   stopId: uuid("stop_id").references(() => stops.id),
   isBid: boolean("is_bid").notNull(),
   qtyRaw: raw("qty_raw").notNull(),
@@ -178,4 +213,7 @@ export type NewStop = typeof stops.$inferInsert;
 export type ExecutionRow = typeof executions.$inferSelect;
 export type NewExecution = typeof executions.$inferInsert;
 export type AlertRow = typeof alerts.$inferSelect;
+export type PlanRow = typeof plans.$inferSelect;
+export type NewPlan = typeof plans.$inferInsert;
+export type PlanStatus = (typeof planStatus.enumValues)[number];
 export type AlertType = (typeof alertType.enumValues)[number];
