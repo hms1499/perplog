@@ -1,4 +1,9 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { attributeCosts } from "../src/costs";
+import { enrichTrades } from "../src/enrich";
+import { readFixture } from "../src/fixture";
 import { buildHealthSummary, filterRange } from "../src/summary";
+import { reconstructTrades } from "../src/trades";
 import { enriched } from "./helpers";
 
 const NOW = 100 * 86400;
@@ -136,4 +141,45 @@ test("a long equity curve is thinned out but keeps its first and final points", 
   expect(s.equity[0]).toEqual({ at: NOW - DAY, netRaw: 1n });
   expect(s.equity.at(-1)).toEqual({ at: NOW - DAY + 1199, netRaw: 1200n });
   expect(s.equity.every((p, i) => i === 0 || p.at > (s.equity[i - 1]?.at ?? 0))).toBe(true);
+});
+
+describe("health breakdown", () => {
+  const dir = new URL("./fixtures/", import.meta.url);
+  const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
+  const summaries = (file: string) => {
+    const fx = readFixture(readFileSync(new URL(file, dir), "utf8"));
+    const attribution = attributeCosts(
+      reconstructTrades(fx.account, fx.history.changes),
+      fx.history.funding,
+      fx.history.fees,
+    );
+    const markets = new Map(fx.markets.map((m) => [m.pool, m]));
+    const trades = enrichTrades(attribution, fx.history, markets, fx.asOfTimestamp);
+    return (["7d", "30d", "all"] as const).map((range) =>
+      buildHealthSummary({
+        trades,
+        unattributedFunding: attribution.unattributedFunding,
+        range,
+        nowSec: fx.asOfTimestamp,
+        reconcile: null,
+      }),
+    );
+  };
+
+  test.each(files)("breakdown identity holds on every range of %s", (file) => {
+    for (const s of summaries(file)) {
+      expect(s.realizedPnlRaw - s.fundingPaidRaw - s.liquidationFeesRaw - s.tradingFeesRaw, s.range).toBe(
+        s.netPnlRaw,
+      );
+    }
+  });
+
+  test("liquidationFeesRaw excludes the realized loss counted in liquidationCostRaw", () => {
+    const file = files.find((f) => f.includes("3952"));
+    if (!file) throw new Error("liquidated fixture 0x3952… missing");
+    const all = summaries(file)[2];
+    if (!all) throw new Error("no summary");
+    expect(all.liquidationFeesRaw).toBeGreaterThan(0n);
+    expect(all.liquidationFeesRaw).toBeLessThan(all.liquidationCostRaw);
+  });
 });

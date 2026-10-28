@@ -74,6 +74,8 @@ export function buildHealthSummary(args: {
     netPnlRaw: closed.reduce((acc, t) => acc + t.netPnl, 0n) - unattributed,
     realizedPnlRaw: closed.reduce((acc, t) => acc + t.realizedPnl, 0n),
     fundingPaidRaw: closed.reduce((acc, t) => acc + t.costs.funding, 0n) + unattributed,
+    liquidationFeesRaw: closed.reduce((acc, t) => acc + t.costs.liquidationFee, 0n),
+    tradingFeesRaw: closed.reduce((acc, t) => acc + t.costs.tradingFee + t.costs.builderFee, 0n),
     liquidationCostRaw: leaks.find((l) => l.id === "LIQUIDATION_COST")?.amountRaw ?? 0n,
     tradesWithoutStopPct: pct(closed.filter((t) => !t.hadStop).length, closed.length),
     winRatePct: pct(closed.filter((t) => t.netPnl > 0n).length, closed.length),

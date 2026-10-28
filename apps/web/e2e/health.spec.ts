@@ -1,9 +1,17 @@
 import { expect, test } from "@playwright/test";
 
-test("liquidated account shows reconciled badge, liquidation cost and its top leak", async ({ page }) => {
+test("liquidated account shows the gap, the breakdown, the reconciled badge and its top leak", async ({
+  page,
+}) => {
   await page.goto("/a/0x395225eab84c1b9304d42cb647238dcc90003951?range=all");
+  const gap = page.getByTestId("health-gap");
+  await expect(gap).toContainText("The app shows (realized)");
+  await expect(gap).toContainText("Your true net PnL");
+  const breakdown = page.getByTestId("health-breakdown");
+  for (const row of ["Realized PnL", "Funding paid", "Liquidation fees", "Net PnL"]) {
+    await expect(breakdown).toContainText(row);
+  }
   await expect(page.getByText("✓ Reconciled with chain")).toBeVisible();
-  await expect(page.getByText("1,782.26 USDso")).toBeVisible();
   await expect(page.getByTestId("top-leak")).toContainText("Losses on trades without a stop-loss");
 });
 

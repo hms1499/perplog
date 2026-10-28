@@ -185,6 +185,10 @@ export interface HealthSummary {
   netPnlRaw: bigint;
   realizedPnlRaw: bigint;
   fundingPaidRaw: bigint;
+  /** Σ liquidation fees only; the Health breakdown uses this, never liquidationCostRaw (which adds the loss). */
+  liquidationFeesRaw: bigint;
+  /** Σ trading + builder fees. realized − funding − liquidationFees − tradingFees = net. */
+  tradingFeesRaw: bigint;
   liquidationCostRaw: bigint;
   tradesWithoutStopPct: number;
   winRatePct: number;
