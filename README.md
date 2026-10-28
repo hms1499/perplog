@@ -235,7 +235,7 @@ pnpm tsx scripts/platform-stats.ts
 
 ## Judges start here
 
-- Live app: _set on deploy_ (`NEXT_PUBLIC_SITE_URL`)
+- Live app: **https://perplog.vercel.app**
 - Sample accounts:
   - `0x395225eab84c1b9304d42cb647238dcc90003951`: liquidated twice; net PnL is −1,700.23 against a realized
     −1,431.15;
