@@ -124,6 +124,10 @@ test("quote updates as risk and stop change", async ({ page }) => {
   await page.getByLabel("Stop price").fill("63900");
   const quote = page.getByTestId("plan-quote");
   await expect(quote).toContainText("0.0718");
+  const ladder = page.getByRole("img", { name: /Entry .* stop .* liquidation/i });
+  await expect(ladder).toBeVisible();
+  await expect(quote).toContainText("Stop · held by PerpLog");
+  await expect(quote).toContainText("Liquidation (est.)");
   await page.getByLabel("Max loss if the stop hits").fill("50");
   await expect(quote).toContainText("0.1436");
   await expect(quote).toContainText("58,410");

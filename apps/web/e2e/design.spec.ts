@@ -16,7 +16,9 @@ test("the page background is rgb(16, 21, 28)", async ({ page }) => {
   expect(bg).toBe("rgb(16, 21, 28)");
 });
 
-test("no horizontal scroll at 390px wide on /, Health, Journal, Leaks and Positions", async ({ page }) => {
+test("no horizontal scroll at 390px wide on /, Health, Journal, Leaks, Positions and Plan", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 390, height: 844 });
   for (const url of [
     "/",
@@ -24,6 +26,7 @@ test("no horizontal scroll at 390px wide on /, Health, Journal, Leaks and Positi
     `${ACCOUNT}&tab=journal`,
     `${ACCOUNT}&tab=leaks`,
     `${ACCOUNT}&tab=positions`,
+    `${ACCOUNT}&tab=plan`,
   ]) {
     await page.goto(url);
     await page.waitForLoadState("networkidle");

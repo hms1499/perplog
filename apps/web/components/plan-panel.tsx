@@ -16,6 +16,7 @@ import { useProtectionAvailable, useSessionState } from "@/lib/use-protection";
 import { ErrorState } from "./error-state";
 import { PlanSummary } from "./plan/plan-summary";
 import { ProtectionStrip } from "./plan/protection-strip";
+import { RiskLadder } from "./plan/risk-ladder";
 import { type PlanView, type QuoteView, quoteErrorText, type Side } from "./plan/shared";
 import { Ticket } from "./plan/ticket";
 import { Button, Panel, StepTracker, WarnBox } from "./ui";
@@ -188,15 +189,17 @@ export function PlanPanel({ address }: { address: Address }) {
           stopInvalid={stop !== "" && !stopRaw}
           place={placeBlock}
         />
-        <div data-testid="plan-quote" className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
-          <Panel className="min-h-[360px]">
-            {!input ? (
-              <p className="text-muted">Enter how much you are willing to lose and where your stop goes.</p>
-            ) : quoteError ? (
-              <WarnBox tone="loss">{quoteErrorText(quoteError, side)}</WarnBox>
-            ) : !q ? (
-              <p className="text-muted">Reading the book…</p>
-            ) : null}
+        <div data-testid="plan-quote" className="grid items-start gap-4 2xl:grid-cols-[minmax(0,1fr)_300px]">
+          <Panel>
+            <RiskLadder
+              quote={quoteError ? null : (q ?? null)}
+              book={book}
+              priceDp={priceDp}
+              side={side}
+              updating={Boolean(q) && quote.isFetching}
+              error={input && quoteError ? quoteErrorText(quoteError, side) : null}
+              emptyText={input ? "Reading the book…" : "Set your max loss and stop to see the plan."}
+            />
           </Panel>
           <Panel>
             <PlanSummary quote={quoteError ? null : (q ?? null)} market={market} side={side} />
@@ -227,7 +230,9 @@ function PlaceBlock(props: {
       >
         Place order
       </Button>
-      {props.summary && <p className="-mt-1.5 text-center font-mono text-muted text-xs">{props.summary}</p>}
+      {props.summary && (
+        <p className="-mt-1.5 text-center text-muted text-xs tabular-nums">{props.summary}</p>
+      )}
       {props.placeError && <WarnBox tone="loss">{props.placeError}</WarnBox>}
       {plan && (
         <div data-testid="plan-status" className="grid gap-2">
