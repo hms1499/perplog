@@ -47,4 +47,58 @@ export const chain = {
       throw new ChainUnavailableError(error);
     }
   },
+  /** Best resting bid and ask on the pool's book, read on-chain; null for an empty side. */
+  async bookTop(pool: Address): Promise<{ bestBid: bigint | null; bestAsk: bigint | null }> {
+    try {
+      const { tops } = await createReadClient(HIDEKI).getBookTopsOnchain([{ id: pool, poolAddress: pool }]);
+      const top = tops[pool];
+      return {
+        bestBid: top?.bestBid ? BigInt(top.bestBid) : null,
+        bestAsk: top?.bestAsk ? BigInt(top.bestAsk) : null,
+      };
+    } catch (error) {
+      throw new ChainUnavailableError(error);
+    }
+  },
+  /** Largest lot-aligned order the account's margin allows at `price`; null when the mark is not priceable. */
+  async maxOrderSize(account: Address, pool: Address, isBid: boolean, price: bigint): Promise<bigint | null> {
+    try {
+      const max = await createReadClient(HIDEKI).getMaxPerpOrderSize({
+        pool,
+        marginBank: HIDEKI.marginBank,
+        account,
+        isBid,
+        price,
+      });
+      return max.priceable ? max.maxQuantity : null;
+    } catch (error) {
+      throw new ChainUnavailableError(error);
+    }
+  },
+  /** Projected liquidation price and leverage after the order; null when the mark is not priceable. */
+  async liquidationPreview(
+    account: Address,
+    pool: Address,
+    isBid: boolean,
+    qtyRaw: bigint,
+    price: bigint,
+  ): Promise<{ liqPrice: bigint | null; leverageBps: bigint | null } | null> {
+    try {
+      const preview = await createReadClient(HIDEKI).previewPerpLiquidationPrice({
+        pool,
+        marginBank: HIDEKI.marginBank,
+        account,
+        isBid,
+        quantity: qtyRaw,
+        price,
+      });
+      if (!preview.priceable) return null;
+      return {
+        liqPrice: preview.projectedLiquidationPrice,
+        leverageBps: preview.projectedPositionLeverageBps,
+      };
+    } catch (error) {
+      throw new ChainUnavailableError(error);
+    }
+  },
 };
