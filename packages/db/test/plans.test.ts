@@ -5,9 +5,11 @@ import {
   createPlanWithEntry,
   getPlan,
   getStop,
+  insertStop,
   listAlerts,
   listEvidence,
   listStopExecutions,
+  medianStopLatencyMs,
   type NewPlanInput,
   recordExecution,
   requeueEntry,
@@ -198,4 +200,43 @@ test("listEvidence returns only rows with a tx hash, newest first, filtered by a
   expect((await listEvidence(db, { account: ACCOUNT })).map((e) => e.id)).toEqual([first]);
   expect(await listEvidence(db, { limit: 1 })).toHaveLength(1);
   expect(await listStopExecutions(db, "00000000-0000-0000-0000-000000000000")).toEqual([]);
+});
+
+test("medianStopLatencyMs is the median of confirmed stop closes and null with none", async () => {
+  const { db, key } = await setup();
+  expect(await medianStopLatencyMs(db)).toBeNull();
+  const triggeredAt = new Date("2026-10-28T09:00:00Z");
+  const close = async (ms: number, status: "confirmed" | "failed" = "confirmed") => {
+    const stop = await insertStop(db, {
+      account: ACCOUNT,
+      pool: POOL,
+      botKeyId: key.id,
+      positionSide: "long",
+      triggerPrice: 1n,
+      triggerOp: "lte",
+      qtyMode: "entire",
+      status: "done",
+      triggeredAt,
+    });
+    await recordExecution(db, {
+      kind: "stop_close",
+      status,
+      account: ACCOUNT,
+      pool: POOL,
+      botKeyId: key.id,
+      stopId: stop.id,
+      isBid: false,
+      qtyRaw: 10n,
+      priceBound: 1n,
+      txHash: HASH,
+      updatedAt: new Date(triggeredAt.getTime() + ms),
+    });
+  };
+  await close(2_400);
+  await close(1_800);
+  await close(3_300);
+  await close(60_000, "failed");
+  expect(await medianStopLatencyMs(db)).toBe(2_400);
+  await close(2_600);
+  expect(await medianStopLatencyMs(db)).toBe(2_500);
 });

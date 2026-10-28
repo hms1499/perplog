@@ -225,3 +225,24 @@ export async function getExecution(db: Db, id: string): Promise<ExecutionRow | n
   const [row] = await db.select().from(executions).where(eq(executions.id, id)).limit(1);
   return row ?? null;
 }
+
+/** Median of `confirmed_at − triggered_at` (ms) over confirmed stop closes; null when there are none. */
+export async function medianStopLatencyMs(db: Db): Promise<number | null> {
+  const rows = await db
+    .select({ confirmedAt: executions.updatedAt, triggeredAt: stops.triggeredAt })
+    .from(executions)
+    .innerJoin(stops, eq(executions.stopId, stops.id))
+    .where(
+      and(
+        eq(executions.kind, "stop_close"),
+        eq(executions.status, "confirmed"),
+        isNotNull(stops.triggeredAt),
+      ),
+    );
+  const ms = rows
+    .map((r) => r.confirmedAt.getTime() - (r.triggeredAt as Date).getTime())
+    .sort((a, b) => a - b);
+  if (ms.length === 0) return null;
+  const mid = Math.floor(ms.length / 2);
+  return ms.length % 2 === 1 ? (ms[mid] as number) : ((ms[mid - 1] as number) + (ms[mid] as number)) / 2;
+}
