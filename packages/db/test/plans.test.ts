@@ -143,6 +143,9 @@ test("settleEntryFilled arms a plan stop and marks the plan entered; a partial f
     triggerPrice: 65_000n * 10n ** 18n,
   });
 
+  // The entry is linked to its stop, so the stop engine fences size reads on the entry's block.
+  expect((await listStopExecutions(db, fullPlan?.stopId ?? "")).map((e) => e.id)).toEqual([full.executionId]);
+
   const [evidence] = await listEvidence(db, { account: ACCOUNT });
   expect(evidence).toMatchObject({ status: "confirmed", txHash: HASH, filledRaw: 3_000_000n, orderId: 7n });
 });

@@ -37,8 +37,10 @@ const riskOf = (qtyRaw: bigint, refPrice: bigint, stopPrice: bigint, baseDecimal
   (qtyRaw * absBig(refPrice - stopPrice)) / 10n ** BigInt(baseDecimals);
 
 /**
- * Risk-based size for a market entry (spec §6.6): a long prices off the best ask, a short off the best bid;
- * qty = risk · 10^baseDecimals / |P − S|, floored to the lot. The IOC bound snaps inside the slippage.
+ * Risk-based size for a market entry (spec §6.6): a long prices off the best ask, a short off the best bid.
+ * The IOC bound snaps inside the slippage, and the size is taken from the WORST fill that bound allows:
+ * qty = risk · 10^baseDecimals / |bound − S|, floored to the lot, so "max loss if the stop hits" holds however
+ * the entry fills. (The spec sized off P; at a 0.5% bound and a tight stop that understated the loss up to ~2×.)
  */
 export function sizeEntry(input: EntryQuoteInput): EntrySize {
   const { market, side, riskRaw, stopPrice } = input;
@@ -47,22 +49,22 @@ export function sizeEntry(input: EntryQuoteInput): EntrySize {
   if (side === "long" ? stopPrice >= refPrice : stopPrice <= refPrice) {
     return { ok: false, error: "stop_wrong_side" };
   }
-  const scale = 10n ** BigInt(market.baseDecimals);
-  const qtyRaw = floorToStep((riskRaw * scale) / absBig(refPrice - stopPrice), market.lotSize);
-  if (qtyRaw <= 0n || qtyRaw < market.minQuantity) return { ok: false, error: "risk_too_small" };
-
   const slip = BigInt(input.slippageBps ?? ENTRY_SLIP_BPS);
   const priceBound =
     side === "long"
       ? floorToStep((refPrice * (10_000n + slip)) / 10_000n, market.tickSize)
       : ceilToStep((refPrice * (10_000n - slip) + 9_999n) / 10_000n, market.tickSize);
+  const scale = 10n ** BigInt(market.baseDecimals);
+  const qtyRaw = floorToStep((riskRaw * scale) / absBig(priceBound - stopPrice), market.lotSize);
+  if (qtyRaw <= 0n || qtyRaw < market.minQuantity) return { ok: false, error: "risk_too_small" };
+
   return {
     ok: true,
     refPrice,
     qtyRaw,
     priceBound,
     notionalRaw: notionalRaw(qtyRaw, refPrice, market.baseDecimals),
-    effectiveRiskRaw: riskOf(qtyRaw, refPrice, stopPrice, market.baseDecimals),
+    effectiveRiskRaw: riskOf(qtyRaw, priceBound, stopPrice, market.baseDecimals),
   };
 }
 
@@ -80,7 +82,7 @@ export function capEntry(
     ...size,
     qtyRaw,
     notionalRaw: notionalRaw(qtyRaw, size.refPrice, market.baseDecimals),
-    effectiveRiskRaw: riskOf(qtyRaw, size.refPrice, stopPrice, market.baseDecimals),
+    effectiveRiskRaw: riskOf(qtyRaw, size.priceBound, stopPrice, market.baseDecimals),
     capped: true,
   };
 }

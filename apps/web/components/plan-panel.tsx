@@ -128,7 +128,8 @@ export function PlanPanel({ address }: { address: Address }) {
   });
 
   const place = useMutation({
-    mutationFn: () => postJson<{ plan: PlanView }>("/api/plans", { ...input, confirm: true }),
+    // The previewed input, never the one still being typed: what is placed is what was shown.
+    mutationFn: () => postJson<{ plan: PlanView }>("/api/plans", { ...debounced, confirm: true }),
     onSuccess: (res) => setPlanId(res.plan.id),
   });
 
@@ -284,7 +285,13 @@ export function PlanPanel({ address }: { address: Address }) {
             ) : linkedAccount === address.toLowerCase() ? (
               <PlaceBlock
                 canPlace={
-                  Boolean(q) && !quoteError && !place.isPending && !(plan.data?.status === "pending_entry")
+                  Boolean(q) &&
+                  !quoteError &&
+                  !quote.isFetching &&
+                  // The preview must be of what is typed now.
+                  (input ? JSON.stringify(input) : null) === debouncedKey &&
+                  !place.isPending &&
+                  !(plan.data?.status === "pending_entry")
                 }
                 summary={
                   q

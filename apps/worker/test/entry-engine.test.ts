@@ -18,6 +18,23 @@ import { encryptPrivateKey } from "@perplog/db/crypto";
 import { createTestDb } from "@perplog/db/testing";
 import { generatePrivateKey, privateKeyToAddress } from "viem/accounts";
 import { createEntryEngine } from "../src/entry-engine";
+
+// Pass-through, so one test can make the settle write fail once after a successful send.
+const dbFaults = vi.hoisted(() => ({ settleFails: 0 }));
+vi.mock("@perplog/db", async (importOriginal) => {
+  const real = await importOriginal<typeof import("@perplog/db")>();
+  return {
+    ...real,
+    settleEntryFilled: (...args: Parameters<typeof real.settleEntryFilled>) => {
+      if (dbFaults.settleFails > 0) {
+        dbFaults.settleFails -= 1;
+        return Promise.reject(new Error("connection terminated"));
+      }
+      return real.settleEntryFilled(...args);
+    },
+  };
+});
+
 import { KeyedSerial } from "../src/serial";
 import { createStopEngine } from "../src/stop-engine";
 import { fakeLogger, fakeTradingChain } from "./fakes";
@@ -245,4 +262,64 @@ test("entry and stop close for the same bot key never overlap", async () => {
   expect(order).toHaveLength(4);
   expect(order[0]?.replace("start", "end")).toBe(order[1]);
   expect(order[2]?.replace("start", "end")).toBe(order[3]);
+});
+
+test("a fill mined between the receipt check and the pending check is settled, not dropped", async () => {
+  const { db, f, run, plan } = await setup();
+  const created = await plan();
+  f.script.push({ unknown: 1_230n });
+  await run();
+  // Next tick: the receipt read still sees nothing, then the tx is mined before the pending check.
+  const receiptOf = vi.mocked(f.chain.receiptOf);
+  const real = receiptOf.getMockImplementation();
+  if (!real) throw new Error("fake without receiptOf");
+  receiptOf.mockImplementationOnce(async () => null);
+  vi.mocked(f.chain.hasPendingTx).mockImplementationOnce(async () => {
+    f.mine();
+    return false;
+  });
+  await run();
+  const after = await getPlan(db, created.plan.id);
+  expect(after?.status).toBe("entered");
+  expect(after?.stopId).not.toBeNull();
+  expect(f.sends).toHaveLength(1);
+});
+
+test("a fill whose settle write fails is re-settled from its receipt on the next tick", async () => {
+  const { db, f, log, run, plan } = await setup();
+  const created = await plan();
+  dbFaults.settleFails = 1;
+  await run();
+  expect((await getPlan(db, created.plan.id))?.status).toBe("pending_entry");
+  await run();
+  const after = await getPlan(db, created.plan.id);
+  expect(after?.status).toBe("entered");
+  expect(after?.stopId).not.toBeNull();
+  expect(f.sends).toHaveLength(1);
+  expect(log.has("entry_execution_error")).toBe(true);
+});
+
+test("an entry with no hash that did open a position is settled from the live size and its stop armed", async () => {
+  const { db, f, run, plan } = await setup();
+  const created = await plan();
+  f.script.push({ unknown: 1_230n, withHash: false });
+  await run();
+  f.mine();
+  await run();
+  const after = await getPlan(db, created.plan.id);
+  expect(after?.status).toBe("entered");
+  expect(await getStop(db, after?.stopId ?? "")).toMatchObject({ status: "armed", qtyMode: "entire" });
+  expect(f.sends).toHaveLength(1);
+});
+
+test("an entry with no hash and still flat fails unresolved, never resent", async () => {
+  const { db, f, run, plan } = await setup();
+  const created = await plan();
+  f.script.push({ unknown: 1_230n, withHash: false });
+  await run();
+  f.drop();
+  await run();
+  expect((await getPlan(db, created.plan.id))?.status).toBe("entry_failed");
+  expect((await listAlerts(db, ACCOUNT, 0))[0]?.payload).toMatchObject({ reason: "unresolved" });
+  expect(f.sends).toHaveLength(1);
 });

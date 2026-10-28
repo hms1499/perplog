@@ -18,7 +18,8 @@ export interface NewPlanInput {
 }
 
 export interface EntryFill {
-  txHash: string;
+  /** Null only when the fill was inferred from the live position after a send whose hash was never recorded. */
+  txHash: string | null;
   orderId: bigint | null;
   filledRaw: bigint;
   avgPrice: bigint | null;
@@ -168,6 +169,12 @@ export async function settleEntryFilled(
       .update(plans)
       .set({ stopId: (stop as { id: string }).id })
       .where(eq(plans.id, plan.id));
+    // Linked to its stop: the stop engine fences size reads on this entry's receipt block, so a lagging node
+    // cannot read the position as still flat and end the stop without closing anything.
+    await tx
+      .update(executions)
+      .set({ stopId: (stop as { id: string }).id })
+      .where(eq(executions.id, entry.id));
     return true;
   });
 }

@@ -1,4 +1,9 @@
-import { OperatorRevert, TxOutcomeUnknown } from "@perplog/chain/signer";
+import {
+  OperatorRevert,
+  type PlaceResult,
+  type ReceiptResult,
+  TxOutcomeUnknown,
+} from "@perplog/chain/signer";
 import { type Address, ENTRY_MAX_AGE_MS } from "@perplog/core";
 import {
   claimQueuedEntries,
@@ -60,25 +65,52 @@ export function createEntryEngine(deps: EntryEngineDeps): EntryEngine {
   const botAddress = async (e: ExecutionRow): Promise<Address | null> =>
     ((await getBotKey(db, e.botKeyId))?.address as Address | null | undefined) ?? null;
 
+  /** Settles an entry from its mined receipt. */
+  async function settleFrom(e: ExecutionRow, r: ReceiptResult): Promise<void> {
+    if (r.reverted) return fail(e, "reverted_onchain", r.txHash);
+    if (r.filledRaw === 0n) return fail(e, "no_fill", r.txHash);
+    const { reverted: _reverted, blockNumber: _block, stepsMs: _steps, ...fill } = r;
+    if (await settleEntryFilled(db, { executionId: e.id, fill })) {
+      log.info({ executionId: e.id, planId: e.planId, txHash: r.txHash }, "entry_resolved");
+    }
+  }
+
   /** An entry whose outcome is not recorded (`sending` after a crash, or `sent`): settle it, never resend it. */
   async function resolve(e: ExecutionRow): Promise<void> {
-    if (e.txHash) {
-      const r = await chain.receiptOf(e.txHash as Hash, e.pool);
-      if (r) {
-        if (r.reverted) return fail(e, "reverted_onchain", r.txHash);
-        if (r.filledRaw === 0n) return fail(e, "no_fill", r.txHash);
-        const { reverted: _reverted, blockNumber: _block, stepsMs: _steps, ...fill } = r;
-        if (await settleEntryFilled(db, { executionId: e.id, fill })) {
-          log.info({ executionId: e.id, planId: e.planId, txHash: r.txHash }, "entry_resolved");
-        }
-        return;
-      }
+    const hash = e.txHash as Hash | null;
+    if (hash) {
+      const r = await chain.receiptOf(hash, e.pool);
+      if (r) return settleFrom(e, r);
     }
     const bot = await botAddress(e);
     if (bot && (await chain.hasPendingTx(bot))) return;
-    // Nothing pending and no receipt: it is gone. Without a hash a mined entry cannot be told from a lost one; if
-    // it did open a position, the unprotected-position alert covers it.
-    return fail(e, e.txHash ? "dropped" : "unresolved", e.txHash);
+    if (hash) {
+      // Nothing pending any more: it was mined just now (receipt visible), or it is gone for good.
+      const r = await chain.receiptOf(hash, e.pool);
+      return r ? settleFrom(e, r) : fail(e, "dropped", hash);
+    }
+    // No hash, nothing pending. The account was flat on this pool right before the send (checked under the
+    // per-key serial), so a position on the plan's side now means the entry filled: arm its stop.
+    const size = await chain.readPositionSize(e.account, e.pool);
+    const filled = e.isBid ? size : -size;
+    if (filled > 0n) {
+      const fill = {
+        txHash: null,
+        orderId: null,
+        // biome-ignore lint/complexity/useMathMinMax: bigint operands; Math.min only takes numbers
+        filledRaw: filled < e.qtyRaw ? filled : e.qtyRaw,
+        avgPrice: null,
+        gasUsed: 0n,
+      };
+      if (await settleEntryFilled(db, { executionId: e.id, fill })) {
+        log.warn(
+          { executionId: e.id, planId: e.planId, filledRaw: fill.filledRaw.toString() },
+          "entry_inferred_fill",
+        );
+      }
+      return;
+    }
+    return fail(e, "unresolved");
   }
 
   async function send(e: ExecutionRow): Promise<void> {
@@ -127,24 +159,10 @@ export function createEntryEngine(deps: EntryEngineDeps): EntryEngine {
       qtyRaw: e.qtyRaw,
       priceBound: e.priceBound,
     };
+    // Only the send is guarded: a failure after it (writing the outcome) must not be mistaken for "nothing sent".
+    let result: PlaceResult;
     try {
-      const result = await chain.placeMarketFor(privateKey, order);
-      if (result.filledRaw === 0n) return fail(e, "no_fill", result.txHash);
-      const { blockNumber: _block, stepsMs, ...fill } = result;
-      await settleEntryFilled(db, { executionId: e.id, fill });
-      log.info(
-        {
-          executionId: e.id,
-          planId: e.planId,
-          pool: e.pool,
-          txHash: result.txHash,
-          qtyRaw: e.qtyRaw.toString(),
-          filledRaw: result.filledRaw.toString(),
-          ms_since_queued: now() - e.createdAt.getTime(),
-          place_steps: stepsMs,
-        },
-        "entry_sent",
-      );
+      result = await chain.placeMarketFor(privateKey, order);
     } catch (err) {
       if (err instanceof TxOutcomeUnknown) {
         // The hash first: it is how the outcome gets resolved, by the next tick or after a restart.
@@ -159,6 +177,24 @@ export function createEntryEngine(deps: EntryEngineDeps): EntryEngine {
       // Before broadcast (simulation revert, RPC error): nothing was sent, and an entry is never retried.
       return fail(e, err instanceof OperatorRevert ? err.errorName : errorText(err));
     }
+    if (result.filledRaw === 0n) return fail(e, "no_fill", result.txHash);
+    // The hash first: if settling fails below, the next tick re-settles from this receipt instead of guessing.
+    await updateExecution(db, e.id, { status: "sent", txHash: result.txHash });
+    const { blockNumber: _block, stepsMs, ...fill } = result;
+    await settleEntryFilled(db, { executionId: e.id, fill });
+    log.info(
+      {
+        executionId: e.id,
+        planId: e.planId,
+        pool: e.pool,
+        txHash: result.txHash,
+        qtyRaw: e.qtyRaw.toString(),
+        filledRaw: result.filledRaw.toString(),
+        ms_since_queued: now() - e.createdAt.getTime(),
+        place_steps: stepsMs,
+      },
+      "entry_sent",
+    );
   }
 
   const schedule = (e: ExecutionRow, job: () => Promise<void>): void => {

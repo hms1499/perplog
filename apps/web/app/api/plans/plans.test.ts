@@ -74,24 +74,30 @@ describe("POST /api/plans/quote", () => {
     const res = await quote(body());
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({
-      qtyRaw: (2n * E18).toString(),
+      qtyRaw: (1_818n * 10n ** 15n).toString(),
       refPrice: (100n * E18).toString(),
       stopPrice: (95n * E18).toString(),
       priceBound: (1005n * 10n ** 17n).toString(),
-      notionalRaw: (200n * E18).toString(),
-      effectiveRiskRaw: (10n * E18).toString(),
+      notionalRaw: (181_800n * 10n ** 15n).toString(),
+      effectiveRiskRaw: (9_999n * 10n ** 15n).toString(),
       capped: false,
       liqPriceEst: (80n * E18).toString(),
       leverageEstBps: "20000",
       warnings: [],
     });
     expect(fake.maxOrderSize).toHaveBeenCalledWith(ACC, P1, true, 1005n * 10n ** 17n);
-    expect(fake.liquidationPreview).toHaveBeenCalledWith(ACC, P1, true, 2n * E18, 100n * E18);
+    expect(fake.liquidationPreview).toHaveBeenCalledWith(ACC, P1, true, 1_818n * 10n ** 15n, 100n * E18);
   });
 
   test("the stop snaps to the tick away from the entry", async () => {
     const res = await quote(body({ stopPrice: "95000050000000000000" }));
     expect((await res.json()).stopPrice).toBe("95000000000000000000");
+  });
+
+  test("a long stop below one tick (it would snap to 0 and never trigger) → 400 invalid_input", async () => {
+    const res = await quote(body({ stopPrice: "50" }));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "invalid_input" });
   });
 
   test("missing ask → 400 no_liquidity", async () => {
@@ -191,14 +197,14 @@ describe("POST /api/plans and GET /api/plans/:id", () => {
     expect(plan).toMatchObject({
       pool: P1,
       side: "long",
-      qtyRaw: (2n * E18).toString(),
+      qtyRaw: (1_818n * 10n ** 15n).toString(),
       stopPrice: (95n * E18).toString(),
       status: "pending_entry",
       stopId: null,
       txHash: null,
     });
     const [entry] = await claimQueuedEntries(db(), 10);
-    expect(entry).toMatchObject({ planId: plan.id, kind: "entry", qtyRaw: 2n * E18, isBid: true });
+    expect(entry).toMatchObject({ planId: plan.id, kind: "entry", qtyRaw: 1_818n * 10n ** 15n, isBid: true });
   });
 
   test("no DATABASE_URL → 503 db_unavailable", async () => {

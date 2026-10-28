@@ -145,3 +145,30 @@ test("without a database there is no Place order button", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Place order" })).toHaveCount(0);
   await expect(page.getByTestId("link-wizard")).toHaveCount(0);
 });
+
+test("Place order waits for the quote of what is typed and posts that input", async ({ page }) => {
+  await mockPlan(page, { linked: true, plans: true });
+  let posted: { riskRaw?: string } | null = null;
+  await page.route("**/api/plans", (route) => {
+    posted = route.request().postDataJSON() as { riskRaw: string };
+    return route.fulfill({
+      status: 201,
+      json: {
+        plan: { id: PLAN_ID, pool: POOL, side: "long", status: "pending_entry", stopId: null, txHash: null },
+      },
+    });
+  });
+  await open(page);
+  await page.getByLabel("Max loss if the stop hits").fill("25");
+  await page.getByLabel("Stop price").fill("63900");
+  await expect(page.getByTestId("plan-quote")).toContainText("0.0718");
+  const place = page.getByRole("button", { name: "Place order" });
+  await expect(place).toBeEnabled();
+  // Edited after the preview: Place is off until the preview catches up.
+  await page.getByLabel("Max loss if the stop hits").fill("50");
+  await expect(place).toBeDisabled();
+  await expect(page.getByTestId("plan-quote")).toContainText("0.1436");
+  await expect(place).toBeEnabled();
+  await place.click();
+  await expect.poll(() => posted?.riskRaw).toBe((50n * E18).toString());
+});

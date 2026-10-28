@@ -19,7 +19,7 @@ const ok = (r: ReturnType<typeof sizeEntry>) => {
   return r;
 };
 
-test("long sizes from bestAsk and floors to the lot", () => {
+test("long sizes from the worst fill (the IOC bound) and floors to the lot", () => {
   const r = ok(
     sizeEntry({
       market: market(),
@@ -33,10 +33,11 @@ test("long sizes from bestAsk and floors to the lot", () => {
   expect(r).toEqual({
     ok: true,
     refPrice: 100n * E18,
-    qtyRaw: 2n * E18,
+    // 10 / |100.5 − 95|: the loss at the stop holds even if the entry fills at the bound.
+    qtyRaw: 1_818n * 10n ** 15n,
     priceBound: 1005n * 10n ** 17n,
-    notionalRaw: 200n * E18,
-    effectiveRiskRaw: 10n * E18,
+    notionalRaw: 181_800_000_000_000_000_000n,
+    effectiveRiskRaw: 9_999_000_000_000_000_000n,
   });
 });
 
@@ -52,17 +53,17 @@ test("short sizes from bestBid; priceBound rounds up to the tick", () => {
     }),
   );
   expect(r.refPrice).toBe(100_000_030_000_000_000_000n);
-  // 10e18 · 1e18 / 2.99997e18 = 3.33336…e18, floored to the 1e15 lot.
-  expect(r.qtyRaw).toBe(3_333_000_000_000_000_000n);
+  // 10e18 · 1e18 / |99.5001 − 103| = 2.85722…e18, floored to the 1e15 lot.
+  expect(r.qtyRaw).toBe(2_857_000_000_000_000_000n);
   // 100.00003 · 0.995 = 99.50002985 → ceil to 0.0001.
   expect(r.priceBound).toBe(99_500_100_000_000_000_000n);
 });
 
 test.each([
   // baseDecimals, lot, min, P, S, R, expected qty
-  [6, 10n, 10n, 2000n * E18, 1900n * E18, 50n * E18, 500_000n],
-  [8, 1000n, 13_000n, 64_248n * E18, 63_900n * E18, 25n * E18, 7_183_000n],
-  [24, E18, E18, E18, 9n * 10n ** 17n, 10n * E18, 10n ** 26n],
+  [6, 10n, 10n, 2000n * E18, 1900n * E18, 50n * E18, 454_540n],
+  [8, 1000n, 13_000n, 64_248n * E18, 63_900n * E18, 25n * E18, 3_735_000n],
+  [24, E18, E18, E18, 9n * 10n ** 17n, 10n * E18, 95_238_095n * E18],
 ] as const)("%i base decimals give the exact floored quantity", (baseDecimals, lot, min, p, s, risk, qty) => {
   const r = ok(
     sizeEntry({
@@ -130,7 +131,7 @@ test("capEntry floors maxQty to the lot, sets capped, recomputes effectiveRiskRa
     ...size,
     qtyRaw: 1_234_000_000_000_000_000n,
     notionalRaw: 123_400_000_000_000_000_000n,
-    effectiveRiskRaw: 6_170_000_000_000_000_000n,
+    effectiveRiskRaw: 6_787_000_000_000_000_000n,
     capped: true,
   });
   expect(capEntry(size, 5n * 10n ** 14n, m, 95n * E18)).toEqual({ ok: false, error: "risk_too_small" });

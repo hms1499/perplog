@@ -44,7 +44,7 @@ export type Quote =
       leverageEstBps: bigint | null;
       warnings: string[];
     }
-  | { ok: false; error: EntryQuoteError | "unknown_pool" };
+  | { ok: false; error: EntryQuoteError | "unknown_pool" | "invalid_input" };
 
 export const CAPPED_WARNING = "Capped by your available margin; effective risk shown.";
 
@@ -68,6 +68,9 @@ export async function quoteEntry(input: QuoteInput): Promise<Quote> {
   // Away from the entry: a long's stop floors, a short's ceils.
   const stopPrice =
     input.side === "long" ? (input.stopPrice / tick) * tick : ((input.stopPrice + tick - 1n) / tick) * tick;
+
+  // A stop that snaps to 0 would never trigger (`mark ≤ 0`): the position would look protected but is not.
+  if (stopPrice <= 0n) return { ok: false, error: "invalid_input" };
 
   const book = await chain.bookTop(input.pool);
   const size = sizeEntry({ market, side: input.side, riskRaw: input.riskRaw, stopPrice, ...book });
