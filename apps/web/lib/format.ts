@@ -1,5 +1,12 @@
+import { formatAmount } from "@perplog/core";
+
 export function fromApiBigint(value: string): bigint {
   return BigInt(value);
+}
+
+/** Signed USDso amount with two decimals and a real minus sign, e.g. "+412.50" / "−86.20". */
+export function signedUsd(raw: bigint): string {
+  return `${raw > 0n ? "+" : raw < 0n ? "−" : ""}${formatAmount(raw < 0n ? -raw : raw, 18, 2)}`;
 }
 
 export function pct(n: number): string {

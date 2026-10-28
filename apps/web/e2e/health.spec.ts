@@ -7,6 +7,7 @@ test("liquidated account shows the gap, the breakdown, the reconciled badge and 
   const gap = page.getByTestId("health-gap");
   await expect(gap).toContainText("The app shows (realized)");
   await expect(gap).toContainText("Your true net PnL");
+  await expect(gap).toContainText("not shown by the app");
   const breakdown = page.getByTestId("health-breakdown");
   for (const row of ["Realized PnL", "Funding paid", "Liquidation fees", "Net PnL"]) {
     await expect(breakdown).toContainText(row);
