@@ -212,9 +212,18 @@ DATABASE_URL=postgresql://USER:PASS@ep-xxx-pooler.REGION.aws.neon.tech/neondb?ss
 
 - **Database:** a Neon Postgres. The worker takes the **direct** URL and the web the **pooled** URL (see
   [Neon](#neon)); the worker applies migrations at boot.
-- **Worker:** a Railway service built from [`apps/worker/Dockerfile`](apps/worker/Dockerfile) through
-  [`apps/worker/railway.toml`](apps/worker/railway.toml), with **1 replica**. Set `DATABASE_URL`,
+- **Worker:** one instance built from [`apps/worker/Dockerfile`](apps/worker/Dockerfile). Set `DATABASE_URL`,
   `KEY_ENCRYPTION_KEY`, `TREASURY_PRIVATE_KEY` and `NETWORK=hideki`.
+  - **Render (free):** New → Blueprint on this repo reads [`render.yaml`](render.yaml) (a free web service in
+    Virginia) and asks for the three secrets. A free web service sleeps after 15 minutes without inbound
+    traffic, and a sleeping worker fires no stop, so keep it awake: a [cron-job.org](https://cron-job.org) job
+    that GETs `https://<service>.onrender.com/healthz` every minute. `/healthz` answers a bare `ok` on any
+    path and reveals no state. The free tier has 750 instance hours a month per workspace: run only this one
+    free service. Render's free tier is for demos, not for real money.
+  - **Railway:** [`apps/worker/railway.toml`](apps/worker/railway.toml), with **1 replica**.
+  - **Any machine:** `pnpm --filter @perplog/worker start` (with `caffeinate -i` on a Mac).
+  - Two workers on the same database are safe: only the holder of the signer lock signs, the other waits in
+    standby and takes over within 10 s once the first stops.
 - **Web:** Vercel, with the pooled `DATABASE_URL` set.
 
 ## Tests

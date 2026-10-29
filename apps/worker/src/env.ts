@@ -15,6 +15,8 @@ export interface WorkerEnv {
   GAS_TOPUP_AMOUNT_WEI: bigint;
   GAS_TOPUP_DAILY_CAP_WEI: bigint;
   LOG_LEVEL: string;
+  /** Set by hosts that require an open port (Render): serves a bare liveness check. Unset means no server. */
+  PORT?: number;
 }
 
 function isPooledNeonUrl(url: string): boolean {
@@ -76,6 +78,7 @@ const schema = z.object({
   GAS_TOPUP_AMOUNT_STT: stt("0.5"),
   GAS_TOPUP_DAILY_CAP_STT: stt("2"),
   LOG_LEVEL: z.preprocess(blankIsUnset, z.string().default("info")),
+  PORT: optional(z.coerce.number().int().min(1).max(65535)),
 });
 
 /** Parses and validates the environment once, at boot. Throws a ZodError listing every bad variable. */
@@ -93,5 +96,6 @@ export function parseEnv(raw: NodeJS.ProcessEnv): WorkerEnv {
     GAS_TOPUP_AMOUNT_WEI: e.GAS_TOPUP_AMOUNT_STT,
     GAS_TOPUP_DAILY_CAP_WEI: e.GAS_TOPUP_DAILY_CAP_STT,
     LOG_LEVEL: e.LOG_LEVEL,
+    ...(e.PORT !== undefined && { PORT: e.PORT }),
   };
 }

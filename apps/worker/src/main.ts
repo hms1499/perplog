@@ -1,11 +1,16 @@
 import { createDb, migrateDb } from "@perplog/db";
 import { liveChain, networkFromEnv } from "./chain-live";
 import { parseEnv } from "./env";
+import { startHealthServer } from "./health";
 import { createLogger } from "./log";
 import { startWorker } from "./start";
 
 const env = parseEnv(process.env);
 const log = createLogger(env.LOG_LEVEL);
+
+// Up before the DB: a host that waits for an open port must see one even while this worker stays standby.
+const health = env.PORT === undefined ? null : await startHealthServer(env.PORT, log);
+if (health) log.info({ port: env.PORT }, "health server listening");
 
 const { db, pool } = createDb(env.DATABASE_URL, (err) => log.error({ err }, "pg pool error"));
 
@@ -38,6 +43,7 @@ const shutdown = async (signal: string) => {
     await worker.stop();
     lockClient.release();
     await pool.end();
+    await health?.close();
   } catch (err) {
     log.error({ err }, "shutdown failed");
     process.exit(1);
