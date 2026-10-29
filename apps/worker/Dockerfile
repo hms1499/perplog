@@ -1,4 +1,4 @@
-# Build context is the repository root (railway.toml points here).
+# Build context is the repository root (render.yaml and railway.toml point here).
 FROM node:24-slim
 WORKDIR /app
 RUN corepack enable

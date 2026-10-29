@@ -1,0 +1,25 @@
+# Render Blueprint for the worker (the web app stays on Vercel). Render's free tier only covers web services,
+# which sleep after 15 minutes without inbound traffic: the worker serves a bare liveness check on $PORT and an
+# external pinger (cron-job.org, every minute) must hit /healthz to keep it awake. See README "Deploy".
+services:
+  - type: web
+    name: perplog-worker
+    runtime: docker
+    plan: free
+    # Next to Neon us-east-1: every stop does several DB round trips.
+    region: virginia
+    dockerfilePath: ./apps/worker/Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    envVars:
+      - key: NETWORK
+        value: hideki
+      - key: PORT
+        value: "10000"
+      # Secrets: entered in the dashboard when the Blueprint is created, never committed.
+      - key: DATABASE_URL
+        sync: false
+      - key: KEY_ENCRYPTION_KEY
+        sync: false
+      - key: TREASURY_PRIVATE_KEY
+        sync: false

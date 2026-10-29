@@ -65,3 +65,11 @@ test("parseEnv rejects a Neon pooled DATABASE_URL without echoing it, and accept
   // Only the first host label marks Neon's pooler; "pooler" elsewhere is not a match.
   expect(() => parseEnv({ ...ok, DATABASE_URL: "postgres://u:p@db.pooler-free.example/x" })).not.toThrow();
 });
+
+test("parseEnv reads an optional PORT for the health server and rejects a bad one", () => {
+  expect(parseEnv(ok).PORT).toBeUndefined();
+  expect(parseEnv({ ...ok, PORT: "" }).PORT).toBeUndefined();
+  expect(parseEnv({ ...ok, PORT: "10000" }).PORT).toBe(10000);
+  expect(() => parseEnv({ ...ok, PORT: "http" })).toThrow();
+  expect(() => parseEnv({ ...ok, PORT: "70000" })).toThrow();
+});
