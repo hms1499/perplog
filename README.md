@@ -214,6 +214,12 @@ DATABASE_URL=postgresql://USER:PASS@ep-xxx-pooler.REGION.aws.neon.tech/neondb?ss
   [Neon](#neon)); the worker applies migrations at boot.
 - **Worker:** one instance built from [`apps/worker/Dockerfile`](apps/worker/Dockerfile). Set `DATABASE_URL`,
   `KEY_ENCRYPTION_KEY`, `TREASURY_PRIVATE_KEY` and `NETWORK=hideki`.
+  - **Fly.io (paid, about $3.69 a month):** [`fly.toml`](fly.toml) runs one always-on `shared-cpu-1x` 512 MB
+    machine in `iad` with no public service, restarted whenever it exits. From the repository root:
+    `fly apps create <name>` (and set `app` in `fly.toml` to it), then load the three secrets without echoing
+    them: `grep -E '^(DATABASE_URL|KEY_ENCRYPTION_KEY|TREASURY_PRIVATE_KEY)=' apps/worker/.env | fly secrets
+    import --stage`, and `fly deploy --ha=false` (one machine). New accounts have no free tier: the trial
+    stops machines after 5 minutes, so a card is needed.
   - **Render (free):** New → Blueprint on this repo reads [`render.yaml`](render.yaml) (a free web service in
     Virginia) and asks for the three secrets. A free web service sleeps after 15 minutes without inbound
     traffic, and a sleeping worker fires no stop, so keep it awake: a [cron-job.org](https://cron-job.org) job

@@ -1,0 +1,36 @@
+# Fly.io config for the worker (the web app stays on Vercel). Deploy from the repository root:
+#   fly apps create <name> && fly deploy --ha=false
+# No [http_service]: the worker is never reachable from the internet and Fly Proxy never auto-stops it.
+app = "perplog-worker"
+# Ashburn, next to Neon us-east-1: every stop does several DB round trips.
+primary_region = "iad"
+# The worker drains its loops on SIGTERM (an in-flight close may be awaiting its receipt) and then releases
+# the signer lock; Fly's defaults (SIGINT, 5 s) could cut that short.
+kill_signal = "SIGTERM"
+kill_timeout = 30
+
+[build]
+  dockerfile = "apps/worker/Dockerfile"
+
+[env]
+  NETWORK = "hideki"
+  # Private liveness server for the machine check below; there is no public service.
+  PORT = "8080"
+
+[checks]
+  [checks.alive]
+    type = "http"
+    port = 8080
+    path = "/healthz"
+    method = "get"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "30s"
+
+# The worker exits on purpose when it loses the signer lock and expects the host to restart it.
+[[restart]]
+  policy = "always"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
